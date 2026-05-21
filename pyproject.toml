@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kaora-memory"
+version = "0.1.0"
+description = "Skill open-source per memoria persistente e comportamento codificato per agenti AI."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [
+    { name = "alex.lamport", email = "alexis1121alexis@gmail.com" },
+]
+keywords = [
+    "claude-code",
+    "ai-agents",
+    "memory",
+    "scaffolding",
+    "codex",
+    "cursor",
+    "gemini-cli",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "click>=8.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "build",
+    "twine",
+]
+
+[project.scripts]
+kaora = "kaora_memory.cli:main"
+
+# TODO finalizzare username GitHub prima della pubblicazione PyPI
+[project.urls]
+Homepage = "https://github.com/alex-lamport/kaora-memory"
+Repository = "https://github.com/alex-lamport/kaora-memory"
+"Bug Tracker" = "https://github.com/alex-lamport/kaora-memory/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["kaora_memory"]
