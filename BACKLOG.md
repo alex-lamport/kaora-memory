@@ -81,6 +81,19 @@ $ kaora dashboard --export
 - Bootstrap agent-driven completo (l'agente investiga e compila i `<BOOTSTRAP/>` markers leggendo git config, README, package.json, ecc.) — design definito, implementazione in Blocco 2/3
 - Skin alternative per il template (es. registro inglese, registro tecnico-asciutto, registro conversazionale)
 
+## Asset di lancio v0.1 (target Blocco 5-6)
+
+Da finalizzare quando arriviamo al README ricco + pubblicazione PyPI:
+
+- **Landing page premium:** `/tmp/kaora-memory-preview.html` (1008 righe, datato 22 maggio 00:55, anteprima v0.1)
+  - Aggiornare: numerazione ADR (da "Stage 1 Fase 8 ADR-034" → "Blocco 2 chiuso · ADR 000-009"), aggiungere framing metacognitivo emerso il 22 maggio, riallineare 6 layer ai file template reali, citare ADR-005/006/007/008/009
+- **Saggio di lancio (brief operativo):** `/tmp/kaora-memory-launch-essay-brief.md` (16 sezioni, generato 22 maggio sera) — passato alla sessione parallela che sta scrivendo il saggio
+- **Documento vision astratta:** `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (datato 20 maggio, "Memory Architecture LLM Wiki Extended") — riusabile come asset di profondità filosofica per audience accademica/intellettuale, oppure da archiviare se non riallineato
+
+## Decisione naming repo (target Blocco 5, prima della pubblicazione PyPI)
+
+Il framing metacognitivo emerso il 22 maggio rende `kaora-memory` un nome sotto-rappresentativo del prodotto. Vedi [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md) § 7 per la matrice di candidati (`kaora-metacognition`, `kaora-meta`, `kaora-mc`, `kaora-mind`, `kaora-self`, `kaora-thinks`, `kaora-core`, status quo). Decisione necessaria **prima** della pubblicazione PyPI (Blocco 6), perché rinominare un pacchetto pubblicato è doloroso.
+
 ## Idee da valutare
 
 (spazio aperto — ogni cosa che emerge va qui prima di entrare in v0.x)

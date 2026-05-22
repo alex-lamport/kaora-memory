@@ -99,8 +99,10 @@ Tutte e 5 **Accepted** dopo Test 1-5 e revisione in chat.
 
 ## Asset di comunicazione collegati
 
-- `/tmp/kaora-memory-preview.html` — dashboard premium anteprima (Blocco 1, asset NON nel repo)
-- `/tmp/kaora_builder_memory_architecture.md` — analisi tecnica (Blocco 1, asset NON nel repo)
+- `/tmp/kaora-memory-preview.html` — landing page premium anteprima v0.1 (datata 22 maggio 00:55, da aggiornare in Blocco 5)
+- `/tmp/kaora-memory-launch-essay-brief.md` — brief operativo 16 sezioni per il saggio di lancio (sessione parallela)
+- `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` — documento di vision astratta "LLM Wiki Extended" (datato 20 maggio, riusabile per audience accademica)
+- `docs/PHILOSOPHY.md` — il *perché* del prodotto: metacognizione applicata, trittico ADR-001/007/009, reverse positioning agente umile, accessibilità cognitiva, considerazioni naming repo
 
 ## Note operative
 
