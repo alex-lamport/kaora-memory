@@ -8,7 +8,27 @@
 
 ## 🟢 PROSSIMA SESSIONE — Blocco 3: `kaora init`
 
-ADR 005-008 tutte `Accepted` in sessione 22 maggio (Blocco 2 finale). Blocco 3 può partire senza preliminari.
+ADR 005-009 tutte `Accepted` in sessione 22 maggio (Blocco 2 finale). Blocco 3 può partire senza preliminari, ma valuta prima il punto aperto qui sotto.
+
+---
+
+## 🔵 PUNTO APERTO DA DECIDERE ALL'APERTURA
+
+**File `AGENTS.md` nel root del repo (untracked, 166 righe).**
+
+Comparso durante la sessione finale del 22 maggio, probabilmente generato da un sub-agent o da un meccanismo IDE. Contiene la versione del master context di `kaora-memory` adattata per Codex/Cursor (gemello del `CLAUDE.md` attuale).
+
+**3 opzioni per la decisione:**
+
+| Opzione | Effetto |
+|---|---|
+| **A — Elimina** (`rm AGENTS.md`) | Coerente con ADR-000: il dogfooding del repo avviene solo dopo Blocco 3 (`kaora init .`). Mantiene la separazione "il repo di sviluppo non è ancora un esempio di kaora-memory installato". |
+| **B — Applica ADR-005 al repo subito** | Trasforma `CLAUDE.md` in import-only (`@AGENTS.md`) e tiene `AGENTS.md` canonico. Anticipa il dogfooding per la parte memoria operativa, lasciando indietro solo l'install vero proprio (template/, hook). |
+| **C — Lascia come gemello identico (ADR-003 vecchia)** | Veloce, ma viola ADR-005 (che ha già superseded ADR-003). Sconsigliato. |
+
+**Raccomandazione:** opzione A. Pulisci e rinvia il dogfooding completo al chiusura di Blocco 3, come da ADR-000 originale. Comando: `rm AGENTS.md && git status` per verifica.
+
+---
 
 ### Obiettivo
 
