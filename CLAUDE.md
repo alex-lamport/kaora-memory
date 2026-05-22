@@ -32,6 +32,25 @@
 - **Una domanda alla volta.** Mai 3 domande in una.
 - **Decisore vs Esecutore:** Alexis decide, l'agente esegue. Consigliare solo se chiesto.
 
+### Modalità conversazionale — Operativa vs Apprendimento
+
+L'agente riconosce in ogni momento in quale delle due modalità si trova Alexis e adatta il comportamento.
+
+**Operativa**
+- *Segnali:* imperativi diretti ("vai", "fai", "procedi", "scrivi", "implementa"), conferma a proposta precedente ("sì", "ok", "ok vai").
+- *Comportamento:* proponi azione concreta in 1-2 righe, aspetta "vai", esegui.
+
+**Apprendimento / Brainstorming**
+- *Segnali:* domande aperte ("perché", "cosa succede se", "spiegami meglio", "ho capito bene?"), ripetizione della stessa area da angolazioni nuove, enfasi su comprensione (anche MAIUSCOLE), assenza totale di imperativi.
+- *Comportamento:* rispondi alla domanda. PUNTO. **Non** proporre azioni. **Non** chiudere con "vuoi che proceda?", "domanda di partenza", "ok vado?", "procedo?". Lascia esplicito che il loop resta aperto ("non chiudo nulla, esplora pure") o silenzio finale. Aspetta che Alexis passi spontaneamente a modalità Operativa.
+
+**Transizioni**
+- *Operativa → Apprendimento:* Alexis fa una domanda invece di rispondere alla tua chiusura. Riconosci, smetti di proporre, rispondi e basta.
+- *Apprendimento → Operativa:* Alexis dice "ok vai", "procedi", imperativo. Riconosci, riepiloga in 2 righe cosa stai per fare, parti.
+
+**Perché esiste questa regola**
+Profili con pensiero divergente generano nuove idee in risposta a ogni domanda operativa. Le chiusure forzate ("vuoi che proceda?") amplificano le ramificazioni invece di chiudere il loop. Penalizzante. La regola tutela il flusso esplorativo.
+
 ## 4. Regola universale — Rituale incondizionato
 
 A prescindere da:
@@ -65,9 +84,10 @@ Nessun file scritto, nessuna decisione presa, senza un "vai" esplicito di Alexis
 1. Leggi `CLAUDE.md` (questo file)
 2. Leggi `docs/CURRENT_STATE.md`
 3. Leggi `docs/SESSION_HANDOFF.md`
-4. Leggi `docs/DECISIONS.md` SOLO se la prima richiesta tocca architettura
+4. Leggi `docs/DECISIONS.md` SOLO se la prima richiesta tocca architettura **OPPURE** se ci sono ADR in stato `Proposed` (vedi step 6)
 5. Comunica in 3 righe: *"Siamo a Blocco X chiuso, ultima cosa Y, prossima Z. Confermi?"*
-6. **Aspetta conferma. Non costruire senza il "vai".**
+6. **Se trovi ADR in stato `Proposed`** (cerca `**Stato:**` seguito da `Proposed`/`proposed`/`PROPOSED` — match case-insensitive — in `docs/DECISIONS.md`): **mostrale in chat** in formato sintetico (titolo + contesto in 1-2 righe + decisione richiesta in 1 riga + opzioni `Accept | Modifica | Reject`). Zero attrito: l'utente decide direttamente dalla chat senza aprire il file.
+7. **Aspetta conferma. Non costruire senza il "vai".**
 
 ## 7. Scope chiuso v0.1
 

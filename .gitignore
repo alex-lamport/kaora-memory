@@ -43,3 +43,6 @@ htmlcov/
 .env
 .env.local
 *.pypirc
+
+# Claude Code local settings (per-machine permission allowlist)
+.claude/settings.local.json
