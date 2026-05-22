@@ -385,6 +385,58 @@ Dopo la decisione dell'utente, l'agente applica le modifiche al file `docs/DECIS
 
 ---
 
+## ADR-009 — Sub-agente vs Read diretto per ottimizzazione context e comportamento
+
+**Data:** 2026-05-22
+**Stato:** Accepted
+
+### Contesto
+
+Quando un agente AI lavora su un progetto, ha bisogno di consultare file di memoria operativa (CLAUDE.md, AGENTS.md, docs/*, codice esistente). Il comportamento di default è "leggi il file con Read tool, poi decidi". Questo ha due costi non sempre giustificati:
+
+1. **Costo token**: il file intero entra nel context window dell'agente principale e ci resta per tutta la conversazione, anche dopo che non serve più. Su sessioni lunghe questo accumula context inutile, riducendo lo spazio per il lavoro in corso e aumentando i costi di ogni risposta successiva.
+
+2. **Costo comportamentale**: la lettura generica "apro per vedere" non costringe l'agente a dichiarare *cosa cerca*. Pattern di letture esplorative ridondanti vs letture finalizzate.
+
+L'alternativa è delegare a un **sub-agente**: il sub-agente apre il file nel **suo** context, fa l'analisi, restituisce solo il summary (tipicamente ~5% dell'input). Il file completo non entra mai nel context principale.
+
+Però sub-agente **non è gratis**: ha latenza (30-90 secondi), overhead di setup (system prompt, tool descriptions), e rischio di *information loss* (restituisce quello che lui considera rilevante, può saltare dettagli).
+
+Domanda emersa nella sessione 22 maggio 2026 (Blocco 2 finale): codifichiamo una regola di decisione per orientare l'agente in modo prevedibile?
+
+### Decisione
+
+L'agente applica la seguente **matrice di decisione**, basata su 3 variabili — *size, intent, post-action*:
+
+| Caso | Approccio |
+|---|---|
+| File < 200 righe | Read diretto (overhead sub-agente > risparmio) |
+| File 200-1000 righe + modificherai dopo | Read diretto (Edit richiede Read comunque) |
+| File 200-1000 righe + serve dettaglio fine | Read diretto (sub-agente perde sfumature) |
+| File 200-1000 righe + solo estrazione/sintesi | **Sub-agente** |
+| File > 1000 righe + non modifichi dopo | **Sub-agente** quasi sempre |
+| File > 1000 righe + serve dettaglio fine | Read diretto + accetta costo (caso raro) |
+
+**Eccezione "già letto in sessione"**: se il file è già nel context dell'agente principale, ri-leggerlo via Read è no-op gratis. Niente sub-agente.
+
+La regola è codificata in `AGENTS.md` § 10 (sotto-sezione "Lettura file: sub-agente vs Read diretto") nel template, e in `CLAUDE.md` del repo per applicazione immediata.
+
+### Alternative scartate
+
+- **"Sempre Read diretto"** (status quo della maggior parte degli agenti): semplice ma spreca context su file grossi consultati solo per sintesi. Non scala su sessioni lunghe.
+- **"Sempre sub-agente"**: ideologicamente pulito ma falsamente economico — la latenza + i token totali (sub-agente + sommario) spesso superano la lettura diretta per file piccoli. Anti-pattern.
+- **Soglia singola (es. "file > 500 righe → sub-agente")**: ignora intent e post-action, due variabili che cambiano significativamente la decisione. Troppo grossolano.
+
+### Conseguenze
+
+- L'agente in questo repo applica la regola **immediatamente** (CLAUDE.md § 10 aggiornato).
+- Tutti i progetti futuri che adottano kaora-memory ereditano la regola via template.
+- La regola codifica un atto di **metacognizione conditional** (Schraw & Moshman 1995: *"so quando applicare quale strategia"*). Forma trittico con ADR-001 (rituale: metacognizione di planning), ADR-007 (modalità conversazionale: metacognizione di Theory of Mind), ADR-009 (delegazione lettura: metacognizione di strategy selection).
+- Testabile in modo concreto: contare nelle sessioni future le letture indiscriminate vs delegazioni a sub-agente. Target qualitativo: l'agente delega ogni volta che la matrice lo prescrive.
+- Possibile evoluzione futura: tool nativo `kaora delegate-read` che wrappa il pattern in un comando esplicito (v0.2+, valuta dopo evidenza d'uso).
+
+---
+
 ## Catena causale aggiornata
 
 - **ADR-000** (dogfooding) → spiega perché esistono `CLAUDE.md` e `docs/*` nel repo stesso prima del Blocco 3
@@ -392,6 +444,7 @@ Dopo la decisione dell'utente, l'agente applica le modifiche al file `docs/DECIS
 - **ADR-002** (init istantaneo) dipende da **ADR-001** (rituale): l'agente sa cosa fare anche senza input perché il rituale è codificato
 - **ADR-005** (canonico+import) raffina **ADR-003**: la direzione resta (cross-agent), il modo cambia (import invece di gemelli)
 - **ADR-006** (backup-first) implementa **ADR-002** per il caso brownfield: l'init resta istantaneo, il merge brownfield diventa lavoro autonomo dell'agente alla prima sessione tramite `<BOOTSTRAP/>`
+- **ADR-009** (sub-agente vs Read) completa il trittico metacognitivo con **ADR-001** (planning) e **ADR-007** (Theory of Mind interlocutore): codifica metacognizione *conditional* di strategy selection
 - **ADR-007** (modalità conversazionale) raffina **ADR-001** § 3 (Registro comunicazione) aggiungendo la distinzione Operativa/Apprendimento. Vale per tutti gli agenti, in ogni momento, non solo all'apertura
 
 ---
@@ -402,3 +455,4 @@ Dopo la decisione dell'utente, l'agente applica le modifiche al file `docs/DECIS
 - v0.1.1 — ADR 005-006 (sessione 22 maggio 2026, Blocco 2, **Accepted** — ADR-006 riscritta v2 con merge JSON prima di Accept)
 - v0.1.2 — ADR-007 (sessione 22 maggio 2026, Blocco 2 finale, **Accepted**)
 - v0.1.3 — ADR-008 (sessione 22 maggio 2026, emersa applicando ADR-007 in tempo reale, **Accepted**)
+- v0.1.4 — ADR-009 (sessione 22 maggio 2026, promossa da BACKLOG dopo discussione su ottimizzazione context e comportamento, **Accepted**)

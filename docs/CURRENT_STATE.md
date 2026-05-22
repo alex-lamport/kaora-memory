@@ -2,7 +2,7 @@
 
 > Aggiornato a fine di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
 >
-> **Ultimo aggiornamento:** 2026-05-22 — Blocco 2 chiuso definitivo · template/ installabile + ADR 005-008 Accepted (incluso ADR-006 v2 con merge JSON).
+> **Ultimo aggiornamento:** 2026-05-22 — Blocco 2 chiuso definitivo · template/ installabile + ADR 005-009 Accepted (incluso ADR-006 v2 con merge JSON e ADR-009 sub-agente vs Read).
 
 ---
 
@@ -12,7 +12,7 @@
 **Commit ultimo:** `f45f4a3 chore: scaffolding iniziale kaora-memory v0.1` (pre-Blocco 2, commit Blocco 2 in attesa di approvazione)
 **Branch:** `main`
 **Repo remoto:** non ancora configurato (placeholder URL `alex-lamport/kaora-memory` in pyproject)
-**ADR aperte:** nessuna · tutte 000-008 Accepted
+**ADR aperte:** nessuna · tutte 000-009 Accepted
 
 ## Cosa esiste
 
@@ -88,8 +88,9 @@ Modifica vs SESSION_HANDOFF Blocco 1: aggiunto `{{communication_language}}` per 
 - **ADR-006 v2** Policy install brownfield in 3 categorie: markdown (backup + BOOTSTRAP-merge), JSON (merge intelligente per `.claude/settings.json`), tutto-il-resto (skip-conservative). Riscritta v2 prima di Accept perché v1 (skip + warn per settings.json) avrebbe lasciato hook kaora inattivi su brownfield.
 - **ADR-007** Modalità conversazionale Operativa vs Apprendimento. Nata dall'osservazione del builder in tempo reale, applicata immediatamente.
 - **ADR-008** Zero attrito per decisioni ADR `Proposed`. Step 7 del rituale: mostra ADR aperte direttamente in chat senza far aprire `docs/DECISIONS.md`. Emersa applicando ADR-007.
+- **ADR-009** Sub-agente vs Read diretto: matrice di decisione su 3 variabili (size, intent, post-action) per ottimizzazione token + comportamento. Promossa da BACKLOG dopo discussione in sessione. Completa il trittico metacognitivo con ADR-001 (planning) e ADR-007 (Theory of Mind).
 
-Tutte e 4 **Accepted** dopo Test 1-4 e revisione in chat.
+Tutte e 5 **Accepted** dopo Test 1-5 e revisione in chat.
 
 ## Annotazioni per Blocco 5 (README)
 

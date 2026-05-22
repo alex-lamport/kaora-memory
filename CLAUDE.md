@@ -137,6 +137,23 @@ Prima di costruire un componente, invoca la skill rilevante. Pattern emerso da p
 | CLI con Click | `python-pro` (o `python-packaging` se include pattern Click) |
 | HTML premium (preview, landing) | `high-end-visual-design` |
 
+### Lettura file: sub-agente vs Read diretto (ADR-009)
+
+Quando consulti file durante la costruzione, scegli in base a 3 variabili — *size, intent, post-action* — secondo questa matrice:
+
+| Caso | Approccio |
+|---|---|
+| File < 200 righe | **Read diretto** (overhead sub-agente > risparmio) |
+| File 200-1000 righe **+ modificherai dopo** | **Read diretto** (Edit richiede Read comunque) |
+| File 200-1000 righe **+ serve dettaglio fine** | **Read diretto** (sub-agente perde sfumature) |
+| File 200-1000 righe **+ solo estrazione/sintesi** | **Sub-agente** |
+| File > 1000 righe **+ non modifichi dopo** | **Sub-agente** quasi sempre |
+| File > 1000 righe **+ serve dettaglio fine** | **Read diretto** + accetta costo (caso raro) |
+
+**Skip se già letto in sessione:** il file è già nel context, ri-leggerlo è no-op gratis, niente sub-agente.
+
+**Effetto duplice:** ottimizzazione token (file fuori dal context principale) + ottimizzazione comportamento (forza dichiarazione dell'intent prima della lettura).
+
 ---
 
 **Verifica rapida di salute progetto** (eseguibile in qualsiasi sessione):

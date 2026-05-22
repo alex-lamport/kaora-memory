@@ -128,6 +128,25 @@ Pattern operativo: ogni componente non-triviale richiede skill o sub-agente spec
 
 <BOOTSTRAP need="skill-mapping" sources="package.json scripts, build config, tech stack inferred from § 2, framework conventions"/>
 
+### Lettura file: sub-agente vs Read diretto (ADR-009)
+
+Quando consulti file durante la costruzione, scegli in base a 3 variabili — *size, intent, post-action* — secondo questa matrice:
+
+| Caso | Approccio |
+|---|---|
+| File < 200 righe | **Read diretto** (overhead sub-agente > risparmio) |
+| File 200-1000 righe **+ modificherai dopo** | **Read diretto** (Edit richiede Read comunque) |
+| File 200-1000 righe **+ serve dettaglio fine** | **Read diretto** (sub-agente perde sfumature) |
+| File 200-1000 righe **+ solo estrazione/sintesi** | **Sub-agente** |
+| File > 1000 righe **+ non modifichi dopo** | **Sub-agente** quasi sempre |
+| File > 1000 righe **+ serve dettaglio fine** | **Read diretto** + accetta costo (caso raro) |
+
+**Skip se già letto in sessione:** il file è già nel context, ri-leggerlo è no-op gratis, niente sub-agente.
+
+**Effetto duplice:**
+- *Ottimizzazione token:* il sub-agente legge nel suo context, restituisce solo il summary (~5% del file). Il file completo non resta mai nel tuo context principale.
+- *Ottimizzazione comportamento:* delegare a sub-agente forza la dichiarazione dell'intent **prima** della lettura. Meno letture esplorative ("apro per curiosità"), più letture finalizzate.
+
 ## 11. Memoria pre-esistente del progetto
 
 Se trovi file `*.kaora-bak` nella root o in `docs/` (es. `AGENTS.md.kaora-bak`, `CLAUDE.md.kaora-bak`), contengono la memoria operativa esistente **prima** di `kaora init`. Procedi così:
