@@ -111,6 +111,24 @@ La filosofia metacognitiva (vedi [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md)) è 
 
 Il framing metacognitivo emerso il 22 maggio rende `kaora-memory` un nome sotto-rappresentativo del prodotto. Vedi [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md) § 7 per la matrice di candidati (`kaora-metacognition`, `kaora-meta`, `kaora-mc`, `kaora-mind`, `kaora-self`, `kaora-thinks`, `kaora-core`, status quo). Decisione necessaria **prima** della pubblicazione PyPI (Blocco 6), perché rinominare un pacchetto pubblicato è doloroso.
 
+## Issue noti / Bug minori
+
+### macOS `UF_HIDDEN` su file `.pth` generato da hatchling editable install
+
+**Sintomo:** dopo `pip install -e .` su macOS con Python 3.13, il comando `kaora` fallisce con `ModuleNotFoundError: No module named 'kaora_memory'`. Causa: hatchling crea `_editable_impl_kaora_memory.pth` con il flag macOS `UF_HIDDEN` (visibile via `ls -lO`). Python 3.13's `site.py` rifiuta esplicitamente i `.pth` con `UF_HIDDEN` ("Skipping hidden .pth file"), quindi il path al sorgente non viene aggiunto a `sys.path`.
+
+**Workaround attuale:** `bin/setup-dev.sh` esegue `chflags nohidden .venv/lib/python*/site-packages/*kaora*.pth` automaticamente dopo l'install.
+
+**⚠️ Aggravamento scoperto in sessione 2026-05-23:** il flag `UF_HIDDEN` viene **ri-applicato spontaneamente** da macOS dopo un certo tempo (osservato: minuti, senza nessun `pip install` nel mezzo). Causa probabile: APFS metadata refresh, Spotlight indexing, o `com.apple.provenance` xattr. Il `setup-dev.sh` non è una soluzione una-tantum — il bug può ripresentarsi durante una sessione di sviluppo lunga.
+
+**Scope:** colpisce solo developer su macOS in editable install. Utente finale (`pip install kaora-memory` da PyPI) non ha questo problema perché il wheel non ha `.pth`.
+
+**Azioni future:**
+- Investigare quale processo macOS ri-applica `UF_HIDDEN` (potrebbe essere fix Apple side)
+- Sostituire l'editable install hatchling con setuptools per il dev workflow (richiede ADR)
+- Wrappare `.venv/bin/kaora` in uno script che fa `chflags nohidden` + `exec python -m kaora_memory.cli "$@"`
+- Aprire issue upstream a hatchling chiedendo se il `.pth` generator può evitare di triggerare `UF_HIDDEN`
+
 ## Idee da valutare
 
 (spazio aperto — ogni cosa che emerge va qui prima di entrare in v0.x)

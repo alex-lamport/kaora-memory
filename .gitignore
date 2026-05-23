@@ -46,3 +46,8 @@ htmlcov/
 
 # Claude Code local settings (per-machine permission allowlist)
 .claude/settings.local.json
+# Anche .claude/settings.json: Claude Code 2.1.x salva qui (invece di settings.local.json)
+# permission auto-allow di sessione, con path assoluti personali. Non va committato.
+# NB: nel TEMPLATE installato da `kaora init` questo file invece è tracked: è
+# kaora-memory STESSO che lo gitignora per evitare leak di path locali.
+.claude/settings.json

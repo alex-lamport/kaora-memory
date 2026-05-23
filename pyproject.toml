@@ -56,3 +56,9 @@ Repository = "https://github.com/alex-lamport/kaora-memory"
 
 [tool.hatch.build.targets.wheel]
 packages = ["kaora_memory"]
+
+# Includi la cartella top-level `template/` dentro il wheel come
+# `kaora_memory/_template/`. In dev (`pip install -e .`) la cartella
+# NON esiste fisicamente: il resolver fa fallback a `template/` top-level.
+[tool.hatch.build.targets.wheel.force-include]
+"template" = "kaora_memory/_template"
