@@ -90,6 +90,23 @@ Da finalizzare quando arriviamo al README ricco + pubblicazione PyPI:
 - **Saggio di lancio (brief operativo):** `/tmp/kaora-memory-launch-essay-brief.md` (16 sezioni, generato 22 maggio sera) — passato alla sessione parallela che sta scrivendo il saggio
 - **Documento vision astratta:** `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (datato 20 maggio, "Memory Architecture LLM Wiki Extended") — riusabile come asset di profondità filosofica per audience accademica/intellettuale, oppure da archiviare se non riallineato
 
+### Strategia narrativa: dove mostrare la filosofia (target Blocco 5-6)
+
+La filosofia metacognitiva (vedi [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md)) è uno dei pilastri narrativi principali del prodotto e va distribuita su più canali con profondità calibrata per audience:
+
+| Canale | Profondità | Cosa mostrare della filosofia |
+|---|---|---|
+| **Landing page premium** (`/tmp/kaora-memory-preview.html` aggiornata) | 🔴 Centrale | Sezione dedicata "Cos'è davvero" con tesi metacognitiva + mapping regole→atti + frame narrativo agente umile vs arrogante + 1-2 citazioni Flavell/Vygotsky in nota |
+| **README.md del repo** | 🟡 Sintetica | Hero pratico + tagline filosofica + sezione "Filosofia in 3 paragrafi" + link a `docs/PHILOSOPHY.md` |
+| **Saggio di lancio** (Substack/Medium) | 🔴 Espansa al massimo | Argomentazione completa ~3000 parole. Brief in `/tmp/kaora-memory-launch-essay-brief.md` ha già la struttura |
+| **`kaora dashboard` v0.2 runtime** | 🟢 Light | Tab "Why kaora" o link a PHILOSOPHY.md su GitHub. L'utente che usa già il prodotto vuole stato del progetto, non manifesto |
+| **Pagina PyPI** | 🟢 Una riga | Description: *"Memoria operativa per agenti AI. Metacognizione indotta — l'agente umile riconosce i limiti."* + link a GitHub |
+| **X/Twitter thread di lancio** | 🟡 Hook + dimostrazione | 10-15 tweet con esempi concreti (codice, screenshot ADR, demo `claude vai`) |
+
+**Strategia ordine landing page:** *risolvere prima, raccontare il perché dopo*. Hero pratico → demo → "come funziona" → "**cos'è davvero**" (qui filosofia) → setup. Invertire perde i tecnici che cercano soluzione.
+
+**Sotto-trama narrativa da sfruttare:** ADR-007 nata da osservazione builder neurodivergente in tempo reale = caso di **co-evoluzione umano-agente documentato**. Nessun altro prodotto AI ha questa storia. Va nel saggio come capitolo, va citata nella landing.
+
 ## Decisione naming repo (target Blocco 5, prima della pubblicazione PyPI)
 
 Il framing metacognitivo emerso il 22 maggio rende `kaora-memory` un nome sotto-rappresentativo del prodotto. Vedi [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md) § 7 per la matrice di candidati (`kaora-metacognition`, `kaora-meta`, `kaora-mc`, `kaora-mind`, `kaora-self`, `kaora-thinks`, `kaora-core`, status quo). Decisione necessaria **prima** della pubblicazione PyPI (Blocco 6), perché rinominare un pacchetto pubblicato è doloroso.
