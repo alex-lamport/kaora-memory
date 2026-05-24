@@ -129,6 +129,40 @@ Il framing metacognitivo emerso il 22 maggio rende `kaora-memory` un nome sotto-
 - Wrappare `.venv/bin/kaora` in uno script che fa `chflags nohidden` + `exec python -m kaora_memory.cli "$@"`
 - Aprire issue upstream a hatchling chiedendo se il `.pth` generator può evitare di triggerare `UF_HIDDEN`
 
+## Pre-publish checklist (Blocco 6)
+
+Da eseguire **immediatamente prima** di ogni `twine upload` su PyPI. Motivo: il wheel in `dist/` non si rigenera da solo quando modifichi codice. Pubblicare un wheel stale = utente finale riceve `ModuleNotFoundError` o feature mancanti (bug scoperto in test #3 sessione 2026-05-24: wheel era datato 23 maggio prima che `cli.py` e `installer.py` esistessero).
+
+```bash
+# 1. Butta artefatti vecchi
+rm -rf dist/ build/ *.egg-info/
+
+# 2. Rebuild wheel + sdist da zero
+.venv/bin/python -m build
+
+# 3. Test installazione in venv totalmente pulito
+python3 -m venv /tmp/publish-test
+/tmp/publish-test/bin/pip install dist/kaora_memory-*.whl
+/tmp/publish-test/bin/kaora --version          # → kaora, version 0.1.0
+/tmp/publish-test/bin/kaora init /tmp/publish-init-test --no-git-init
+find /tmp/publish-init-test -type f | wc -l    # → 13
+rm -rf /tmp/publish-test /tmp/publish-init-test
+
+# 4. Test PyPI staging
+.venv/bin/twine upload --repository testpypi dist/*
+
+# 5. Test install da testpypi in altro venv pulito
+python3 -m venv /tmp/testpypi-test
+/tmp/testpypi-test/bin/pip install --index-url https://test.pypi.org/simple/ kaora-memory
+/tmp/testpypi-test/bin/kaora --version
+rm -rf /tmp/testpypi-test
+
+# 6. Solo dopo tutti gli step verdi: PyPI production
+.venv/bin/twine upload dist/*
+```
+
+**Automazione futura (v0.2+):** sostituire con GitHub Actions su tag di release. Vedi anche issue UF_HIDDEN sopra (impatta solo dev macOS, non utente finale).
+
 ## Idee da valutare
 
 (spazio aperto — ogni cosa che emerge va qui prima di entrare in v0.x)
