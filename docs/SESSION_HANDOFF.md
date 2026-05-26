@@ -2,38 +2,42 @@
 
 > Leggi subito dopo `CLAUDE.md` e `CURRENT_STATE.md`.
 >
-> **Ultima sessione:** 2026-05-23 · Blocco 3 chiuso (kaora init implementato, 33/33 test green, wheel buildable, smoke OK end-to-end).
+> **Ultima sessione:** 2026-05-26 · Self-dogfooding ADR-000 APPLICATO (opzione A): `kaora init .` eseguito, merge AGENTS.md guidato da agente naive in seconda sessione (con revisore in parallelo), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN RISOLTO (2026-05-24). Working tree con modifiche pending, commit dogfooding da fare.
 
 ---
 
 ## 🟢 PROSSIMA SESSIONE — Blocco 4: `kaora check`
 
-ADR 000-009 tutte `Accepted`. Blocco 3 chiuso, commit pending approvazione Alexis. Blocco 4 può partire dopo il commit (o anche prima se si vuole proseguire e committare in batch a fine sessione successiva).
+ADR 000-009 tutte `Accepted`. Blocco 3 chiuso. Self-dogfooding ADR-000 applicato. Pronto per Blocco 4. Commit dogfooding da consolidare prima di partire (o batch a fine Blocco 4).
 
 ---
 
 ## 🔵 PUNTI APERTI DA DECIDERE PRIMA DI PARTIRE
 
-### 1. Self-dogfooding `kaora init .` (ADR-000)
+### 1. Commit dogfooding 2026-05-26
 
-ADR-000 promette dogfooding del repo dopo Blocco 3 chiuso. Ora è chiuso, quindi tecnicamente è il momento. **Ma:** il `CLAUDE.md` attuale del repo è ricco (~10 sezioni, master context kaora-memory stesso), mentre il template ha il 4-righe `@AGENTS.md`. Eseguire `kaora init .` produrrebbe:
+Working tree contiene:
+- `AGENTS.md` popolato (merge guidato bak)
+- `BACKLOG.md` (aggiunti onboarding multi-canale IDENTITY.md v0.2 + terza opzione archive § 11 step 5 v0.1 + issue UF_HIDDEN marcato RISOLTO)
+- `docs/CURRENT_STATE.md` + `docs/SESSION_HANDOFF.md` consolidati
+- `docs/archive/CLAUDE.md.kaora-bak` (untracked, da versionare come asset storico)
+- `bin/setup-dev.sh` (wrapper self-healing UF_HIDDEN)
+- `CLAUDE.md` (ridotto a 4 righe `@AGENTS.md`)
+- nuovi: `AGENT_BRIEF.md`, `docs/IDENTITY.md`, `docs/SESSION_ERRORS_TEMPLATE.md`, `.claude/settings.json`, `.claude/hooks/*.sh`
 
-- `CLAUDE.md.kaora-bak` con l'attuale denso
-- `CLAUDE.md` nuovo (4 righe)
-- `AGENTS.md.kaora-bak` con i 166 righe vecchi (se mai ricreato) o niente
-- `AGENTS.md` nuovo (template canonico)
+Suggested message: `feat(dogfooding): kaora init applicato sul repo + wrapper self-healing UF_HIDDEN + archive bak`
 
-**Tre opzioni:**
+### 2. Aggiornamento template § 11 step 5 (basso costo, v0.1)
 
-| Opzione | Effetto |
-|---|---|
-| **A — Esegui `kaora init .` per davvero** | ADR-000 onorata letteralmente. Però perdiamo il `CLAUDE.md` ricco (resta in `.kaora-bak`). Significa adottare il template canonico anche per il repo che lo produce → coerenza massima ma sostituzione di un asset narrativo importante. |
-| **B — `kaora init . --dry-run` per validare il piano, poi NON applicare** | Verifica end-to-end della logica sul repo stesso, senza mutare lo stato. ADR-000 onorata in spirito ma non in pratica. |
-| **C — Trattare kaora-memory come caso speciale, scrivere ADR-010** | Documentare che il repo che produce kaora ha legittimamente un master context più ricco, e che il dogfooding pratico avviene tramite test e smoke su tmp_path. ADR-000 va aggiornata/superseded. |
+Scoperta operativa dal dogfooding: l'agente naive ha inventato spontaneamente la terza opzione "archive" oltre a conserva/elimina. Formalizzarla nel template prima del lancio. Edit di 30 secondi a `template/AGENTS.md`. Vedi BACKLOG → Template.
 
-**Raccomandazione:** B per ora (dry-run safe), poi decidere se C vale come ADR. A è troppo invasiva sul lavoro narrativo accumulato.
+### 3. Rituale di chiusura sessione — IMPLEMENTATO 2026-05-26 (era v0.2+, promosso a v0.1)
 
-### 2. Naming repo prima di PyPI (BACKLOG, Blocco 6)
+Scoperta operativa dal dogfooding: senza rituale di chiusura simmetrico, i docs operativi divergono dallo stato reale. § 6bis aggiunta a `template/AGENTS.md` + `AGENTS.md` del repo. Comportamento: sintesi sessione → diff CURRENT_STATE → diff SESSION_HANDOFF → proposta commit, ognuno con Gate C. Vedi `docs/DOGFOODING_REPORT.md` § 4 per il contesto.
+
+`kaora handoff` CLI per automazione completa resta in v0.2+.
+
+### 3. Naming repo prima di PyPI (BACKLOG, Blocco 6)
 
 Non bloccante per Blocco 4, ma se vogliamo evitare di pubblicare con nome "sbagliato", decidere entro Blocco 5.
 
@@ -107,9 +111,9 @@ tests/
 
 - ❌ `LICENSE`, `.gitignore` finalizzati
 - ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer}.py` — moduli stabili Blocco 3
-- ❌ `template/` salvo bug critici scoperti durante implementazione `check`
+- ❌ `template/` salvo: (a) bug critici scoperti durante implementazione `check`, (b) aggiornamento § 11 step 5 con terza opzione "archive" (item v0.1 in BACKLOG)
 - ❌ Riaprire ADR `Accepted` (000-009)
-- ❌ `bin/setup-dev.sh` salvo workaround UF_HIDDEN da migliorare
+- ❌ `bin/setup-dev.sh` — wrapper self-healing UF_HIDDEN già applicato 2026-05-24, non rivederlo
 
 ### Check di apertura sessione
 
@@ -123,7 +127,7 @@ grep -c "Proposed" docs/DECISIONS.md   # deve essere 0
 .venv/bin/kaora --version && echo "CLI OK"
 ```
 
-Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh` (rifa setup + chflags).
+Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalla wrapper self-healing su `.venv/bin/kaora`). Capita se hai rifatto `pip install -e .` manualmente bypassando lo script.
 
 ### Output atteso a fine Blocco 4
 
@@ -149,4 +153,4 @@ Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh`
 - **Apri Claude Code in `~/Desktop/kaora-memory/`**
 - **Registro:** italiano · diretto · no preamboli · una decisione alla volta · modalità Operativa vs Apprendimento (ADR-007)
 - **Decisioni grandi** → nuova ADR in `docs/DECISIONS.md` (ADR-008 step 6 del rituale)
-- **Self-dogfooding:** vedi punto 1 sopra. Probabilmente B (dry-run validation), C (nuova ADR) se vogliamo formalizzare l'eccezione del repo che produce kaora.
+- **Self-dogfooding:** APPLICATO 2026-05-26 con opzione A (esecuzione reale). Commit pending nel working tree.

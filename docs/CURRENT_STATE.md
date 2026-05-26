@@ -2,14 +2,14 @@
 
 > Aggiornato a fine di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
 >
-> **Ultimo aggiornamento:** 2026-05-23 — Blocco 3 ✅ chiuso · `kaora init` implementato, testato end-to-end (33/33 pytest green + wheel buildable + smoke test greenfield/dry-run/brownfield OK).
+> **Ultimo aggiornamento:** 2026-05-26 — Self-dogfooding ADR-000 APPLICATO (opzione A): `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato dall'agente completato, `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN macOS RISOLTO via wrapper self-healing in `bin/setup-dev.sh` (2026-05-24).
 
 ---
 
 ## Snapshot oggi
 
-**Blocco corrente:** Blocco 3 ✅ chiuso · Blocco 4 prossimo (`kaora check`)
-**Commit ultimo:** `ce588e9 docs(backlog): strategia narrativa filosofia per canale di lancio` (pre-Blocco 2 finale; commit Blocco 2+3 in attesa di approvazione Alexis)
+**Blocco corrente:** Blocco 3 ✅ chiuso · Self-dogfooding ✅ applicato · Blocco 4 prossimo (`kaora check`)
+**Commit ultimo in main:** `66e0c48 chore(backlog): pre-publish checklist Blocco 6 + nota wheel stale risk`. Blocco 2+3 già committati (`d212951 feat(cli): kaora init con policy brownfield ADR-006 v2`). Working tree con modifiche pending da consolidare in commit dogfooding.
 **Branch:** `main`
 **Repo remoto:** non ancora configurato (placeholder URL `alex-lamport/kaora-memory` in pyproject)
 **ADR aperte:** nessuna · tutte 000-009 Accepted
@@ -23,9 +23,11 @@ kaora-memory/
 ├── LICENSE
 ├── README.md                         (minimal, ricco in Blocco 5)
 ├── pyproject.toml                    (hatchling, py>=3.10, entry `kaora`, force-include `template/` → `kaora_memory/_template/`)
-├── CLAUDE.md                         (master context kaora-memory stesso, dogfooding)
+├── CLAUDE.md                         (4 righe `@AGENTS.md` — post-dogfooding 2026-05-26)
+├── AGENTS.md                         ✨ NUOVO (post-dogfooding) — master context canonico, popolato via merge guidato del .kaora-bak
+├── AGENT_BRIEF.md                    ✨ NUOVO (post-dogfooding) — onboarding agenti
 ├── bin/
-│   └── setup-dev.sh                  ✨ NUOVO (Blocco 3) — venv + pip -e .[dev] + chflags nohidden + verify
+│   └── setup-dev.sh                  ✨ AGGIORNATO 2026-05-24 — venv + pip -e .[dev] + installa wrapper self-healing su .venv/bin/kaora (fix UF_HIDDEN macOS)
 ├── kaora_memory/                     ✨ ESPANSO (Blocco 3)
 │   ├── __init__.py                   (__version__ = "0.1.0")
 │   ├── settings_merger.py            ✨ NUOVO — merge JSON ADR-006 v2 (permissions union, hooks dedup by matcher)
@@ -42,7 +44,12 @@ kaora-memory/
 │   ├── CURRENT_STATE.md              (questo file)
 │   ├── SESSION_HANDOFF.md            (brief Blocco 4)
 │   ├── DECISIONS.md                  (ADR 000-009 Accepted)
-│   └── PHILOSOPHY.md                 (perché del prodotto, metacognizione applicata)
+│   ├── PHILOSOPHY.md                 (perché del prodotto, metacognizione applicata)
+│   ├── IDENTITY.md                   ✨ NUOVO (post-dogfooding) — chi è il builder, come comunica, anti-pattern
+│   ├── SESSION_ERRORS_TEMPLATE.md    ✨ NUOVO (post-dogfooding) — template post-mortem
+│   ├── DOGFOODING_REPORT.md          ✨ NUOVO (post-dogfooding) — case study completo del test self-dogfooding 2026-05-26
+│   └── archive/
+│       └── CLAUDE.md.kaora-bak       ✨ NUOVO (post-dogfooding) — vecchio master context, archiviato per non far scattare lo scan rituale
 └── template/                         (Blocco 2, sorgente unica, force-include nel wheel)
     ├── AGENTS.md                     (canonico cross-agent)
     ├── CLAUDE.md                     (4 righe: @AGENTS.md)
@@ -61,7 +68,11 @@ kaora-memory/
 - ✅ Smoke `kaora init /tmp/kaora-smoke --no-git-init`: 13 file creati, hook `protect-credentials.sh` eseguibile, placeholder `{{project_name}}` sostituito con basename
 - ✅ Smoke `kaora init --dry-run`: piano stampato, zero file scritti
 - ✅ Smoke brownfield CLAUDE.md preesistente: backup `.kaora-bak` preserva contenuto utente, nuovo CLAUDE.md contiene `@AGENTS.md`
-- ⚠️ **Bug noto macOS:** dopo `pip install -e .`, hatch crea `.pth` con flag `UF_HIDDEN`. Python 3.13 lo skippa silenziosamente → `kaora` fallisce. Workaround in `bin/setup-dev.sh` (chflags nohidden). Issue documentata in BACKLOG.
+
+**Verifiche eseguite 2026-05-24 / 2026-05-26:**
+- ✅ **Bug UF_HIDDEN macOS RISOLTO** via wrapper self-healing in `bin/setup-dev.sh`. Stress test confermato: forzando `chflags hidden` sul `.pth`, `kaora --version` continua a funzionare e rimuove il flag al volo. Vedi BACKLOG → "Issue noti" sezione marcata RISOLTO 2026-05-24.
+- ✅ **Self-dogfooding ADR-000 applicato 2026-05-26** (opzione A): `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato da agente naive in seconda sessione Claude Code (con questa sessione come revisore), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Validazione end-to-end del prodotto sul produttore. Report completo in `docs/DOGFOODING_REPORT.md`.
+- ✅ **Rituale di chiusura sessione (§ 6bis)** aggiunto al template + AGENTS.md del repo. Scoperta operativa dal dogfooding (originariamente v0.2+, promosso a v0.1). Senza chiusura ordinata, i docs operativi divergevano dallo stato reale. Ora codificato.
 
 ## Placeholder definitivi (v0.1.1)
 
@@ -70,7 +81,7 @@ kaora-memory/
 | `{{project_name}}` | Nome progetto utente | `MioProgetto` |
 | `{{project_oneliner}}` | Pitch in una riga | `App SaaS per dentisti italiani` |
 | `{{project_path}}` | Path assoluto progetto | `/Users/alex/Desktop/mioprogetto` |
-| `{{owner_name}}` | Nome builder | `Alex Silva` |
+| `{{owner_name}}` | Nome builder | `Alex Rojas` |
 | `{{owner_email}}` | Email | `alex@example.com` |
 | `{{communication_register}}` | Tono preferito | `diretto, conciso, no preamboli` |
 | `{{communication_language}}` | Lingua docs/log | `italiano` |
@@ -80,8 +91,8 @@ Modifica vs SESSION_HANDOFF Blocco 1: aggiunto `{{communication_language}}` per 
 
 ## Cosa manca (priorità ordinata)
 
-1. **Commit Blocco 3** — diff pronto, aspetta OK Alexis. Suggested message: `feat(cli): kaora init con policy brownfield ADR-006 v2 + test 33/33`
-2. **Self-dogfooding** `kaora init . --dry-run` poi `kaora init .` — momento ADR-000. Genera backup `.kaora-bak` per CLAUDE.md attuale (denso) + sovrascrive col 4-righe template. **Da valutare se vogliamo davvero farlo o se kaora-memory è caso speciale che mantiene CLAUDE.md custom.**
+1. **Commit dogfooding 2026-05-26** — working tree pending: AGENTS.md popolato + § 6bis rituale chiusura, BACKLOG aggiornato, CURRENT_STATE/SESSION_HANDOFF aggiornati, docs/archive/CLAUDE.md.kaora-bak, bin/setup-dev.sh con wrapper self-healing, docs/DOGFOODING_REPORT.md, template/AGENTS.md con § 6bis. Suggested message: `feat(dogfooding): kaora init sul repo + rituale chiusura + wrapper UF_HIDDEN + archive bak + report`
+2. **Aggiornamento template § 11 step 5** — aggiungere terza opzione "archive" oltre a conserva/elimina. Scoperta operativa dal dogfooding (v0.1, basso costo). Vedi BACKLOG → Template.
 3. **`kaora_memory/check.py`** + tests — TUTTO Blocco 4 (`kaora check`: linter integrità memoria operativa)
 4. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti)
 5. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
@@ -120,7 +131,7 @@ Tutte e 5 **Accepted** dopo Test 1-5 e revisione in chat.
 ## Note operative
 
 - **Repo NON ancora pushato** su GitHub
-- **Setup dev (one-liner):** `bash bin/setup-dev.sh` — crea venv, `pip install -e ".[dev]"`, fa `chflags nohidden` (workaround macOS UF_HIDDEN), esegue `kaora --version` e pytest. Va rieseguito dopo ogni `pip install -e .` (vedi BACKLOG issue noto).
+- **Setup dev (one-liner):** `bash bin/setup-dev.sh` — crea venv, `pip install -e ".[dev]"`, installa wrapper self-healing su `.venv/bin/kaora` (auto-fix UF_HIDDEN macOS ad ogni esecuzione, ~5ms overhead), esegue `kaora --version` e pytest. Da rieseguire dopo `pip install -e .` per ripristinare il wrapper.
 - **Run test:** `.venv/bin/python -m pytest` (oppure `source .venv/bin/activate && pytest`). Per agenti AI: preferire `.venv/bin/...` perché `activate` non sopravvive tra chiamate shell isolate.
 - **Run CLI:** `.venv/bin/kaora init [PATH] [--force] [--dry-run] [--no-git-init]`
 - **Test rapido salute:**

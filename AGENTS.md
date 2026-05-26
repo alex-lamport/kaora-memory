@@ -1,4 +1,4 @@
-# AGENTS.md — {{project_name}}
+# AGENTS.md — kaora-memory
 
 > File canonico di memoria operativa.
 > Auto-letto da Codex CLI · Cursor · Aider · Gemini CLI · OpenAI Agents.
@@ -9,24 +9,31 @@
 
 ## 1. Identità progetto
 
-**Nome:** {{project_name}}
-**Pitch:** {{project_oneliner}}
-**Owner:** {{owner_name}} ({{owner_email}})
-**Path:** {{project_path}}
-**Anno:** {{year}}
-**Stage corrente:** <BOOTSTRAP need="stage" sources="docs/CURRENT_STATE.md, git log, README"/>
+**Nome:** kaora-memory
+**Pitch:** Skill open-source per memoria persistente e comportamento codificato per agenti AI (Claude Code, Codex, Cursor, Gemini CLI).
+**Owner:** Alexis Rojas · X [@alex_lamports](https://x.com/alex_lamports) · alexis1121alexis@gmail.com
+**Path:** /Users/alexissilva/Desktop/kaora-memory
+**Anno:** 2026
+**Stage corrente:** v0.1 in costruzione · Blocco 3 chiuso · Blocco 4 prossimo (`kaora check`)
 
 ## 2. Stack tecnico
 
-<BOOTSTRAP need="tech-stack" sources="package.json, pyproject.toml, Cargo.toml, go.mod, Gemfile, composer.json, lock files, build config, README"/>
+| Layer | Tecnologia |
+|---|---|
+| Package | Python `>=3.10` · build backend `hatchling` |
+| Layout | flat — `kaora_memory/` accanto a `pyproject.toml` (NO `src/`) |
+| CLI | `click >= 8.1.0` |
+| Entry point | `kaora = kaora_memory.cli:main` |
+| Test | `pytest` (in `[project.optional-dependencies].dev`) |
+| Distribuzione | PyPI (`pip install kaora-memory` → `kaora init`) |
 
 ## 3. Registro comunicazione
 
-- **Lingua:** {{communication_language}} per docs, log, commenti. Inglese per codice e identificatori tecnici.
-- **Tono:** {{communication_register}}
+- **Lingua:** italiano per docs, log, commenti. Inglese per codice e identificatori tecnici.
+- **Tono:** diretto, conciso, niente preamboli, niente "perfetto", niente "mi piacerebbe", niente alternative ridondanti se non chieste.
 - **Una direzione alla volta.** Mai 4 opzioni in batch. Una proposta, conferma, vai.
 - **Una domanda alla volta.** Mai 3 domande in una.
-- **Decisore vs Esecutore:** {{owner_name}} decide, l'agente esegue. Consigliare solo se chiesto.
+- **Decisore vs Esecutore:** Alexis Rojas decide, l'agente esegue. Consigliare solo se chiesto.
 
 ### Modalità conversazionale — Operativa vs Apprendimento
 
@@ -76,7 +83,7 @@ Dopo 3-4 file modificati: mini-riepilogo all'utente + attesa "ok" prima di prose
 
 ### Gate C — Mai agire di iniziativa
 
-Nessun file scritto, nessuna decisione presa, senza un "vai" esplicito di {{owner_name}}. Anche se "ovvio".
+Nessun file scritto, nessuna decisione presa, senza un "vai" esplicito di Alexis Rojas. Anche se "ovvio".
 
 ## 6. Rituale di apertura sessione
 
@@ -91,7 +98,7 @@ Nessun file scritto, nessuna decisione presa, senza un "vai" esplicito di {{owne
 
 ## 6bis. Rituale di chiusura sessione
 
-Complemento simmetrico del rituale di apertura (§ 6). Senza chiusura ordinata, `docs/CURRENT_STATE.md` e `docs/SESSION_HANDOFF.md` divergono dallo stato reale del codice, e la sessione successiva eredita info datate.
+Complemento simmetrico del rituale di apertura (§ 6). Senza chiusura ordinata, `docs/CURRENT_STATE.md` e `docs/SESSION_HANDOFF.md` divergono dallo stato reale del codice, e la sessione successiva eredita info datate (osservato durante dogfooding 2026-05-26, vedi `docs/DOGFOODING_REPORT.md`).
 
 ### Trigger
 
@@ -122,10 +129,15 @@ In v0.2+ arriverà il comando dedicato `kaora handoff` che automatizzerà i pass
 ## 7. Scope corrente
 
 **Dentro lo scope attivo:**
-<BOOTSTRAP need="current-scope" sources="docs/CURRENT_STATE.md, docs/SESSION_HANDOFF.md, recent ADR in docs/DECISIONS.md"/>
+Blocco 4 — `kaora check` (linter integrità memoria operativa post-`kaora init`). Vedi `docs/SESSION_HANDOFF.md` per spec dettagliata.
 
 **Backlog (NON ora, vive in `BACKLOG.md`):**
-<BOOTSTRAP need="backlog-summary" sources="BACKLOG.md"/>
+- Blocco 5 — README ricco + demo del flow + asset di lancio
+- Blocco 6 — Pubblicazione PyPI (test.pypi prima, naming repo da decidere)
+- Self-dogfooding ADR-000 (`kaora init . --dry-run` validato, applicazione piena open)
+- `kaora handoff` · `kaora errors record` · `kaora skill install` (v0.2+)
+- Hook context-threshold a 60% per Claude Code (v0.2+)
+- MCP server · cloud sync · dashboard web (v0.3+)
 
 ## 8. File chiave
 
@@ -141,7 +153,12 @@ In v0.2+ arriverà il comando dedicato `kaora handoff` che automatizzerà i pass
 | `docs/SESSION_ERRORS_TEMPLATE.md` | Template post-mortem riusabile |
 | `BACKLOG.md` | Idee fuori scope corrente |
 | `.claude/settings.json` + `hooks/` | Protezione credenziali + log API |
-<BOOTSTRAP need="project-specific-key-files" sources="src/, lib/, packages/, README, build entry points"/>
+| `kaora_memory/` | Codice Python del package (`cli`, `installer`, `settings_merger`, `template_resolver`) |
+| `template/` | Template sorgente che `kaora init` copia nel progetto utente |
+| `tests/` | Suite `pytest` (33 cases green) |
+| `pyproject.toml` | Hatchling build config + entry point `kaora` |
+| `bin/setup-dev.sh` | Setup dev one-liner (venv + `pip -e .[dev]` + chflags nohidden) |
+| `README.md` | Pitch pubblico del pacchetto |
 
 ## 9. Cosa NON fare
 
@@ -151,13 +168,22 @@ In v0.2+ arriverà il comando dedicato `kaora handoff` che automatizzerà i pass
 - ❌ Saltare il rituale a meno di skip esplicito (§ 4)
 - ❌ Toccare file `.env`, `credentials.*`, `.secret.*` (bloccati da hook)
 - ❌ Cancellare file `.kaora-bak` senza prima averli letti (memoria pre-install, vedi § 11)
-<BOOTSTRAP need="project-specific-do-not" sources="docs/IDENTITY.md anti-pattern, prior session errors, recent commit messages"/>
+- ❌ Cambiare layout package da flat a `src/` (ADR-004)
+- ❌ Sostituire `hatchling` con `setuptools`/`poetry` (ADR-004)
+- ❌ Cambiare entry point da `kaora` a qualcosa d'altro
+- ❌ Modificare `kaora_memory/{installer,settings_merger,template_resolver,cli}.py` — moduli stabili Blocco 3
 
 ## 10. Skill / sub-agenti da invocare PRIMA di costruire
 
 Pattern operativo: ogni componente non-triviale richiede skill o sub-agente specializzato caricato **PRIMA** di scrivere codice (Gate A § 5.1).
 
-<BOOTSTRAP need="skill-mapping" sources="package.json scripts, build config, tech stack inferred from § 2, framework conventions"/>
+| Cosa stai per fare | Skill da invocare PRIMA |
+|---|---|
+| Modificare `pyproject.toml`, building, PyPI | `python-packaging` |
+| Generalizzare `template/AGENTS.md` | `agents-md` |
+| Generalizzare `template/docs/DECISIONS.md` | `architecture-decision-records` |
+| CLI con Click (test-first) | `tdd-workflows-tdd-cycle` (+ `python-pro` se refactor cli) |
+| HTML premium (preview, landing) | `high-end-visual-design` |
 
 ### Lettura file: sub-agente vs Read diretto (ADR-009)
 
@@ -188,7 +214,7 @@ I file `*.kaora-bak` in root o in `docs/` (es. `AGENTS.md.kaora-bak`, `CLAUDE.md
 2. Estrai contenuti tecnici rilevanti: package manager, comandi (test/lint/build), conventions di codice, file-scoped commands, struttura cartelle
 3. Proponi un diff per integrarli nella sezione appropriata di questo `AGENTS.md` (§ 2 stack, § 8 file chiave, § 10 skill mapping). Se il `.kaora-bak` contiene contenuto progetto-specifico denso (caso master context già curato), valuta anche `docs/IDENTITY.md` o `docs/CURRENT_STATE.md` come destinazione
 4. **NON duplicare** la memoria operativa kaora (rituale § 4, gate § 5, scope § 7) — quella è già canonica qui
-5. Al termine, chiedi a {{owner_name}} cosa fare dei `.kaora-bak`. Tre opzioni:
+5. Al termine, chiedi a Alexis Rojas cosa fare dei `.kaora-bak`. Tre opzioni:
    - **(1) Eliminare** — pulizia immediata, perde l'asset storico
    - **(2) Conservare in root/docs/** — il file resta dov'è MA il rituale § 6 step 4 lo troverà e segnalerà ad ogni apertura sessione futura (rumore inutile, il contenuto è già stato migrato)
    - **(3) Archiviare in `docs/archive/`** — conserva l'artefatto fuori dallo scan rituale, zero rumore. **Default raccomandato.**
@@ -206,4 +232,10 @@ Validi per Claude Code, Codex, Cursor, Aider, Gemini CLI e qualsiasi altro agent
 
 **Verifica rapida di salute progetto** (eseguibile in qualsiasi sessione):
 
-<BOOTSTRAP need="health-check" sources="primary build/test command, lint command, package manager check, lock file integrity"/>
+```bash
+cd ~/Desktop/kaora-memory
+python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
+ls template/ template/docs template/.claude/hooks && echo "template completo"
+.venv/bin/python -m pytest -q && echo "TEST OK (33/33)"
+.venv/bin/kaora --version && echo "CLI OK"
+```
