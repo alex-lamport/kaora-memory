@@ -2,42 +2,25 @@
 
 > Leggi subito dopo `CLAUDE.md` e `CURRENT_STATE.md`.
 >
-> **Ultima sessione:** 2026-05-26 · Self-dogfooding ADR-000 APPLICATO (opzione A): `kaora init .` eseguito, merge AGENTS.md guidato da agente naive in seconda sessione (con revisore in parallelo), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN RISOLTO (2026-05-24). Working tree con modifiche pending, commit dogfooding da fare.
+> **Ultima sessione:** 2026-05-26 · Self-dogfooding ADR-000 APPLICATO + committato (`a9518d6`). Merge AGENTS.md guidato da agente naive in seconda sessione (con revisore in parallelo), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN RISOLTO (2026-05-24). Working tree pulito. Drift docs allineato 2026-05-27 in apertura sessione Blocco 4.
 
 ---
 
 ## 🟢 PROSSIMA SESSIONE — Blocco 4: `kaora check`
 
-ADR 000-009 tutte `Accepted`. Blocco 3 chiuso. Self-dogfooding ADR-000 applicato. Pronto per Blocco 4. Commit dogfooding da consolidare prima di partire (o batch a fine Blocco 4).
+ADR 000-009 tutte `Accepted`. Blocco 3 chiuso. Self-dogfooding ADR-000 applicato e committato (`a9518d6`). Template § 11 step 5 già aggiornato con terza opzione "archive" (template/AGENTS.md:194). Pronto per Blocco 4 senza punti aperti bloccanti.
 
 ---
 
 ## 🔵 PUNTI APERTI DA DECIDERE PRIMA DI PARTIRE
 
-### 1. Commit dogfooding 2026-05-26
-
-Working tree contiene:
-- `AGENTS.md` popolato (merge guidato bak)
-- `BACKLOG.md` (aggiunti onboarding multi-canale IDENTITY.md v0.2 + terza opzione archive § 11 step 5 v0.1 + issue UF_HIDDEN marcato RISOLTO)
-- `docs/CURRENT_STATE.md` + `docs/SESSION_HANDOFF.md` consolidati
-- `docs/archive/CLAUDE.md.kaora-bak` (untracked, da versionare come asset storico)
-- `bin/setup-dev.sh` (wrapper self-healing UF_HIDDEN)
-- `CLAUDE.md` (ridotto a 4 righe `@AGENTS.md`)
-- nuovi: `AGENT_BRIEF.md`, `docs/IDENTITY.md`, `docs/SESSION_ERRORS_TEMPLATE.md`, `.claude/settings.json`, `.claude/hooks/*.sh`
-
-Suggested message: `feat(dogfooding): kaora init applicato sul repo + wrapper self-healing UF_HIDDEN + archive bak`
-
-### 2. Aggiornamento template § 11 step 5 (basso costo, v0.1)
-
-Scoperta operativa dal dogfooding: l'agente naive ha inventato spontaneamente la terza opzione "archive" oltre a conserva/elimina. Formalizzarla nel template prima del lancio. Edit di 30 secondi a `template/AGENTS.md`. Vedi BACKLOG → Template.
-
-### 3. Rituale di chiusura sessione — IMPLEMENTATO 2026-05-26 (era v0.2+, promosso a v0.1)
+### 1. Rituale di chiusura sessione — IMPLEMENTATO 2026-05-26 (era v0.2+, promosso a v0.1)
 
 Scoperta operativa dal dogfooding: senza rituale di chiusura simmetrico, i docs operativi divergono dallo stato reale. § 6bis aggiunta a `template/AGENTS.md` + `AGENTS.md` del repo. Comportamento: sintesi sessione → diff CURRENT_STATE → diff SESSION_HANDOFF → proposta commit, ognuno con Gate C. Vedi `docs/DOGFOODING_REPORT.md` § 4 per il contesto.
 
 `kaora handoff` CLI per automazione completa resta in v0.2+.
 
-### 3. Naming repo prima di PyPI (BACKLOG, Blocco 6)
+### 2. Naming repo prima di PyPI (BACKLOG, Blocco 6)
 
 Non bloccante per Blocco 4, ma se vogliamo evitare di pubblicare con nome "sbagliato", decidere entro Blocco 5.
 

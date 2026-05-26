@@ -2,14 +2,14 @@
 
 > Aggiornato a fine di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
 >
-> **Ultimo aggiornamento:** 2026-05-26 — Self-dogfooding ADR-000 APPLICATO (opzione A): `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato dall'agente completato, `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN macOS RISOLTO via wrapper self-healing in `bin/setup-dev.sh` (2026-05-24).
+> **Ultimo aggiornamento:** 2026-05-27 — Drift docs allineato post-commit dogfooding `a9518d6` (apertura sessione Blocco 4). Self-dogfooding ADR-000 APPLICATO (opzione A) e committato: `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato dall'agente completato, `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN macOS RISOLTO via wrapper self-healing in `bin/setup-dev.sh` (2026-05-24).
 
 ---
 
 ## Snapshot oggi
 
-**Blocco corrente:** Blocco 3 ✅ chiuso · Self-dogfooding ✅ applicato · Blocco 4 prossimo (`kaora check`)
-**Commit ultimo in main:** `66e0c48 chore(backlog): pre-publish checklist Blocco 6 + nota wheel stale risk`. Blocco 2+3 già committati (`d212951 feat(cli): kaora init con policy brownfield ADR-006 v2`). Working tree con modifiche pending da consolidare in commit dogfooding.
+**Blocco corrente:** Blocco 3 ✅ chiuso · Self-dogfooding ✅ applicato e committato · Blocco 4 prossimo (`kaora check`)
+**Commit ultimo in main:** `a9518d6 feat(dogfooding): kaora init sul repo + rituale chiusura § 6bis + archive bak + report`. Blocchi 2+3 + dogfooding tutti committati. Working tree pulito.
 **Branch:** `main`
 **Repo remoto:** non ancora configurato (placeholder URL `alex-lamport/kaora-memory` in pyproject)
 **ADR aperte:** nessuna · tutte 000-009 Accepted
@@ -91,13 +91,11 @@ Modifica vs SESSION_HANDOFF Blocco 1: aggiunto `{{communication_language}}` per 
 
 ## Cosa manca (priorità ordinata)
 
-1. **Commit dogfooding 2026-05-26** — working tree pending: AGENTS.md popolato + § 6bis rituale chiusura, BACKLOG aggiornato, CURRENT_STATE/SESSION_HANDOFF aggiornati, docs/archive/CLAUDE.md.kaora-bak, bin/setup-dev.sh con wrapper self-healing, docs/DOGFOODING_REPORT.md, template/AGENTS.md con § 6bis. Suggested message: `feat(dogfooding): kaora init sul repo + rituale chiusura + wrapper UF_HIDDEN + archive bak + report`
-2. **Aggiornamento template § 11 step 5** — aggiungere terza opzione "archive" oltre a conserva/elimina. Scoperta operativa dal dogfooding (v0.1, basso costo). Vedi BACKLOG → Template.
-3. **`kaora_memory/check.py`** + tests — TUTTO Blocco 4 (`kaora check`: linter integrità memoria operativa)
-4. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti)
-5. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
-6. **Decisione naming repo** (`kaora-memory` vs `kaora-mc` vs altri) — prima di pubblicazione PyPI, vedi BACKLOG
-7. **Possibile ADR-010** "delegation depth selection: `/goal` vs delega kaora normale" — emersa durante Blocco 3 dopo test pratico di `/goal`, da scrivere quando il pattern d'uso si consolida
+1. **`kaora_memory/check.py`** + tests — TUTTO Blocco 4 (`kaora check`: linter integrità memoria operativa)
+2. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti)
+3. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
+4. **Decisione naming repo** (`kaora-memory` vs `kaora-mc` vs altri) — prima di pubblicazione PyPI, vedi BACKLOG
+5. **Possibile ADR-010** "delegation depth selection: `/goal` vs delega kaora normale" — emersa durante Blocco 3 dopo test pratico di `/goal`, da scrivere quando il pattern d'uso si consolida
 
 ## Decisioni di design Blocco 3 (in attesa formalizzazione)
 
