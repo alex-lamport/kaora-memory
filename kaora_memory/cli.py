@@ -10,6 +10,7 @@ from pathlib import Path
 import click
 
 from kaora_memory import __version__
+from kaora_memory.check import check_project, format_json, format_text
 from kaora_memory.installer import InstallReport, install_template
 
 
@@ -50,6 +51,34 @@ def init(path: Path, force: bool, dry_run: bool, no_git_init: bool) -> None:
         _maybe_git_init(target)
 
     _print_report(target, report, dry_run=dry_run)
+
+
+@main.command()
+@click.argument(
+    "path",
+    type=click.Path(file_okay=False, dir_okay=True, exists=False, path_type=Path),
+    default=".",
+    required=False,
+)
+@click.option("--strict", is_flag=True, help="Promuovi WARN a exit code 1.")
+@click.option("--quiet", is_flag=True, help="Mostra solo ERROR.")
+@click.option(
+    "--json", "json_output", is_flag=True, help="Output JSON machine-readable."
+)
+@click.pass_context
+def check(
+    ctx: click.Context, path: Path, strict: bool, quiet: bool, json_output: bool
+) -> None:
+    """Verifica integrità memoria operativa kaora in PATH (default: cwd)."""
+    target = path.resolve()
+    report = check_project(target)
+
+    if json_output:
+        click.echo(format_json(report))
+    else:
+        click.echo(format_text(report, quiet=quiet))
+
+    ctx.exit(report.exit_code(strict=strict))
 
 
 def _maybe_git_init(target: Path) -> None:
