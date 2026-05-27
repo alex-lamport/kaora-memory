@@ -1,10 +1,10 @@
-"""kaora-memory check — linter integrità memoria operativa.
+"""kaora-memory check — operating-memory integrity linter.
 
-Diagnostica un progetto post-`kaora init` su 6 categorie:
+Diagnoses a project post-`kaora init` across 6 categories:
 structure, adr005, adr_state, placeholders, hooks, settings.
 
-Severità: error / warn / info / ok. Exit code 0 di default; --strict promuove
-warn a 1. Output text o JSON via format_text() / format_json().
+Severity: error / warn / info / ok. Exit code 0 by default; --strict
+promotes warn to 1. Output text or JSON via format_text() / format_json().
 """
 from __future__ import annotations
 
@@ -79,8 +79,8 @@ def _check_structure(target: Path, report: CheckReport) -> None:
             report.results.append(CheckResult(
                 level="error",
                 category="structure",
-                message=f"{rel} mancante",
-                hint="esegui `kaora init` o ripristina dal .kaora-bak",
+                message=f"{rel} missing",
+                hint="run `kaora init` or restore from .kaora-bak",
             ))
 
     settings = target / ".claude" / "settings.json"
@@ -91,12 +91,12 @@ def _check_structure(target: Path, report: CheckReport) -> None:
             report.results.append(CheckResult(
                 level="error",
                 category="structure",
-                message=f".claude/settings.json non è JSON valido: {exc.msg}",
+                message=f".claude/settings.json is not valid JSON: {exc.msg}",
             ))
 
 
 # ---------------------------------------------------------------------------
-# 2. ADR-005 — canonico AGENTS.md + import @AGENTS.md in CLAUDE.md
+# 2. ADR-005 — canonical AGENTS.md + @AGENTS.md import in CLAUDE.md
 # ---------------------------------------------------------------------------
 
 _AGENTS_MIN_LINES = 50
@@ -108,8 +108,8 @@ def _check_adr005(target: Path, report: CheckReport) -> None:
         report.results.append(CheckResult(
             level="warn",
             category="adr005",
-            message="CLAUDE.md non contiene direttiva @AGENTS.md (vedi ADR-005)",
-            hint="aggiungi una riga `@AGENTS.md` per importare il canonico",
+            message="CLAUDE.md does not contain @AGENTS.md directive (see ADR-005)",
+            hint="add a line `@AGENTS.md` to import the canonical file",
         ))
 
     agents = target / "AGENTS.md"
@@ -120,30 +120,30 @@ def _check_adr005(target: Path, report: CheckReport) -> None:
                 level="warn",
                 category="adr005",
                 message=(
-                    f"AGENTS.md sembra mutilato ({n_lines} righe, "
-                    f"minimo atteso {_AGENTS_MIN_LINES}) — popola le sezioni canoniche"
+                    f"AGENTS.md looks mutilated ({n_lines} lines, "
+                    f"expected at least {_AGENTS_MIN_LINES}) — populate the canonical sections"
                 ),
             ))
 
 
 # ---------------------------------------------------------------------------
-# 3. ADR STATE — almeno una Accepted, segnala Proposed
+# 3. ADR STATE — at least one Accepted, flag Proposed
 # ---------------------------------------------------------------------------
 
-_RE_ADR_ACCEPTED = re.compile(r"\*\*Stato:\*\*\s*Accepted", re.IGNORECASE)
-_RE_ADR_PROPOSED = re.compile(r"\*\*Stato:\*\*\s*Proposed", re.IGNORECASE)
+_RE_ADR_ACCEPTED = re.compile(r"\*\*Status:\*\*\s*Accepted", re.IGNORECASE)
+_RE_ADR_PROPOSED = re.compile(r"\*\*Status:\*\*\s*Proposed", re.IGNORECASE)
 _RE_FENCED_CODE_BLOCK = re.compile(r"```.*?```", re.DOTALL)
 
 
 def _strip_code_blocks(content: str) -> str:
-    """Rimuove fenced code blocks per evitare di matchare esempi template."""
+    """Remove fenced code blocks to avoid matching template examples."""
     return _RE_FENCED_CODE_BLOCK.sub("", content)
 
 
 def _check_adr_state(target: Path, report: CheckReport) -> None:
     decisions = target / "docs" / "DECISIONS.md"
     if not decisions.is_file():
-        return  # error già loggato in _check_structure
+        return  # error already logged in _check_structure
 
     content = _strip_code_blocks(decisions.read_text(encoding="utf-8"))
     n_accepted = len(_RE_ADR_ACCEPTED.findall(content))
@@ -153,18 +153,18 @@ def _check_adr_state(target: Path, report: CheckReport) -> None:
         report.results.append(CheckResult(
             level="info",
             category="adr_state",
-            message=f"nessuna ADR Accepted in docs/DECISIONS.md (proposed: {n_proposed})",
+            message=f"no Accepted ADR in docs/DECISIONS.md (proposed: {n_proposed})",
         ))
     if n_proposed > 0:
         report.results.append(CheckResult(
             level="info",
             category="adr_state",
-            message=f"{n_proposed} ADR in stato Proposed da decidere",
+            message=f"{n_proposed} ADR(s) in Proposed state awaiting decision",
         ))
 
 
 # ---------------------------------------------------------------------------
-# 4. PLACEHOLDERS — strutturali (WARN) vs BOOTSTRAP (INFO)
+# 4. PLACEHOLDERS — structural (WARN) vs BOOTSTRAP (INFO)
 # ---------------------------------------------------------------------------
 
 _STRUCTURAL_PLACEHOLDERS = ("project_name", "project_path", "year")
@@ -181,9 +181,9 @@ _PLACEHOLDER_EXCLUDE_DIR_PARTS = {"archive"}
 
 
 def _placeholder_scan_paths(target: Path) -> list[Path]:
-    """Tutti i .md kaora-managed: root + docs/ ricorsivo, escluso
-    docs/archive/** e docs/PHILOSOPHY.md (contenuto narrativo non
-    soggetto a sostituzione)."""
+    """All kaora-managed .md files: root + recursive docs/, excluding
+    docs/archive/** and docs/PHILOSOPHY.md (narrative content, not subject
+    to substitution)."""
     paths: list[Path] = sorted(target.glob("*.md"))
     docs = target / "docs"
     if docs.is_dir():
@@ -208,8 +208,8 @@ def _check_placeholders(target: Path, report: CheckReport) -> None:
                 report.results.append(CheckResult(
                     level="warn",
                     category="placeholders",
-                    message=f"placeholder strutturale {token} ancora aperto in {rel}",
-                    hint="riesegui `kaora init` o sostituisci a mano",
+                    message=f"structural placeholder {token} still open in {rel}",
+                    hint="re-run `kaora init` or replace manually",
                 ))
 
         for ph in _BOOTSTRAP_PLACEHOLDERS:
@@ -218,19 +218,19 @@ def _check_placeholders(target: Path, report: CheckReport) -> None:
                 report.results.append(CheckResult(
                     level="info",
                     category="placeholders",
-                    message=f"BOOTSTRAP placeholder {token} da riempire in {rel}",
+                    message=f"BOOTSTRAP placeholder {token} to fill in {rel}",
                 ))
 
         for match in _RE_BOOTSTRAP_MARKER.finditer(content):
             report.results.append(CheckResult(
                 level="info",
                 category="placeholders",
-                message=f"BOOTSTRAP marker da riempire in {rel}: {match.group()}",
+                message=f"BOOTSTRAP marker to fill in {rel}: {match.group()}",
             ))
 
 
 # ---------------------------------------------------------------------------
-# 5. HOOKS — .claude/hooks/*.sh devono essere eseguibili
+# 5. HOOKS — .claude/hooks/*.sh must be executable
 # ---------------------------------------------------------------------------
 
 
@@ -244,13 +244,13 @@ def _check_hooks(target: Path, report: CheckReport) -> None:
             report.results.append(CheckResult(
                 level="warn",
                 category="hooks",
-                message=f"{rel} non eseguibile",
+                message=f"{rel} not executable",
                 hint=f"chmod +x {rel}",
             ))
 
 
 # ---------------------------------------------------------------------------
-# 6. SETTINGS — .claude/settings.json referenzia hook kaora
+# 6. SETTINGS — .claude/settings.json references kaora hooks
 # ---------------------------------------------------------------------------
 
 _KAORA_HOOK_NAMES = ("protect-credentials.sh", "log-api-calls.sh")
@@ -263,24 +263,24 @@ def _check_settings(target: Path, report: CheckReport) -> None:
     try:
         data = json.loads(settings.read_text(encoding="utf-8"))
     except json.JSONDecodeError:
-        return  # già loggato da _check_structure
+        return  # already logged by _check_structure
 
     if not _has_kaora_hook_command(data):
         report.results.append(CheckResult(
             level="info",
             category="settings",
             message=(
-                ".claude/settings.json non referenzia hook kaora "
+                ".claude/settings.json does not reference kaora hooks "
                 f"({', '.join(_KAORA_HOOK_NAMES)})"
             ),
-            hint="riesegui `kaora init` per aggiungere gli hook standard",
+            hint="re-run `kaora init` to add the standard hooks",
         ))
 
 
 def _has_kaora_hook_command(settings_data: object) -> bool:
-    """Naviga settings.json e cerca un command che termini con un hook kaora.
+    """Walk settings.json and look for a command that ends with a kaora hook.
 
-    Struttura attesa Claude Code:
+    Expected Claude Code structure:
       settings["hooks"][<Event>] = [{"matcher": ..., "hooks": [{"command": "..."}, ...]}, ...]
     """
     if not isinstance(settings_data, dict):
@@ -332,7 +332,7 @@ def format_text(report: CheckReport, quiet: bool = False) -> str:
                 line += f"\n      hint: {r.hint}"
             lines.append(line)
     if not lines:
-        lines.append("✅ OK — tutti i check passano")
+        lines.append("✅ OK — all checks pass")
     return "\n".join(lines).lstrip("\n")
 
 

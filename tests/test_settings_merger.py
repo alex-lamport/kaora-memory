@@ -1,10 +1,10 @@
-"""Test della policy di merge ADR-006 v2 per .claude/settings.json.
+"""Tests for the ADR-006 v2 merge policy for .claude/settings.json.
 
-Quattro casi minimi richiesti dal Goal di Blocco 3:
+Four minimal cases required by the Block 3 Goal:
 1. permissions union (allow + deny dedup)
-2. hooks matcher append (matcher non presente nell'existing)
-3. hooks matcher conflict dedup (matcher esistente, hook command duplicato deduplicato)
-4. malformed JSON fail-safe (existing illeggibile, nessuna scrittura, ritorno errore)
+2. hooks matcher append (matcher not present in existing)
+3. hooks matcher conflict dedup (existing matcher, duplicate hook command deduplicated)
+4. malformed JSON fail-safe (existing unreadable, no writes, error returned)
 """
 from pathlib import Path
 
@@ -14,7 +14,7 @@ from kaora_memory.settings_merger import merge_settings, merge_claude_settings
 
 
 # ---------------------------------------------------------------------------
-# Caso 1 — permissions union
+# Case 1 — permissions union
 # ---------------------------------------------------------------------------
 
 def test_permissions_union_preserves_user_and_adds_kaora():
@@ -57,7 +57,7 @@ def test_permissions_missing_in_existing_uses_template():
 
 
 # ---------------------------------------------------------------------------
-# Caso 2 — hooks matcher append (matcher non presente nell'existing)
+# Case 2 — hooks matcher append (matcher not present in existing)
 # ---------------------------------------------------------------------------
 
 def test_hooks_matcher_append_adds_whole_block_when_matcher_new():
@@ -118,7 +118,7 @@ def test_hooks_matcher_append_adds_whole_block_when_matcher_new():
 
 
 # ---------------------------------------------------------------------------
-# Caso 3 — hooks matcher conflict dedup
+# Case 3 — hooks matcher conflict dedup
 # ---------------------------------------------------------------------------
 
 def test_hooks_matcher_conflict_appends_new_commands_and_dedupes():
@@ -168,7 +168,7 @@ def test_hooks_matcher_conflict_appends_new_commands_and_dedupes():
 
 
 # ---------------------------------------------------------------------------
-# Caso 4 — malformed JSON fail-safe
+# Case 4 — malformed JSON fail-safe
 # ---------------------------------------------------------------------------
 
 def test_malformed_json_returns_error_and_leaves_file_untouched(tmp_path: Path):
@@ -215,7 +215,7 @@ def test_merge_claude_settings_missing_file_returns_template_copy(tmp_path: Path
 
 
 # ---------------------------------------------------------------------------
-# Caso bonus — chiavi non-hooks preservate
+# Bonus case — non-hooks keys preserved
 # ---------------------------------------------------------------------------
 
 def test_unknown_keys_preserved_from_existing():

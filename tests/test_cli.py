@@ -1,4 +1,4 @@
-"""Smoke test del CLI kaora (Click)."""
+"""Smoke tests for the kaora CLI (Click)."""
 from __future__ import annotations
 
 import json
@@ -24,7 +24,7 @@ def test_cli_init_greenfield(tmp_path: Path):
     assert result.exit_code == 0, result.output
     assert (target / "CLAUDE.md").is_file()
     assert (target / "AGENTS.md").is_file()
-    assert "kaora init completato" in result.output
+    assert "kaora init complete" in result.output
 
 
 def test_cli_init_dry_run_writes_nothing(tmp_path: Path):
@@ -36,7 +36,7 @@ def test_cli_init_dry_run_writes_nothing(tmp_path: Path):
 
     assert result.exit_code == 0, result.output
     assert "DRY-RUN" in result.output
-    # In dry-run la cartella non viene creata
+    # In dry-run mode the folder is not created
     assert not target.exists() or list(target.rglob("*")) == []
 
 
@@ -49,7 +49,7 @@ def test_cli_init_default_to_cwd(tmp_path: Path, monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# kaora check — Blocco 4
+# kaora check — Block 4
 # ---------------------------------------------------------------------------
 
 def test_cli_check_on_greenfield_post_init_exit_zero(tmp_path: Path):
@@ -66,7 +66,7 @@ def test_cli_check_strict_promotes_warn_to_exit_one(tmp_path: Path):
     runner = CliRunner()
     target = tmp_path / "proj"
     runner.invoke(main, ["init", str(target), "--no-git-init"])
-    # induciamo un WARN aprendo un placeholder strutturale in AGENTS.md
+    # induce a WARN by opening a structural placeholder in AGENTS.md
     agents = target / "AGENTS.md"
     agents.write_text(
         agents.read_text(encoding="utf-8") + "\n\nPath: {{project_path}}\n",

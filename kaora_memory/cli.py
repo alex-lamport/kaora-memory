@@ -1,6 +1,6 @@
-"""Kaora-memory CLI entry point.
+"""kaora-memory CLI entry point.
 
-Comando esposto come `kaora` (vedi pyproject.toml [project.scripts]).
+Command exposed as `kaora` (see pyproject.toml [project.scripts]).
 """
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from kaora_memory.installer import InstallReport, install_template
 @click.group()
 @click.version_option(__version__, prog_name="kaora")
 def main() -> None:
-    """kaora — memoria persistente e comportamento codificato per agenti AI."""
+    """kaora — persistent memory and codified behavior for AI agents."""
 
 
 @main.command()
@@ -30,20 +30,20 @@ def main() -> None:
 @click.option(
     "--force",
     is_flag=True,
-    help="Sovrascrivi tutto senza backup, salta merge JSON. Per CI/automazione consapevole.",
+    help="Overwrite everything without backup, skip JSON merge. For intentional CI/automation use.",
 )
 @click.option(
     "--dry-run",
     is_flag=True,
-    help="Mostra il piano completo senza toccare alcun file.",
+    help="Show the full plan without touching any file.",
 )
 @click.option(
     "--no-git-init",
     is_flag=True,
-    help="Non eseguire `git init` se il target non è dentro un repo git.",
+    help="Do not run `git init` if the target is not inside a git repo.",
 )
 def init(path: Path, force: bool, dry_run: bool, no_git_init: bool) -> None:
-    """Installa il template kaora-memory in PATH (default: directory corrente)."""
+    """Install the kaora-memory template into PATH (default: current directory)."""
     target = path.resolve()
     report = install_template(target, force=force, dry_run=dry_run)
 
@@ -60,16 +60,16 @@ def init(path: Path, force: bool, dry_run: bool, no_git_init: bool) -> None:
     default=".",
     required=False,
 )
-@click.option("--strict", is_flag=True, help="Promuovi WARN a exit code 1.")
-@click.option("--quiet", is_flag=True, help="Mostra solo ERROR.")
+@click.option("--strict", is_flag=True, help="Promote WARN to exit code 1.")
+@click.option("--quiet", is_flag=True, help="Show only ERROR.")
 @click.option(
-    "--json", "json_output", is_flag=True, help="Output JSON machine-readable."
+    "--json", "json_output", is_flag=True, help="Machine-readable JSON output."
 )
 @click.pass_context
 def check(
     ctx: click.Context, path: Path, strict: bool, quiet: bool, json_output: bool
 ) -> None:
-    """Verifica integrità memoria operativa kaora in PATH (default: cwd)."""
+    """Check kaora operating-memory integrity in PATH (default: cwd)."""
     target = path.resolve()
     report = check_project(target)
 
@@ -82,7 +82,7 @@ def check(
 
 
 def _maybe_git_init(target: Path) -> None:
-    """Esegue `git init` in target se non è già dentro un repo git."""
+    """Run `git init` in target if it's not already inside a git repo."""
     try:
         result = subprocess.run(
             ["git", "rev-parse", "--is-inside-work-tree"],
@@ -97,26 +97,26 @@ def _maybe_git_init(target: Path) -> None:
             ["git", "init", "--quiet"], cwd=target, check=False, capture_output=True
         )
     except FileNotFoundError:
-        # git non installato: silenzioso, non è un errore bloccante
+        # git not installed: silent, not a blocking error
         pass
 
 
 def _print_report(target: Path, report: InstallReport, *, dry_run: bool) -> None:
     if dry_run:
-        click.secho(f"\n[DRY-RUN] Piano per: {target}", fg="cyan", bold=True)
+        click.secho(f"\n[DRY-RUN] Plan for: {target}", fg="cyan", bold=True)
     else:
-        click.secho(f"\nkaora init completato in: {target}", fg="green", bold=True)
+        click.secho(f"\nkaora init complete in: {target}", fg="green", bold=True)
 
-    _section("creati", report.created, "green")
-    _section("backup + sovrascritti (.kaora-bak)", report.backed_up, "yellow")
-    _section("settings.json mergiati (.kaora-bak)", report.merged, "yellow")
-    _section("skippati (preservati esistenti)", report.skipped, "blue")
+    _section("created", report.created, "green")
+    _section("backed up + overwritten (.kaora-bak)", report.backed_up, "yellow")
+    _section("settings.json merged (.kaora-bak)", report.merged, "yellow")
+    _section("skipped (preserved existing)", report.skipped, "blue")
 
     click.echo("")
-    click.secho("Prossimo passo: ", nl=False, bold=True)
+    click.secho("Next step: ", nl=False, bold=True)
     click.echo(
-        "apri il progetto in un agente AI (Claude Code / Codex / Cursor) "
-        "e lascia che esegua il rituale di apertura (legge AGENTS.md)."
+        "open the project in an AI agent (Claude Code / Codex / Cursor) "
+        "and let it run the opening ritual (it reads AGENTS.md)."
     )
 
 

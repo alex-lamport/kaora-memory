@@ -1,16 +1,16 @@
-"""Test per kaora_memory.installer.install_template (ADR-006 v2).
+"""Tests for kaora_memory.installer.install_template (ADR-006 v2).
 
-Categorie di file gestite:
+File categories handled:
 - **canonical** (CLAUDE.md, AGENTS.md, AGENT_BRIEF.md): backup .kaora-bak + overwrite,
-  con placeholder substitution
+  with placeholder substitution
 - **json-merge** (.claude/settings.json): merge via settings_merger, backup .kaora-bak
-- **skip-if-exists** (tutto il resto: docs/*, BACKLOG.md, README.md, hook scripts):
-  scrivi solo se mancante
+- **skip-if-exists** (everything else: docs/*, BACKLOG.md, README.md, hook scripts):
+  write only if missing
 - **rename**: README.md.tpl → README.md
 
-Flag:
-- dry_run=True → calcola report ma non scrive nulla
-- force=True → sovrascrivi tutto senza backup, salta merge JSON
+Flags:
+- dry_run=True → compute report but write nothing
+- force=True → overwrite everything without backup, skip JSON merge
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ YEAR = 2026
 
 
 # ---------------------------------------------------------------------------
-# Greenfield — cartella vuota
+# Greenfield — empty folder
 # ---------------------------------------------------------------------------
 
 def test_greenfield_creates_canonical_markdown(tmp_path: Path):
@@ -67,7 +67,7 @@ def test_greenfield_creates_backlog(tmp_path: Path):
 # ---------------------------------------------------------------------------
 
 def test_structural_placeholders_substituted_in_canonical(tmp_path: Path):
-    target = tmp_path / "mioprogetto"
+    target = tmp_path / "myproject"
     target.mkdir()
     install_template(target, year=YEAR)
 
@@ -75,7 +75,7 @@ def test_structural_placeholders_substituted_in_canonical(tmp_path: Path):
     assert "{{project_name}}" not in agents
     assert "{{project_path}}" not in agents
     assert "{{year}}" not in agents
-    assert "mioprogetto" in agents
+    assert "myproject" in agents
     assert str(target.resolve()) in agents
     assert "2026" in agents
 
@@ -83,7 +83,7 @@ def test_structural_placeholders_substituted_in_canonical(tmp_path: Path):
 def test_bootstrap_placeholders_left_untouched(tmp_path: Path):
     install_template(tmp_path, year=YEAR)
     agents = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
-    # Almeno uno dei placeholder utente deve rimanere intatto per BOOTSTRAP
+    # At least one user placeholder must remain intact for BOOTSTRAP
     bootstrap_placeholders = (
         "{{owner_name}}",
         "{{owner_email}}",
@@ -92,13 +92,13 @@ def test_bootstrap_placeholders_left_untouched(tmp_path: Path):
         "{{communication_language}}",
     )
     assert any(p in agents for p in bootstrap_placeholders), (
-        f"Atteso almeno un placeholder BOOTSTRAP in AGENTS.md, "
-        f"trovati 0 di {bootstrap_placeholders}"
+        f"Expected at least one BOOTSTRAP placeholder in AGENTS.md, "
+        f"found 0 of {bootstrap_placeholders}"
     )
 
 
 # ---------------------------------------------------------------------------
-# Brownfield — backup canonical
+# Brownfield — canonical backup
 # ---------------------------------------------------------------------------
 
 def test_brownfield_claude_md_backed_up_and_rewritten(tmp_path: Path):
@@ -163,12 +163,12 @@ def test_brownfield_hook_script_skipped(tmp_path: Path):
     install_template(tmp_path, year=YEAR)
 
     assert user_hook.read_text(encoding="utf-8") == "#!/bin/sh\necho user-custom"
-    # l'altro hook (log-api-calls.sh) non esiste → deve essere scritto
+    # the other hook (log-api-calls.sh) doesn't exist → must be written
     assert (hooks / "log-api-calls.sh").is_file()
 
 
 # ---------------------------------------------------------------------------
-# Brownfield — merge JSON
+# Brownfield — JSON merge
 # ---------------------------------------------------------------------------
 
 def test_brownfield_claude_settings_merged(tmp_path: Path):
@@ -186,9 +186,9 @@ def test_brownfield_claude_settings_merged(tmp_path: Path):
 
     data = json.loads(settings.read_text(encoding="utf-8"))
     allow = data["permissions"]["allow"]
-    assert "Bash(ls:*)" in allow, "permission utente deve essere preservata"
-    assert data.get("theme") == "dark", "chiavi non-hooks devono essere preservate"
-    assert "hooks" in data, "hook kaora devono essere aggiunti dal merge"
+    assert "Bash(ls:*)" in allow, "user permission must be preserved"
+    assert data.get("theme") == "dark", "non-hooks keys must be preserved"
+    assert "hooks" in data, "kaora hooks must be added by the merge"
 
     bak = claude / "settings.json.kaora-bak"
     assert bak.is_file()
@@ -196,15 +196,15 @@ def test_brownfield_claude_settings_merged(tmp_path: Path):
 
 
 # ---------------------------------------------------------------------------
-# Flag dry-run e force
+# Flags dry-run and force
 # ---------------------------------------------------------------------------
 
 def test_dry_run_writes_nothing(tmp_path: Path):
     report = install_template(tmp_path, dry_run=True, year=YEAR)
 
     written = list(tmp_path.rglob("*"))
-    assert written == [], f"dry-run non deve scrivere nulla, trovato: {written}"
-    # report popolato anche in dry-run (mostra cosa sarebbe stato fatto)
+    assert written == [], f"dry-run must write nothing, found: {written}"
+    # report populated even in dry-run (shows what would have been done)
     assert len(report.created) > 0
 
 
@@ -230,13 +230,13 @@ def test_force_overwrites_settings_json_without_merge(tmp_path: Path):
     install_template(tmp_path, force=True, year=YEAR)
 
     data = json.loads(settings.read_text(encoding="utf-8"))
-    # in force mode il merger è bypassato → permissions utente perdute
+    # in force mode the merger is bypassed → user permissions lost
     assert "Bash(ls:*)" not in data.get("permissions", {}).get("allow", [])
     assert not (claude / "settings.json.kaora-bak").exists()
 
 
 # ---------------------------------------------------------------------------
-# InstallReport struttura
+# InstallReport structure
 # ---------------------------------------------------------------------------
 
 def test_report_has_all_categories(tmp_path: Path):
@@ -246,7 +246,7 @@ def test_report_has_all_categories(tmp_path: Path):
     assert isinstance(report.backed_up, list)
     assert isinstance(report.merged, list)
     assert isinstance(report.skipped, list)
-    # greenfield: tutto in created, niente in altre liste
+    # greenfield: everything in created, nothing in the other lists
     assert len(report.created) > 0
     assert report.backed_up == []
     assert report.merged == []

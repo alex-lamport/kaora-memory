@@ -1,16 +1,16 @@
-"""Installa il template kaora-memory in una directory target (ADR-006 v2).
+"""Install the kaora-memory template into a target directory (ADR-006 v2).
 
-Policy brownfield:
+Brownfield policy:
 - `CANONICAL_MARKDOWN` (CLAUDE.md, AGENTS.md, AGENT_BRIEF.md):
-  backup `.kaora-bak` + overwrite con placeholder substitution.
-- `JSON_MERGE_FILES` (.claude/settings.json): merge intelligente via
+  backup `.kaora-bak` + overwrite with placeholder substitution.
+- `JSON_MERGE_FILES` (.claude/settings.json): intelligent merge via
   settings_merger.merge_claude_settings, backup `.kaora-bak`.
-- Tutto il resto: scrivi solo se mancante (skip-conservative).
+- Everything else: write only if missing (skip-conservative).
 - `RENAME`: README.md.tpl → README.md.
 
-Flag CLI:
-- `force=True`: overwrite tutto senza backup, salta merge JSON.
-- `dry_run=True`: popola il report senza toccare disco.
+CLI flags:
+- `force=True`: overwrite everything without backup, skip JSON merge.
+- `dry_run=True`: populate the report without touching disk.
 """
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ _TEXT_SUFFIXES = frozenset({".md", ".sh", ".json", ".tpl", ".txt"})
 
 @dataclass
 class InstallReport:
-    """Esito di install_template, percorsi relativi al target."""
+    """Outcome of install_template, paths relative to the target."""
 
     created: list[Path] = field(default_factory=list)
     backed_up: list[Path] = field(default_factory=list)
@@ -63,7 +63,7 @@ def install_template(
     dry_run: bool = False,
     year: int | None = None,
 ) -> InstallReport:
-    """Installa il template kaora-memory in `target`, applicando la policy ADR-006 v2."""
+    """Install the kaora-memory template into `target`, applying ADR-006 v2 policy."""
     target = Path(target).resolve()
     if not dry_run:
         target.mkdir(parents=True, exist_ok=True)
@@ -128,7 +128,7 @@ def _process(
         _write_fresh(src, dest, rel, placeholders, dry_run, report)
         return
 
-    # dest existe, non force → applica policy ADR-006 v2
+    # dest exists, not force → apply ADR-006 v2 policy
     if rel_posix in CANONICAL_MARKDOWN:
         _backup_and_write(src, dest, rel, placeholders, dry_run, report)
     elif rel_posix in JSON_MERGE_FILES:

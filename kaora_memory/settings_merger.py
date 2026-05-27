@@ -1,13 +1,13 @@
-"""Merge intelligente per .claude/settings.json (ADR-006 v2).
+"""Intelligent merge for .claude/settings.json (ADR-006 v2).
 
-Implementa la policy brownfield definita in ADR-006 v2:
-- permissions.allow / permissions.deny → union deduplicato, esistenti prima
-- hooks.<event> → array union raggruppato per `matcher`, dedup per `command`
-- ogni altra chiave dell'existing → preservata 1:1
+Implements the brownfield policy defined in ADR-006 v2:
+- permissions.allow / permissions.deny → deduplicated union, existing first
+- hooks.<event> → array union grouped by `matcher`, dedup by `command`
+- every other key from existing → preserved 1:1
 
-Edge case:
-- JSON malformato → ritorna (None, messaggio) senza scrivere nulla
-- file mancante → ritorna copia del template
+Edge cases:
+- malformed JSON → returns (None, message) without writing anything
+- missing file → returns a copy of the template
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ _HOOK_EVENT_KEYS = ("PreToolUse", "PostToolUse", "Stop", "SubagentStop", "Notifi
 
 
 def merge_settings(existing: dict[str, Any], template: dict[str, Any]) -> dict[str, Any]:
-    """Pure merge tra due dict di settings.json secondo ADR-006 v2."""
+    """Pure merge between two settings.json dicts following ADR-006 v2."""
     merged: dict[str, Any] = copy.deepcopy(existing)
 
     for key, template_value in template.items():
@@ -44,14 +44,14 @@ def merge_settings(existing: dict[str, Any], template: dict[str, Any]) -> dict[s
 def merge_claude_settings(
     existing_path: Path, template: dict[str, Any]
 ) -> tuple[dict[str, Any] | None, str | None]:
-    """Carica `existing_path`, esegue il merge, ritorna (merged, error).
+    """Load `existing_path`, run the merge, return (merged, error).
 
-    - File mancante → (deepcopy(template), None)
-    - JSON malformato → (None, "JSON parse error: ...") senza alcuna scrittura
-    - Successo → (merged_dict, None)
+    - Missing file → (deepcopy(template), None)
+    - Malformed JSON → (None, "JSON parse error: ...") with no writes
+    - Success → (merged_dict, None)
 
-    Questa funzione NON scrive su disco: la scrittura (e il backup .kaora-bak)
-    è responsabilità del caller (installer.py).
+    This function does NOT write to disk: writing (and the .kaora-bak backup)
+    is the caller's responsibility (installer.py).
     """
     if not existing_path.exists():
         return copy.deepcopy(template), None
@@ -160,7 +160,7 @@ def _ordered_union(existing: list[Any], template: list[Any]) -> list[Any]:
     seen: set[Any] = set()
     result: list[Any] = []
     for item in list(existing) + list(template):
-        # Solo stringhe / hashable: per item non hashable cadiamo su confronto lineare
+        # Hashable items only: for non-hashable items fall back to linear comparison
         try:
             if item in seen:
                 continue

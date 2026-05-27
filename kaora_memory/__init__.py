@@ -1,3 +1,3 @@
-"""kaora-memory · memoria persistente e comportamento codificato per agenti AI."""
+"""kaora-memory · persistent memory and codified behavior for AI agents."""
 
 __version__ = "0.1.0"

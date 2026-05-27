@@ -1,18 +1,18 @@
-"""Test per kaora_memory.check.check_project (Blocco 4).
+"""Tests for kaora_memory.check.check_project (Block 4).
 
-Linter integrità memoria operativa post-`kaora init`. Sei categorie di check:
-- structure: file/cartelle minime presenti
-- adr005: CLAUDE.md importa @AGENTS.md, AGENTS.md ricco a sufficienza
-- adr_state: presenza ADR Accepted, segnalazione Proposed
-- placeholders: distingue strutturali (WARN) da BOOTSTRAP (INFO)
-- hooks: .claude/hooks/*.sh eseguibili
-- settings: .claude/settings.json contiene hook kaora attesi
+Operating-memory integrity linter post-`kaora init`. Six check categories:
+- structure: minimal required files/folders present
+- adr005: CLAUDE.md imports @AGENTS.md, AGENTS.md rich enough
+- adr_state: presence of Accepted ADRs, flag Proposed
+- placeholders: distinguish structural (WARN) from BOOTSTRAP (INFO)
+- hooks: .claude/hooks/*.sh executable
+- settings: .claude/settings.json contains the expected kaora hooks
 
 Severity: error / warn / info / ok.
-Exit code: 0 di default; --strict promuove warn a error.
+Exit code: 0 by default; --strict promotes warn to error.
 
-Fixture: scriviamo lo scheletro minimo direttamente, NON dipendiamo da template/ reale
-(così cambi al template non rompono questi test).
+Fixtures: we write the minimal skeleton directly, NOT depending on the real template/
+(so changes to the template don't break these tests).
 """
 from __future__ import annotations
 
@@ -35,34 +35,34 @@ from kaora_memory.check import (
 # ---------------------------------------------------------------------------
 
 def _valid_project(target: Path) -> None:
-    """Scrive uno scheletro kaora che passa tutti i check (tutto OK / INFO).
+    """Write a kaora skeleton that passes all checks (everything OK / INFO).
 
-    Tutti i test partono da qui e rompono UN aspetto per volta.
+    All tests start from here and break ONE aspect at a time.
     """
     target.mkdir(parents=True, exist_ok=True)
 
-    # AGENTS.md: ricco (>=50 righe), senza placeholder strutturali aperti.
-    # Lascia un BOOTSTRAP marker per simulare progetto fresco post-init (INFO atteso).
+    # AGENTS.md: rich (>=50 lines), no open structural placeholders.
+    # Leaves a BOOTSTRAP marker to simulate a fresh post-init project (INFO expected).
     agents_lines = [
         "# AGENTS.md — fixture project",
         "",
-        "## 1. Identità",
+        "## 1. Identity",
         "",
-        "Project fixture per test di check.",
+        "Fixture project for check tests.",
         "",
         "## 2. Stack",
         "",
         '<BOOTSTRAP need="tech-stack" sources="pyproject.toml"/>',
         "",
     ]
-    # Pad a >50 righe con sezioni placeholder valide.
+    # Pad to >50 lines with valid placeholder sections.
     for i in range(3, 20):
-        agents_lines += [f"## {i}. Sezione", "", f"Contenuto sezione {i}.", ""]
+        agents_lines += [f"## {i}. Section", "", f"Section {i} content.", ""]
     (target / "AGENTS.md").write_text("\n".join(agents_lines), encoding="utf-8")
 
-    # CLAUDE.md con direttiva @AGENTS.md
+    # CLAUDE.md with @AGENTS.md directive
     (target / "CLAUDE.md").write_text(
-        "# CLAUDE.md\n\n> Entry point per Claude Code.\n\n@AGENTS.md\n",
+        "# CLAUDE.md\n\n> Entry point for Claude Code.\n\n@AGENTS.md\n",
         encoding="utf-8",
     )
 
@@ -71,11 +71,11 @@ def _valid_project(target: Path) -> None:
     docs.mkdir(exist_ok=True)
     (docs / "IDENTITY.md").write_text("# IDENTITY\n", encoding="utf-8")
     (docs / "DECISIONS.md").write_text(
-        "# DECISIONS\n\n## ADR-001 Esempio\n\n**Stato:** Accepted\n\nDecisione presa.\n",
+        "# DECISIONS\n\n## ADR-001 Example\n\n**Status:** Accepted\n\nDecision taken.\n",
         encoding="utf-8",
     )
 
-    # .claude/settings.json con hook kaora attesi
+    # .claude/settings.json with expected kaora hooks
     claude = target / ".claude"
     hooks = claude / "hooks"
     hooks.mkdir(parents=True, exist_ok=True)
@@ -163,13 +163,13 @@ def test_structure_all_present_is_ok(tmp_path: Path):
 
 
 # ---------------------------------------------------------------------------
-# 2. ADR-005 — canonico + import (3)
+# 2. ADR-005 — canonical + import (3)
 # ---------------------------------------------------------------------------
 
 def test_adr005_claude_without_import_directive_is_warn(tmp_path: Path):
     _valid_project(tmp_path)
     (tmp_path / "CLAUDE.md").write_text(
-        "# CLAUDE.md\n\nNessuna direttiva di import qui.\n", encoding="utf-8"
+        "# CLAUDE.md\n\nNo import directive here.\n", encoding="utf-8"
     )
 
     report = check_project(tmp_path)
@@ -181,13 +181,13 @@ def test_adr005_claude_without_import_directive_is_warn(tmp_path: Path):
 def test_adr005_agents_too_short_is_warn(tmp_path: Path):
     _valid_project(tmp_path)
     (tmp_path / "AGENTS.md").write_text(
-        "# AGENTS.md\n\nTroppo corto.\n", encoding="utf-8"
+        "# AGENTS.md\n\nToo short.\n", encoding="utf-8"
     )
 
     report = check_project(tmp_path)
 
     assert "warn" in _levels(report, "adr005")
-    assert any("AGENTS.md" in r.message and "righe" in r.message
+    assert any("AGENTS.md" in r.message and "lines" in r.message
                for r in report.warnings)
 
 
@@ -207,7 +207,7 @@ def test_adr005_canonical_setup_is_ok(tmp_path: Path):
 def test_adr_state_zero_adr_is_info(tmp_path: Path):
     _valid_project(tmp_path)
     (tmp_path / "docs" / "DECISIONS.md").write_text(
-        "# DECISIONS\n\nNessuna ADR registrata.\n", encoding="utf-8"
+        "# DECISIONS\n\nNo ADR registered.\n", encoding="utf-8"
     )
 
     report = check_project(tmp_path)
@@ -219,7 +219,7 @@ def test_adr_state_zero_adr_is_info(tmp_path: Path):
 def test_adr_state_only_proposed_is_info(tmp_path: Path):
     _valid_project(tmp_path)
     (tmp_path / "docs" / "DECISIONS.md").write_text(
-        "# DECISIONS\n\n## ADR-001 Bozza\n\n**Stato:** Proposed\n",
+        "# DECISIONS\n\n## ADR-001 Draft\n\n**Status:** Proposed\n",
         encoding="utf-8",
     )
 
@@ -236,25 +236,25 @@ def test_adr_state_has_accepted_is_ok(tmp_path: Path):
     report = check_project(tmp_path)
 
     levels = _levels(report, "adr_state")
-    # Almeno una Accepted → niente warn, niente error
+    # At least one Accepted → no warn, no error
     assert "warn" not in levels
     assert "error" not in levels
 
 
 def test_adr_state_ignores_proposed_in_code_block(tmp_path: Path):
-    """Un **Stato:** Proposed dentro un fenced code block è un esempio template,
-    non un'ADR reale. Non deve generare INFO."""
+    """A **Status:** Proposed inside a fenced code block is a template example,
+    not a real ADR. It must NOT generate INFO."""
     _valid_project(tmp_path)
     (tmp_path / "docs" / "DECISIONS.md").write_text(
         "# DECISIONS\n\n"
-        "## ADR-001 Reale\n\n"
-        "**Stato:** Accepted\n\n"
-        "Decisione presa.\n\n"
+        "## ADR-001 Real\n\n"
+        "**Status:** Accepted\n\n"
+        "Decision taken.\n\n"
         "---\n\n"
-        "Template per nuove ADR (esempio, non un'ADR reale):\n\n"
+        "Template for new ADRs (example, not a real ADR):\n\n"
         "```\n"
-        "## ADR-XXX Titolo\n\n"
-        "**Stato:** Proposed\n"
+        "## ADR-XXX Title\n\n"
+        "**Status:** Proposed\n"
         "```\n",
         encoding="utf-8",
     )
@@ -266,8 +266,8 @@ def test_adr_state_ignores_proposed_in_code_block(tmp_path: Path):
         if r.category == "adr_state" and "Proposed" in r.message
     ]
     assert proposed_infos == [], (
-        f"Atteso 0 INFO 'Proposed' (sono dentro code-block), "
-        f"trovati {len(proposed_infos)}: {[r.message for r in proposed_infos]}"
+        f"Expected 0 'Proposed' INFOs (they're inside a code-block), "
+        f"found {len(proposed_infos)}: {[r.message for r in proposed_infos]}"
     )
 
 
@@ -277,7 +277,7 @@ def test_adr_state_ignores_proposed_in_code_block(tmp_path: Path):
 
 def test_placeholders_structural_open_is_warn(tmp_path: Path):
     _valid_project(tmp_path)
-    # Iniettiamo un placeholder strutturale aperto in AGENTS.md
+    # Inject an open structural placeholder in AGENTS.md
     current = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     (tmp_path / "AGENTS.md").write_text(
         current + "\n\nProject path: {{project_path}}\n", encoding="utf-8"
@@ -290,21 +290,21 @@ def test_placeholders_structural_open_is_warn(tmp_path: Path):
 
 
 def test_placeholders_bootstrap_marker_open_is_info(tmp_path: Path):
-    # _valid_project lascia già <BOOTSTRAP need="tech-stack"/> aperto
+    # _valid_project already leaves <BOOTSTRAP need="tech-stack"/> open
     _valid_project(tmp_path)
 
     report = check_project(tmp_path)
 
     placeholder_results = [r for r in report.results if r.category == "placeholders"]
     info_present = any(r.level == "info" for r in placeholder_results)
-    assert info_present, "BOOTSTRAP marker aperto deve generare almeno un INFO"
-    # NON deve essere un WARN
+    assert info_present, "Open BOOTSTRAP marker must generate at least one INFO"
+    # Must NOT be a WARN
     assert "warn" not in [r.level for r in placeholder_results]
 
 
 def test_placeholders_clean_is_ok(tmp_path: Path):
     _valid_project(tmp_path)
-    # Rimuoviamo anche il BOOTSTRAP marker per avere un AGENTS completamente pulito
+    # Remove the BOOTSTRAP marker too so we have a fully clean AGENTS
     agents = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     cleaned = agents.replace(
         '<BOOTSTRAP need="tech-stack" sources="pyproject.toml"/>',
@@ -320,8 +320,8 @@ def test_placeholders_clean_is_ok(tmp_path: Path):
 
 
 def test_placeholders_scans_all_md_in_docs(tmp_path: Path):
-    """File .md aggiuntivi in docs/ (es. CUSTOM.md, NOTES.md) devono essere
-    scansionati. Lista hardcoded non scala."""
+    """Extra .md files in docs/ (e.g. CUSTOM.md, NOTES.md) must be
+    scanned. A hardcoded list does not scale."""
     _valid_project(tmp_path)
     (tmp_path / "docs" / "CUSTOM.md").write_text(
         "# Custom\n\nProject: {{project_name}}\n", encoding="utf-8"
@@ -331,25 +331,25 @@ def test_placeholders_scans_all_md_in_docs(tmp_path: Path):
 
     placeholder_warns = [r for r in report.warnings if r.category == "placeholders"]
     assert any("CUSTOM.md" in r.message for r in placeholder_warns), (
-        f"Atteso warn su docs/CUSTOM.md, warnings trovati: "
+        f"Expected warn on docs/CUSTOM.md, warnings found: "
         f"{[r.message for r in placeholder_warns]}"
     )
 
 
 def test_placeholders_ignores_open_inside_code_block(tmp_path: Path):
-    """Placeholder e BOOTSTRAP marker dentro un fenced code block sono esempi
-    documentari (es. spec del check stesso), non placeholder reali da
-    sostituire. Stesso pattern del fix adr_state."""
+    """Placeholder and BOOTSTRAP markers inside a fenced code block are
+    documentary examples (e.g. spec of the check itself), not real
+    placeholders to substitute. Same pattern as the adr_state fix."""
     _valid_project(tmp_path)
     (tmp_path / "docs" / "SPEC.md").write_text(
         "# Spec check\n\n"
-        "Esempio di output atteso:\n\n"
+        "Example of expected output:\n\n"
         "```\n"
         "PATH = {{project_path}}\n"
         "YEAR = {{year}}\n"
         '<BOOTSTRAP need="..." sources="..."/>\n'
         "```\n\n"
-        "Fine spec.\n",
+        "End of spec.\n",
         encoding="utf-8",
     )
 
@@ -360,22 +360,22 @@ def test_placeholders_ignores_open_inside_code_block(tmp_path: Path):
         if r.category == "placeholders" and "SPEC.md" in r.message
     ]
     assert spec_results == [], (
-        f"Atteso 0 segnalazioni placeholder per SPEC.md (sono dentro code-block), "
-        f"trovati {len(spec_results)}: {[r.message for r in spec_results]}"
+        f"Expected 0 placeholder signals for SPEC.md (they're inside a code-block), "
+        f"found {len(spec_results)}: {[r.message for r in spec_results]}"
     )
 
 
 def test_placeholders_skips_archive_and_philosophy(tmp_path: Path):
-    """docs/archive/** e docs/PHILOSOPHY.md non sono kaora-managed e devono
-    essere esclusi (contengono testo discorsivo, falsi positivi)."""
+    """docs/archive/** and docs/PHILOSOPHY.md are not kaora-managed and must
+    be excluded (they contain narrative text, false positives)."""
     _valid_project(tmp_path)
     archive = tmp_path / "docs" / "archive"
     archive.mkdir()
     (archive / "OLD.md").write_text(
-        "Memoria pre-install: {{project_name}}\n", encoding="utf-8"
+        "Pre-install memory: {{project_name}}\n", encoding="utf-8"
     )
     (tmp_path / "docs" / "PHILOSOPHY.md").write_text(
-        "Esempio narrativo: {{project_name}} è un placeholder concettuale.\n",
+        "Narrative example: {{project_name}} is a conceptual placeholder.\n",
         encoding="utf-8",
     )
 
@@ -412,7 +412,7 @@ def test_hooks_executable_is_ok(tmp_path: Path):
 
 
 # ---------------------------------------------------------------------------
-# 6. SETTINGS — hook kaora attesi (2)
+# 6. SETTINGS — expected kaora hooks (2)
 # ---------------------------------------------------------------------------
 
 def test_settings_without_kaora_hooks_is_info(tmp_path: Path):
@@ -437,15 +437,15 @@ def test_settings_with_kaora_hooks_is_ok(tmp_path: Path):
 
 
 def test_settings_string_match_outside_hooks_struct_is_not_enough(tmp_path: Path):
-    """Stringy match è troppo permissivo: un campo arbitrario può menzionare il
-    nome dell'hook senza che sia effettivamente configurato. Il check deve
-    navigare hooks.<Event>[*].hooks[*].command, non fare substring sul blob."""
+    """Stringy match is too permissive: an arbitrary field can mention the
+    hook name without the hook being actually configured. The check must
+    walk hooks.<Event>[*].hooks[*].command, not run substring on the blob."""
     _valid_project(tmp_path)
     (tmp_path / ".claude" / "settings.json").write_text(
         json.dumps({
             "theme": "dark",
             "comment": "see protect-credentials.sh for details",
-            "hooks": {},  # nessun hook reale configurato
+            "hooks": {},  # no real hook configured
         }),
         encoding="utf-8",
     )
@@ -453,8 +453,8 @@ def test_settings_string_match_outside_hooks_struct_is_not_enough(tmp_path: Path
     report = check_project(tmp_path)
 
     assert "info" in _levels(report, "settings"), (
-        "string-match permissivo non basta: il check deve verificare la "
-        "struttura hooks.<Event>[*].hooks[*].command"
+        "permissive string-match is not enough: the check must verify the "
+        "hooks.<Event>[*].hooks[*].command structure"
     )
 
 
@@ -464,7 +464,7 @@ def test_settings_string_match_outside_hooks_struct_is_not_enough(tmp_path: Path
 
 def test_report_exit_code_strict_promotes_warn(tmp_path: Path):
     _valid_project(tmp_path)
-    # induciamo un warn (placeholder strutturale aperto)
+    # induce a warn (open structural placeholder)
     current = (tmp_path / "AGENTS.md").read_text(encoding="utf-8")
     (tmp_path / "AGENTS.md").write_text(
         current + "\n\nName: {{project_name}}\n", encoding="utf-8"
@@ -478,12 +478,12 @@ def test_report_exit_code_strict_promotes_warn(tmp_path: Path):
 
 def test_report_format_text_contains_section_markers(tmp_path: Path):
     _valid_project(tmp_path)
-    (tmp_path / "AGENTS.md").unlink()  # forza un error
+    (tmp_path / "AGENTS.md").unlink()  # force an error
 
     report = check_project(tmp_path)
     text = format_text(report)
 
-    # markers visivi per livello
+    # visual markers per level
     assert any(token in text for token in ("ERROR", "❌"))
     assert "AGENTS.md" in text
 

@@ -1,7 +1,7 @@
-"""Test per kaora_memory.template_resolver.
+"""Tests for kaora_memory.template_resolver.
 
-In ambiente di test (pip install -e .) il resolver deve trovare il template
-via il fallback dev mode (template/ top-level del repo).
+In the test environment (pip install -e .) the resolver must find the template
+via the dev-mode fallback (top-level repo `template/`).
 """
 from pathlib import Path
 

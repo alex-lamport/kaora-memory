@@ -1,458 +1,458 @@
-# DECISIONS.md — ADR log immutabile
+# DECISIONS.md — immutable ADR log
 
-> Architectural Decision Records. **Append-only.** Una decisione chiusa si riapre solo con una nuova ADR che la sostituisce esplicitamente (`Supersedes: ADR-XXX`).
+> Architectural Decision Records. **Append-only.** A closed decision is reopened only with a new ADR that explicitly supersedes it (`Supersedes: ADR-XXX`).
 >
-> Formato: data · contesto · decisione · alternative scartate · conseguenze.
+> Format: date · context · decision · rejected alternatives · consequences.
 
 ---
 
-## ADR-000 — Adozione dogfooding
+## ADR-000 — Dogfooding adoption
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-Stiamo costruendo `kaora-memory`, un pacchetto Python che installa scaffolding di memoria operativa per agenti AI in qualsiasi progetto. Domanda emersa nella sessione del 22 maggio: il repo `kaora-memory` stesso deve usare la skill che pubblica?
+We're building `kaora-memory`, a Python package that installs operating-memory scaffolding for AI agents into any project. Question that came up in the May 22 session: does the `kaora-memory` repo itself need to use the skill it publishes?
 
-### Decisione
+### Decision
 
-**Sì.** Dopo che il Blocco 3 (`kaora init`) sarà chiuso e funzionante, eseguiremo `kaora init .` nel repo stesso. Nel frattempo (in Blocco 1) creiamo manualmente la memoria operativa minima per il repo (`CLAUDE.md`, `docs/CURRENT_STATE.md`, `docs/SESSION_HANDOFF.md`, `docs/DECISIONS.md`) replicando il pattern che la skill installerà.
+**Yes.** After Block 3 (`kaora init`) is closed and working, we'll run `kaora init .` in the repo itself. In the meantime (in Block 1) we manually create the minimal operating memory for the repo (`CLAUDE.md`, `docs/CURRENT_STATE.md`, `docs/SESSION_HANDOFF.md`, `docs/DECISIONS.md`), replicating the pattern the skill will install.
 
-### Alternative scartate
+### Rejected alternatives
 
-- **A — Repo di sviluppo senza memoria operativa.** Più semplice, ma:
-  - Disonesto narrativamente (vendiamo memoria persistente senza usarla)
-  - Le sessioni di sviluppo del repo stesso ripartirebbero da zero, perdendo coerenza
-- **B — Memoria manuale ma divergente dal template.** Più libero, ma il repo non sarebbe un valid prima dimostrazione del prodotto
+- **A — Development repo without operating memory.** Simpler, but:
+  - Narratively dishonest (we sell persistent memory without using it)
+  - The repo's own development sessions would start from scratch, losing coherence
+- **B — Manual memory but divergent from the template.** More flexible, but the repo wouldn't be a valid first demonstration of the product
 
-### Conseguenze
+### Consequences
 
-- Il repo `kaora-memory` è il **primo utente reale** della skill. Se non funziona qui, non funziona da nessuna parte.
-- Quando i template Blocco 2 saranno pronti, i file `CLAUDE.md` / `docs/*` di questo repo andranno sostituiti con quelli generati da `kaora init` (forse rifiniti a mano dove diverge per specificità).
-- Pattern di dogfooding va menzionato esplicitamente nel README come segnale di serietà del prodotto.
-
----
-
-## ADR-001 — Rituale di apertura universale incondizionato + skip via intent naturale
-
-**Data:** 2026-05-22
-**Stato:** Accepted
-
-### Contesto
-
-La skill kaora-memory promuove il "rituale di apertura sessione" come pratica operativa. Domanda: che cosa fa partire il rituale? Una frase specifica come `"claude vai"`? Un set di trigger phrases? Un'apertura automatica?
-
-### Decisione
-
-**Rituale incondizionato.** A prescindere da:
-- chi è l'agente (Claude Code, Codex, Cursor, Gemini CLI, altro)
-- come l'utente apre la sessione (qualsiasi input — "vai", "ciao", "?", richiesta tecnica, silenzio)
-- se l'utente chiama l'agente per nome o no
-
-Alla prima risposta della sessione, l'agente esegue il rituale (lettura file → sintesi 3 righe → attesa conferma). Una sola volta per conversazione.
-
-**Skip via riconoscimento intent naturale.** L'agente riconosce semanticamente l'intento di skip (es. *"salta il rituale, so già cosa fare"*, *"bypass, vai dritto"*, *"veloce"*). Match semantico, non sintattico. In caso di dubbio chiede conferma in una riga.
-
-### Alternative scartate
-
-- **Trigger phrase fissa** (`"kaora go"` o `"claude vai"`): rigida, non funziona se l'utente apre con altro, e fa sembrare il prodotto Claude-only
-- **Trigger via comando esplicito** (`/kaora-init-context`): troppa frizione cognitiva, dimentichi
-- **Match sintattico** sulla skip phrase: fragile, fallisce con varianti non previste
-
-### Conseguenze
-
-- Il prodotto è agnostico rispetto all'agente — supporta Claude Code, Codex, Cursor, Gemini CLI con la stessa esperienza
-- Il rituale va codificato in `CLAUDE.md` E in `AGENTS.md` (vedi ADR-003)
-- Skip va documentato esplicitamente nel template con esempi multilingua
+- The `kaora-memory` repo is the **first real user** of the skill. If it doesn't work here, it doesn't work anywhere.
+- When the Block 2 templates are ready, this repo's `CLAUDE.md` / `docs/*` files will be replaced with those generated by `kaora init` (possibly hand-refined where it diverges for specificity).
+- The dogfooding pattern should be mentioned explicitly in the README as a signal of product seriousness.
 
 ---
 
-## ADR-002 — `kaora init` istantaneo + bootstrap agent-driven via `<BOOTSTRAP/>` markers
+## ADR-001 — Unconditional universal opening ritual + skip via natural intent
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-Domanda di design: come si raccolgono le informazioni minime (identità progetto, registro comunicazione, ecc.) per popolare i template?
+The kaora-memory skill promotes the "session opening ritual" as an operational practice. Question: what triggers the ritual? A specific phrase like `"claude go"`? A set of trigger phrases? An automatic opening?
 
-### Decisione
+### Decision
 
-**`kaora init` è istantaneo. Zero prompt interattivi.** Copia il `template/` nella destinazione, sostituisce placeholder strutturali (path, anno, nome cartella), esegue `git init` se serve. Fine.
+**Unconditional ritual.** Regardless of:
+- who the agent is (Claude Code, Codex, Cursor, Gemini CLI, other)
+- how the user opens the session (any input — "go", "hi", "?", technical request, silence)
+- whether the user addresses the agent by name or not
 
-I file generati contengono `<BOOTSTRAP need="..." sources="..."/>` markers nelle sezioni che richiedono input umano. Alla **prima sessione AI** (qualsiasi agente), il modello:
-1. Investiga il progetto (git config, README, package files, commit log)
-2. Compila bozze dei `<BOOTSTRAP/>` autonomamente
-3. Chiede 1-2 domande mirate solo per i buchi
-4. Applica diff con conferma utente
+At the first response of the session, the agent runs the ritual (read files → 3-line summary → wait for confirmation). Once per conversation only.
 
-Frizione cognitiva crollata da ~10 min di scrittura manuale a ~30 sec di 2 risposte.
+**Skip via natural intent recognition.** The agent recognizes semantically the intent to skip (e.g. *"skip the ritual, I already know what to do"*, *"bypass, go straight"*, *"quick"*). Semantic match, not syntactic. When in doubt, ask for confirmation in one line.
 
-### Alternative scartate
+### Rejected alternatives
 
-- **Wizard 4-prompt interattivo (`click.prompt`)** — proposta iniziale di Claude Desktop. Più semplice tecnicamente ma:
-  - 10 min di scrittura manuale obbligatoria
-  - Richiede all'utente di decidere TUTTO subito (pet peeve, anti-pattern, ecc.) — molti rispondono male e non tornano a sistemare
-  - Il valore di "agente competente dal primo turno" non viene mostrato
+- **Fixed trigger phrase** (`"kaora go"` or `"claude vai"`): rigid, doesn't work if the user opens with something else, and makes the product look Claude-only
+- **Explicit command trigger** (`/kaora-init-context`): too much cognitive friction, you forget
+- **Syntactic match** on the skip phrase: fragile, fails with unforeseen variants
 
-- **File completamente pre-compilati** con valori default — fallisce perché ogni utente è diverso
+### Consequences
 
-### Conseguenze
-
-- Implementazione `kaora init` (Blocco 3) è molto più semplice: copia + sostituisce path + git init
-- Aggiunge un convention/protocollo `<BOOTSTRAP/>` che va documentato bene in `AGENT_BRIEF.md` (Blocco 2)
-- Il vero "wow moment" della skill è la prima `claude vai` (o equivalente), non l'install
+- The product is agnostic about the agent — it supports Claude Code, Codex, Cursor, Gemini CLI with the same experience
+- The ritual must be codified in `CLAUDE.md` AND in `AGENTS.md` (see ADR-003)
+- Skip must be documented explicitly in the template with multilingual examples
 
 ---
 
-## ADR-003 — Cross-agent via AGENTS.md come gemello funzionale di CLAUDE.md
+## ADR-002 — Instant `kaora init` + agent-driven bootstrap via `<BOOTSTRAP/>` markers
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-Claude Code auto-carica `CLAUDE.md`. Codex CLI, Cursor, Aider, e altri agenti seguono il proposed standard `AGENTS.md`. Come supportare entrambi senza duplicare contenuto?
+Design question: how do we collect the minimal information (project identity, communication register, etc.) to populate the templates?
 
-### Decisione
+### Decision
 
-Il template include **entrambi**:
-- `CLAUDE.md` — auto-caricato da Claude Code
-- `AGENTS.md` — auto-caricato da Codex / Cursor / Aider / Gemini CLI / altri agenti compliant con lo standard
+**`kaora init` is instant. Zero interactive prompts.** It copies the `template/` to the destination, replaces structural placeholders (path, year, folder name), runs `git init` if needed. Done.
 
-I due file sono **gemelli funzionali**: contengono lo stesso identico contenuto, generato dallo stesso template Jinja al momento di `kaora init`. Eventualmente nel futuro, se i due standard divergeranno, faremo due template separati.
+The generated files contain `<BOOTSTRAP need="..." sources="..."/>` markers in the sections that require human input. At the **first AI session** (any agent), the model:
+1. Investigates the project (git config, README, package files, commit log)
+2. Drafts the `<BOOTSTRAP/>` content autonomously
+3. Asks 1-2 targeted questions only for the gaps
+4. Applies a diff with user confirmation
 
-### Alternative scartate
+Cognitive friction collapsed from ~10 min of manual writing to ~30 sec of 2 answers.
 
-- **Solo `CLAUDE.md`** — taglia fuori 50%+ degli utenti potenziali (Codex/Cursor in espansione)
-- **Solo `AGENTS.md`** — funziona ma Claude Code non lo legge (richiede istruzioni esplicite all'utente)
-- **Symlink `AGENTS.md → CLAUDE.md`** — non funziona su Windows e in alcuni harness
+### Rejected alternatives
 
-### Conseguenze
+- **4-prompt interactive wizard (`click.prompt`)** — initial proposal from Claude Desktop. Technically simpler but:
+  - 10 min of mandatory manual writing
+  - Requires the user to decide EVERYTHING up front (pet peeves, anti-patterns, etc.) — many answer poorly and don't come back to fix it
+  - The value of "competent agent from the first turn" doesn't get shown
 
-- Il piano di Blocco 2 genera due file dallo stesso contenuto
-- `kaora init` deve generare entrambi a partire dallo stesso template
-- README evidenzia il supporto cross-agent come differenziatore
+- **Fully pre-filled files** with default values — fails because every user is different
 
----
+### Consequences
 
-## ADR-004 — Layout package flat + build backend hatchling
-
-**Data:** 2026-05-22
-**Stato:** Accepted
-
-### Contesto
-
-Scelta di layout per il pacchetto Python distribuito su PyPI. Opzioni: `src/kaora_memory/` (raccomandato come best practice per librerie) vs `kaora_memory/` flat (più semplice).
-
-### Decisione
-
-**Flat layout:** `kaora_memory/` accanto a `pyproject.toml`. **Build backend:** `hatchling`.
-
-### Alternative scartate
-
-- **`src/` layout** — best practice ufficiale Python. Più sicuro contro import accidentali da root, ma:
-  - Aggiunge un livello di indirezione per un pacchetto piccolo (v0.1: 2-3 file Python)
-  - Richiede config esplicita `packages.find` o equivalente in hatchling
-  - Per un CLI tool con superficie minima, il costo cognitivo non è giustificato
-
-- **setuptools / poetry / flit** — funzionano tutti ma:
-  - `setuptools`: legacy, configurazione più verbosa
-  - `poetry`: lock file ed ecosistema separato (overkill per un pacchetto senza dipendenze pesanti)
-  - `flit`: ottimo per pure Python ma meno mainstream di hatchling oggi
-
-### Conseguenze
-
-- Pyproject minimale: `[tool.hatch.build.targets.wheel] packages = ["kaora_memory"]`
-- Includere `template/` come data file richiede `force-include` (vedi `SESSION_HANDOFF.md` Blocco 2)
-- Se in futuro v0.5+ il package crescerà a 15+ moduli, eventuale switch a `src/` layout richiederà nuova ADR
+- The `kaora init` implementation (Block 3) is much simpler: copy + path replace + git init
+- Adds a `<BOOTSTRAP/>` convention/protocol that must be documented well in `AGENT_BRIEF.md` (Block 2)
+- The real "wow moment" of the skill is the first `claude go` (or equivalent), not the install
 
 ---
 
-## ADR-005 — Canonico `AGENTS.md` + import `@AGENTS.md` in `CLAUDE.md`
+## ADR-003 — Cross-agent via AGENTS.md as functional twin of CLAUDE.md
 
-**Data:** 2026-05-22
-**Stato:** Accepted
-**Supersedes:** ADR-003 (parziale — la direzione "supportare entrambi gli agenti" resta valida, cambia il *modo*)
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-ADR-003 ha scelto "gemelli funzionali identici": `CLAUDE.md` e `AGENTS.md` con contenuto duplicato. Motivazione di scarto del symlink: incompatibilità Windows + alcuni harness.
+Claude Code auto-loads `CLAUDE.md`. Codex CLI, Cursor, Aider, and other agents follow the proposed `AGENTS.md` standard. How do we support both without duplicating content?
 
-In sessione Blocco 2 (22 maggio) è emerso un terzo modo non considerato in ADR-003: **import nativo** di Claude Code. Sintassi `@path/file.md` dentro `CLAUDE.md` carica automaticamente il file referenziato. È solo testo, funziona ovunque (Windows, Linux, macOS, WSL), zero magia filesystem.
+### Decision
 
-Inoltre, "gemelli identici" introduce un problema operativo: dopo `kaora init` l'utente ha due file fisici separati. Edita uno, dimentica l'altro → drift silenzioso. Richiederebbe un `kaora check` per diff, complicando il prodotto.
+The template includes **both**:
+- `CLAUDE.md` — auto-loaded by Claude Code
+- `AGENTS.md` — auto-loaded by Codex / Cursor / Aider / Gemini CLI / other agents compliant with the standard
 
-### Decisione
+The two files are **functional twins**: they contain the same identical content, generated from the same Jinja template at `kaora init` time. Eventually in the future, if the two standards diverge, we'll make two separate templates.
 
-Il template ha:
-- **`AGENTS.md`** — file canonico, contenuto pieno (memoria operativa kaora completa). Auto-letto da Codex CLI, Cursor, Aider, Gemini CLI, OpenAI Agents.
-- **`CLAUDE.md`** — file minimo (4 righe), unica direttiva operativa: `@AGENTS.md`. Claude Code legge `CLAUDE.md`, vede l'import, carica `AGENTS.md` automaticamente.
+### Rejected alternatives
 
-Single source of truth fisica. Drift impossibile per costruzione.
+- **Only `CLAUDE.md`** — cuts out 50%+ of potential users (Codex/Cursor expanding)
+- **Only `AGENTS.md`** — works but Claude Code doesn't read it (requires explicit user instructions)
+- **Symlink `AGENTS.md → CLAUDE.md`** — doesn't work on Windows and in some harnesses
 
-### Alternative scartate
+### Consequences
 
-- **Status quo (gemelli identici)** — già analizzato in ADR-003. Funziona, ma drift gestito a posteriori invece che prevenuto.
-- **Symlink** — già scartato in ADR-003. Decisione confermata.
-- **Source `docs/MEMORY.md` + generator** — single source via build step. Aggiunge un sistema (sync hook git, comando `kaora sync`) per zero valore extra rispetto all'import nativo.
-
-### Conseguenze
-
-- Il template Blocco 2 implementa direttamente il pattern canonico+import (`template/AGENTS.md` ricco, `template/CLAUDE.md` di 4 righe).
-- `kaora check` (Blocco 4) può eliminare la voce "diff drift CLAUDE.md ↔ AGENTS.md" dal proprio scope → semplificazione.
-- README (Blocco 5) racconta il pattern come differenziatore vs standard agents-md mainstream.
-- Da verificare in Blocco 6 prima della pubblicazione PyPI: che il pattern funzioni su Cursor + Aider + Codex CLI moderni (rischio basso, ma test richiesto).
-- Compatibilità Windows confermata: nessun symlink, nessun comando OS-specifico.
+- The Block 2 plan generates two files from the same content
+- `kaora init` must generate both starting from the same template
+- The README highlights cross-agent support as a differentiator
 
 ---
 
-## ADR-006 — Policy install brownfield: backup-first + merge JSON per settings + BOOTSTRAP-merge per markdown
+## ADR-004 — Flat package layout + hatchling build backend
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-`kaora init` (Blocco 3) deve gestire progetti che hanno già una memoria operativa parziale: `CLAUDE.md` scritto a mano, `AGENTS.md` standard, file `docs/` di documentazione, `.claude/settings.json` custom.
+Layout choice for the Python package distributed on PyPI. Options: `src/kaora_memory/` (recommended best practice for libraries) vs `kaora_memory/` flat (simpler).
 
-Una prima versione di questa ADR (Proposed, 22 maggio 2026, mattina) adottava strategia "Skip + warn" per `.claude/settings.json`. Riscritta come v2 prima di Accept, durante la stessa sessione, perché *skip lascia gli hook kaora inattivi* su qualunque utente con `.claude/settings.json` esistente. Significherebbe regalare la protezione credenziali (uno dei valori più visibili del prodotto) solo a chi parte da progetto vuoto. Inaccettabile.
+### Decision
 
-### Decisione
+**Flat layout:** `kaora_memory/` alongside `pyproject.toml`. **Build backend:** `hatchling`.
 
-`kaora init` adotta una strategia **per-file con tre categorie di gestione**, gerarchizzate per complessità di contenuto:
+### Rejected alternatives
 
-#### Categoria 1 — Markdown (memoria operativa)
-Backup + BOOTSTRAP-merge alla prima sessione AI. Nessun merge automatico (semantica markdown troppo complessa per logica programmatica).
+- **`src/` layout** — official Python best practice. Safer against accidental imports from root, but:
+  - Adds a level of indirection for a small package (v0.1: 2-3 Python files)
+  - Requires explicit `packages.find` config or equivalent in hatchling
+  - For a CLI tool with minimal surface, the cognitive cost isn't justified
 
-| File | Azione |
+- **setuptools / poetry / flit** — all work but:
+  - `setuptools`: legacy, more verbose configuration
+  - `poetry`: lock file and separate ecosystem (overkill for a package without heavy dependencies)
+  - `flit`: great for pure Python but less mainstream than hatchling today
+
+### Consequences
+
+- Minimal pyproject: `[tool.hatch.build.targets.wheel] packages = ["kaora_memory"]`
+- Including `template/` as a data file requires `force-include` (see `SESSION_HANDOFF.md` Block 2)
+- If in the future v0.5+ the package grows to 15+ modules, an eventual switch to `src/` layout will require a new ADR
+
+---
+
+## ADR-005 — Canonical `AGENTS.md` + import `@AGENTS.md` in `CLAUDE.md`
+
+**Date:** 2026-05-22
+**Status:** Accepted
+**Supersedes:** ADR-003 (partial — the direction "support both agents" stays valid, the *how* changes)
+
+### Context
+
+ADR-003 chose "identical functional twins": `CLAUDE.md` and `AGENTS.md` with duplicated content. Reason for rejecting the symlink: Windows incompatibility + some harnesses.
+
+In the Block 2 session (May 22), a third method not considered in ADR-003 emerged: **native import** of Claude Code. Syntax `@path/file.md` inside `CLAUDE.md` automatically loads the referenced file. It's just text, works everywhere (Windows, Linux, macOS, WSL), zero filesystem magic.
+
+Plus, "identical twins" introduces an operational problem: after `kaora init` the user has two separate physical files. Edit one, forget the other → silent drift. Would require a `kaora check` for diff, complicating the product.
+
+### Decision
+
+The template has:
+- **`AGENTS.md`** — canonical file, full content (complete kaora operating memory). Auto-read by Codex CLI, Cursor, Aider, Gemini CLI, OpenAI Agents.
+- **`CLAUDE.md`** — minimal file (4 lines), single operational directive: `@AGENTS.md`. Claude Code reads `CLAUDE.md`, sees the import, automatically loads `AGENTS.md`.
+
+Single physical source of truth. Drift impossible by construction.
+
+### Rejected alternatives
+
+- **Status quo (identical twins)** — already analyzed in ADR-003. Works, but drift handled after the fact instead of prevented.
+- **Symlink** — already rejected in ADR-003. Decision confirmed.
+- **Source `docs/MEMORY.md` + generator** — single source via build step. Adds a system (git sync hook, `kaora sync` command) for zero extra value compared to native import.
+
+### Consequences
+
+- The Block 2 template directly implements the canonical+import pattern (`template/AGENTS.md` rich, `template/CLAUDE.md` 4 lines).
+- `kaora check` (Block 4) can drop "CLAUDE.md ↔ AGENTS.md diff drift" from its scope → simplification.
+- The README (Block 5) tells the pattern as a differentiator vs mainstream agents-md standard.
+- To verify in Block 6 before PyPI publication: that the pattern works on modern Cursor + Aider + Codex CLI (low risk, but test required).
+- Windows compatibility confirmed: no symlinks, no OS-specific commands.
+
+---
+
+## ADR-006 — Brownfield install policy: backup-first + JSON merge for settings + BOOTSTRAP-merge for markdown
+
+**Date:** 2026-05-22
+**Status:** Accepted
+
+### Context
+
+`kaora init` (Block 3) must handle projects that already have a partial operating memory: hand-written `CLAUDE.md`, standard `AGENTS.md`, `docs/` documentation files, custom `.claude/settings.json`.
+
+A first version of this ADR (Proposed, May 22 2026, morning) adopted the "Skip + warn" strategy for `.claude/settings.json`. Rewritten as v2 before Accept, during the same session, because *skip leaves kaora hooks inactive* on any user with an existing `.claude/settings.json`. That would mean giving credential protection (one of the product's most visible values) only to those starting from an empty project. Unacceptable.
+
+### Decision
+
+`kaora init` adopts a **per-file strategy with three handling categories**, hierarchized by content complexity:
+
+#### Category 1 — Markdown (operating memory)
+Backup + BOOTSTRAP-merge at the first AI session. No automatic merge (markdown semantics too complex for programmatic logic).
+
+| File | Action |
 |---|---|
-| `CLAUDE.md` | Backup → `CLAUDE.md.kaora-bak` + scrivi nuovo (`@AGENTS.md`) |
-| `AGENTS.md` | Backup → `AGENTS.md.kaora-bak` + scrivi nuovo (ricco kaora) |
+| `CLAUDE.md` | Backup → `CLAUDE.md.kaora-bak` + write new (`@AGENTS.md`) |
+| `AGENTS.md` | Backup → `AGENTS.md.kaora-bak` + write new (rich kaora) |
 
-#### Categoria 2 — JSON strutturato (.claude/settings.json)
-**Merge JSON intelligente.** Parse del JSON esistente, deep-merge con il template kaora, backup, riscrittura, report cambiamenti.
+#### Category 2 — Structured JSON (.claude/settings.json)
+**Intelligent JSON merge.** Parse the existing JSON, deep-merge with the kaora template, backup, rewrite, report the changes.
 
-Logica di merge:
-- `permissions.allow` + `permissions.deny` → **union** dei due array (set semantics, deduplicazione)
-- `hooks.PreToolUse` + `hooks.PostToolUse` → **array union raggruppato per `matcher`**:
-  - Se l'utente ha già un blocco con stesso `matcher` di kaora: **append** del nostro `command` all'array `hooks` di quel blocco (più hook si eseguono in sequenza)
-  - Se non lo ha: aggiungi blocco intero
-- Qualsiasi altra chiave (`statusLine`, `theme`, `env`, chiavi future di Claude Code) → **preservata 1:1**
+Merge logic:
+- `permissions.allow` + `permissions.deny` → **union** of the two arrays (set semantics, dedup)
+- `hooks.PreToolUse` + `hooks.PostToolUse` → **array union grouped by `matcher`**:
+  - If the user already has a block with the same `matcher` as kaora's: **append** our `command` to that block's `hooks` array (multiple hooks run in sequence)
+  - If not: add the whole block
+- Any other key (`statusLine`, `theme`, `env`, future Claude Code keys) → **preserved 1:1**
 
-Backup sempre creato in `.claude/settings.json.kaora-bak` prima di qualsiasi modifica.
+Backup always created in `.claude/settings.json.kaora-bak` before any modification.
 
-Report a fine merge:
-> *"settings.json: aggiunti 2 hook kaora (PreToolUse Write/Edit/MultiEdit, PostToolUse Bash), preservate N permission allow, preservate M chiavi non-hooks. Backup in .claude/settings.json.kaora-bak"*
+Report at end of merge:
+> *"settings.json: added 2 kaora hooks (PreToolUse Write/Edit/MultiEdit, PostToolUse Bash), preserved N permission allow, preserved M non-hooks keys. Backup in .claude/settings.json.kaora-bak"*
 
-Edge case:
-- **JSON malformato** → skip + warn, backup intatto, file originale invariato (fail-safe)
-- **JSONC con commenti** → parser tollerante se disponibile, altrimenti skip + warn
-- **Hook utente con identico `command` path al nostro** → deduplico silenziosamente (no duplicate execution)
+Edge cases:
+- **Malformed JSON** → skip + warn, backup intact, original file unchanged (fail-safe)
+- **JSONC with comments** → tolerant parser if available, otherwise skip + warn
+- **User hook with identical `command` path to ours** → silently dedup (no duplicate execution)
 
-#### Categoria 3 — Tutto il resto (memoria vivente, script, README)
-Skip-conservative. Mai distruggere lavoro utente.
+#### Category 3 — Everything else (living memory, scripts, README)
+Skip-conservative. Never destroy user work.
 
-| File | Azione |
+| File | Action |
 |---|---|
-| `docs/CURRENT_STATE.md` | Skip (stato vivo, mai distruggere) |
+| `docs/CURRENT_STATE.md` | Skip (live state, never destroy) |
 | `docs/SESSION_HANDOFF.md` | Skip |
-| `docs/DECISIONS.md` | Skip (ADR esistenti sono sacre) |
-| `docs/IDENTITY.md` | Skip se esiste |
-| `.claude/hooks/*.sh` | Skip per file, scrivi solo i mancanti (mai mergiare codice eseguibile) |
-| `README.md` | Skip (mai toccare README utente) |
-| `BACKLOG.md` | Skip se esiste, scrivi se manca |
+| `docs/DECISIONS.md` | Skip (existing ADRs are sacred) |
+| `docs/IDENTITY.md` | Skip if exists |
+| `.claude/hooks/*.sh` | Skip per file, write only the missing (never merge executable code) |
+| `README.md` | Skip (never touch user README) |
+| `BACKLOG.md` | Skip if exists, write if missing |
 
-### Comportamento BOOTSTRAP-merge per `.kaora-bak` markdown
+### BOOTSTRAP-merge behavior for `.kaora-bak` markdown
 
-I file `.kaora-bak` di markdown diventano **fonte autorevole** per il primo BOOTSTRAP della prima sessione AI. L'agente li legge, estrae setup tecnico (package manager, comandi, conventions), propone diff di integrazione nelle sezioni appropriate del nuovo `AGENTS.md` o `docs/IDENTITY.md`. Il problema "cosa fare con il file vecchio?" diventa la feature più impressionante della prima sessione.
+The `.kaora-bak` markdown files become an **authoritative source** for the first BOOTSTRAP of the first AI session. The agent reads them, extracts technical setup (package manager, commands, conventions), proposes an integration diff into the appropriate sections of the new `AGENTS.md` or `docs/IDENTITY.md`. The "what do I do with the old file?" problem becomes the most impressive feature of the first session.
 
-### Flag override CLI
+### CLI override flags
 
-- `kaora init --dry-run` → mostra piano completo (cosa scriverò, cosa backuppo, cosa mergio, cosa skippo) senza toccare nessun file
-- `kaora init --force` → overwrite tutto (per CI/automazione consapevole, salta merge JSON e va in scrittura diretta)
+- `kaora init --dry-run` → shows full plan (what I'll write, what I back up, what I merge, what I skip) without touching any file
+- `kaora init --force` → overwrite everything (for conscious CI/automation, skips JSON merge and goes to direct write)
 
-### Alternative scartate
+### Rejected alternatives
 
-- **Overwrite cieco** — distrugge lavoro utente. NO.
-- **Refuse if exists** — friction alta, l'utente è bloccato. NO.
-- **Wizard interattivo per ogni file** — viola ADR-002 (`kaora init` istantaneo).
-- **Skip + warn per `.claude/settings.json` (v1 di questa ADR)** — scartata: lascia hook inattivi, regala il valore di sicurezza solo a greenfield.
-- **Merge automatico statico per markdown** — fragile, troppe euristiche per content arbitrario. Defer all'agente alla prima sessione (BOOTSTRAP).
+- **Blind overwrite** — destroys user work. NO.
+- **Refuse if exists** — high friction, the user is blocked. NO.
+- **Interactive wizard for each file** — violates ADR-002 (`kaora init` instant).
+- **Skip + warn for `.claude/settings.json` (v1 of this ADR)** — rejected: leaves hooks inactive, gives security value only to greenfield.
+- **Static automatic merge for markdown** — fragile, too many heuristics for arbitrary content. Defer to the agent at the first session (BOOTSTRAP).
 
-### Conseguenze
+### Consequences
 
-- Implementazione `kaora init` (Blocco 3) include modulo `merge_claude_settings(existing_path, template_content) -> merged_dict` con test brownfield specifici (caso: solo permissions, caso: hooks esistenti, caso: matcher uguale al nostro, caso: JSON malformato)
-- `AGENT_BRIEF.md` e `AGENTS.md` del template documentano già il significato dei `.kaora-bak` (Blocco 2 chiuso)
-- README brownfield-friendly: nessun warning "solo greenfield", invece FAQ "ho già un CLAUDE.md?" → "backup-first, zero perdita, JSON merger trasparente" (annotato per Blocco 5)
-- `SESSION_HANDOFF.md` Blocco 3 estende lo scope tecnico per includere il merger JSON come modulo dedicato
-
----
-
-## ADR-007 — Modalità conversazionale: Operativa vs Apprendimento
-
-**Data:** 2026-05-22
-**Stato:** Accepted
-
-### Contesto
-
-Durante la sessione Blocco 2 è emerso un pattern di comportamento dell'agente che penalizza Alexis (e, generalizzando, profili con pensiero divergente / neurodivergenti / alta apertura cognitiva):
-
-Alexis fa una domanda di **comprensione** ("ridurre l'adozione?", "doppione fattibilità?", "brownfield cosa succede?"). L'agente risponde correttamente nel contenuto, ma chiude ogni volta con una **domanda operativa** ("vado con X?", "posso partire?", "domanda di chiusura"). Le chiusure operative agiscono come **amplificatori**: per profili che pensano per associazioni, ogni domanda apre 3 nuove finestre invece di chiudere il loop. Il risultato:
-
-- L'utente non trova lo spazio per esplorare
-- Le idee si moltiplicano invece di sedimentare
-- L'attenzione cognitiva è spesa per chiudere loop che l'agente continua ad aprire
-- L'utente potrebbe ignorare le domande dell'agente, ma le domande comunque hanno già "acceso" rami associativi in testa
-
-Quote di Alexis (22 maggio): *"HO NOTATO CHE CONTINUI A PROPORRE DI LAVORARE E IO CERCO DI CAPIRE, BASTEREBBE IGNORARTI MA LE TUE DOMANDE ACCENDONO ALTRE IDEEE E ALTRE IDEE IN TESTA. QUESTA COSA PER PROFILI FUORI MEDIA PUO ESSERE PENALIZZZANTE."*
-
-### Decisione
-
-L'agente codifica e applica una distinzione di **modalità conversazionale** in ogni momento del dialogo:
-
-**Operativa** — segnali: imperativi diretti ("vai", "fai", "procedi"), conferma a proposta. Comportamento: proponi azione concreta in 1-2 righe, aspetta "vai", esegui.
-
-**Apprendimento** — segnali: domande aperte ("perché", "cosa succede se", "spiegami"), ripetizione da angolazioni nuove, enfasi su comprensione (anche MAIUSCOLE), assenza di imperativi. Comportamento: rispondi alla domanda. PUNTO. **Non** proporre azioni. **Non** chiudere con domande operative. Lascia esplicito che il loop resta aperto.
-
-La regola vive in `AGENTS.md` § 3 (sotto-sezione "Modalità conversazionale") nel template, replicata in `CLAUDE.md` del repo per applicazione immediata, e citata in `template/docs/IDENTITY.md` § 3 e in `template/AGENT_BRIEF.md` glossario.
-
-### Alternative scartate
-
-- **Affidarsi alla sola IDENTITY.md `<BOOTSTRAP>` per anti-pattern** — fragile, perché richiede che il builder lo segnali ogni volta che l'agente sbaglia. Lo abbiamo visto sbagliare 5 volte di fila in questa sessione prima che Alexis lo verbalizzasse. La regola va codificata di default, non come correzione retroattiva.
-- **Regola "non fare mai domande di chiusura"** (sempre, indipendentemente da modalità) — troppo restrittiva: in modalità Operativa la domanda "procedo con X?" è il modo corretto di rispettare Gate C (mai agire di iniziativa). La distinzione modale è necessaria.
-- **Lasciare al modello LLM intuire la modalità senza istruzioni esplicite** — non funziona consistentemente. Senza ancoraggio esplicito nei file di memoria operativa, il modello tende per default a chiudere ogni risposta con call-to-action ("vuoi che proceda?"), che è il pattern problematico.
-
-### Conseguenze
-
-- L'agente in questo repo applica la regola **immediatamente** (CLAUDE.md aggiornato).
-- Tutti i progetti futuri che adottano kaora-memory ereditano la regola via template.
-- Adozione amplificata su profili neurodivergenti / pensiero laterale, che sono early adopter naturali di tool AI. La regola è un **differenziatore di prodotto**, non solo igiene operativa.
-- Possibili falsi positivi (utente in modalità Operativa frainteso come Apprendimento): l'agente in caso di dubbio chiede in **una sola riga** ("modalità ora: chiudo o lascio aperto?") senza proporre azioni concrete.
-- Test di efficacia: in sessioni future, contare quante chiusure operative vengono fatte erroneamente in fase di Apprendimento. Target: zero.
+- `kaora init` implementation (Block 3) includes a `merge_claude_settings(existing_path, template_content) -> merged_dict` module with specific brownfield tests (case: permissions only, case: existing hooks, case: matcher equal to ours, case: malformed JSON)
+- `AGENT_BRIEF.md` and `AGENTS.md` of the template already document the meaning of `.kaora-bak` (Block 2 closed)
+- Brownfield-friendly README: no "greenfield-only" warning, instead a FAQ "I already have a CLAUDE.md?" → "backup-first, zero loss, transparent JSON merger" (noted for Block 5)
+- Block 3 `SESSION_HANDOFF.md` extends the technical scope to include the JSON merger as a dedicated module
 
 ---
 
-## ADR-008 — Zero attrito per decisioni su ADR `Proposed`
+## ADR-007 — Conversational mode: Operative vs Learning
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-Il rituale di apertura sessione (§ 6 di `AGENTS.md`) prevede di leggere `docs/DECISIONS.md` solo se la prima richiesta tocca architettura. Funziona finché tutte le ADR sono `Accepted`.
+During the Block 2 session a pattern of agent behavior emerged that penalizes Alexis (and, generalizing, profiles with divergent thinking / neurodivergent / high cognitive openness):
 
-Quando però ci sono ADR in stato `Proposed` (decisione architetturale aperta in attesa di scelta dell'utente), il flusso attuale è penalizzante:
+Alexis asks a **comprehension** question ("reduce adoption?", "feasibility duplicate?", "brownfield what happens?"). The agent answers correctly on content, but closes every time with an **operational question** ("go with X?", "can I start?", "closing question"). The operational closures act as **amplifiers**: for profiles that think by association, every question opens 3 new windows instead of closing the loop. The result:
 
-- L'utente deve aprire manualmente `docs/DECISIONS.md`
-- Scrollare il file (può essere lungo)
-- Leggere ADR multiple (contesto, decisione, alternative, conseguenze ciascuna)
-- Ricordare il numero di ognuna
-- Tornare in chat e dire "Accept ADR-005 e 007, riformula ADR-006"
+- The user doesn't find the space to explore
+- Ideas multiply instead of settling
+- Cognitive attention is spent closing loops the agent keeps opening
+- The user could ignore the agent's questions, but the questions have already "ignited" associative branches in their head
 
-Attrito cognitivo alto, errori di nomenclatura possibili, perdita di flusso. Per profili con pensiero divergente (cfr. ADR-007), questo attrito è particolarmente penalizzante: ogni ADR aperta è una finestra cognitiva attiva, leggerle senza un'interfaccia di chat le mantiene aperte più a lungo del necessario.
+Alexis quote (May 22): *"I'VE NOTICED YOU KEEP PROPOSING WORK AND I'M TRYING TO UNDERSTAND, I COULD JUST IGNORE YOU BUT YOUR QUESTIONS IGNITE OTHER IDEAS AND OTHER IDEAS IN MY HEAD. THIS THING FOR PROFILES OUTSIDE THE AVERAGE CAN BE PENALIZING."*
 
-### Decisione
+### Decision
 
-Il rituale di apertura (§ 6) viene esteso con uno **step 6** dedicato:
+The agent codifies and applies a distinction between **conversational modes** at every moment of the dialogue:
 
-> **Se trovi ADR in stato `Proposed`** (cerca `**Stato:** Proposed` in `docs/DECISIONS.md`): **mostrale in chat** in formato sintetico (titolo + contesto in 1-2 righe + decisione richiesta in 1 riga + opzioni `Accept | Modifica | Reject`). Zero attrito: l'utente decide direttamente dalla chat senza aprire il file.
+**Operative** — signals: direct imperatives ("go", "do it", "proceed"), confirmation of a proposal. Behavior: propose a concrete action in 1-2 lines, wait for "go", execute.
 
-Formato suggerito per ogni ADR mostrata:
+**Learning** — signals: open questions ("why", "what if", "explain"), repetition from new angles, emphasis on understanding (including ALL CAPS), absence of imperatives. Behavior: answer the question. PERIOD. **Do not** propose actions. **Do not** close with operational questions. Make it explicit that the loop stays open.
+
+The rule lives in `AGENTS.md` § 3 (sub-section "Conversational mode") in the template, replicated in the repo's `CLAUDE.md` for immediate application, and cited in `template/docs/IDENTITY.md` § 3 and in `template/AGENT_BRIEF.md` glossary.
+
+### Rejected alternatives
+
+- **Rely only on IDENTITY.md `<BOOTSTRAP>` for anti-patterns** — fragile, because it requires the builder to flag it every time the agent gets it wrong. We've seen it fail 5 times in a row in this session before Alexis verbalized it. The rule must be codified by default, not as retroactive correction.
+- **Rule "never ask closing questions"** (always, regardless of mode) — too restrictive: in Operative mode the question "proceed with X?" is the correct way to respect Gate C (never act on initiative). The modal distinction is necessary.
+- **Let the LLM infer the mode without explicit instructions** — doesn't work consistently. Without an explicit anchor in the operating-memory files, the model tends by default to close every response with a call-to-action ("want me to proceed?"), which is the problematic pattern.
+
+### Consequences
+
+- The agent in this repo applies the rule **immediately** (CLAUDE.md updated).
+- All future projects that adopt kaora-memory inherit the rule via template.
+- Amplified adoption on neurodivergent / lateral-thinking profiles, who are natural early adopters of AI tools. The rule is a **product differentiator**, not just operational hygiene.
+- Possible false positives (Operative user misread as Learning): the agent in case of doubt asks in **one line only** ("mode now: close or leave open?") without proposing concrete actions.
+- Effectiveness test: in future sessions, count how many operational closures are made wrongly in Learning phase. Target: zero.
+
+---
+
+## ADR-008 — Zero friction for `Proposed` ADR decisions
+
+**Date:** 2026-05-22
+**Status:** Accepted
+
+### Context
+
+The session opening ritual (§ 6 of `AGENTS.md`) calls for reading `docs/DECISIONS.md` only if the first request touches architecture. Works as long as all ADRs are `Accepted`.
+
+When, however, there are ADRs in `Proposed` state (open architectural decision waiting for the user's choice), the current flow is penalizing:
+
+- The user must manually open `docs/DECISIONS.md`
+- Scroll the file (it can be long)
+- Read multiple ADRs (context, decision, alternatives, consequences for each)
+- Remember the number of each
+- Go back to chat and say "Accept ADR-005 and 007, reformulate ADR-006"
+
+High cognitive friction, possible naming errors, loss of flow. For profiles with divergent thinking (cf. ADR-007), this friction is particularly penalizing: every open ADR is an active cognitive window, reading them without a chat interface keeps them open longer than necessary.
+
+### Decision
+
+The opening ritual (§ 6) is extended with a dedicated **step 6**:
+
+> **If you find ADRs in `Proposed` state** (search for `**Status:** Proposed` in `docs/DECISIONS.md`): **show them in chat** in synthetic form (title + 1-2 lines of context + 1-line decision asked + options `Accept | Modify | Reject`). Zero friction: the user decides directly from chat without opening the file.
+
+Suggested format for each shown ADR:
 
 ```
-**ADR-NNN — Titolo**
-Contesto: [1-2 righe]
-Decisione richiesta: [1 riga]
-Opzioni: Accept | Modifica | Reject
+**ADR-NNN — Title**
+Context: [1-2 lines]
+Decision asked: [1 line]
+Options: Accept | Modify | Reject
 ```
 
-Dopo la decisione dell'utente, l'agente applica le modifiche al file `docs/DECISIONS.md` (cambia `Stato: Proposed` → `Stato: Accepted` con la data corrente, oppure riscrive il contenuto in caso di modifica, oppure marca `Stato: Rejected` con una riga di motivazione).
+After the user's decision, the agent applies the changes to `docs/DECISIONS.md` (changes `Status: Proposed` → `Status: Accepted` with today's date, or rewrites the content in case of modification, or marks `Status: Rejected` with a one-line motivation).
 
-### Alternative scartate
+### Rejected alternatives
 
-- **Stato attuale (utente apre file manualmente)** — attrito alto, già discusso.
-- **Comando CLI dedicato** (`kaora adr list-proposed`) — utile in futuro (v0.2+) ma richiede di interrompere il flusso di chat per andare in terminale. Aggiunge un canale, non lo riduce. La chat-first è meglio.
-- **File dedicato** (`docs/PENDING_DECISIONS.md`) — duplica informazione già presente in `DECISIONS.md`. Genera drift.
+- **Current state (user opens file manually)** — high friction, already discussed.
+- **Dedicated CLI command** (`kaora adr list-proposed`) — useful in the future (v0.2+) but requires interrupting the chat flow to go to the terminal. Adds a channel, doesn't reduce it. Chat-first is better.
+- **Dedicated file** (`docs/PENDING_DECISIONS.md`) — duplicates information already in `DECISIONS.md`. Generates drift.
 
-### Conseguenze
+### Consequences
 
-- L'agente applica la regola **immediatamente** in tutti i progetti che adottano il template.
-- Il rituale di apertura diventa più "denso" quando ci sono ADR aperte, ma proporzionatamente al carico decisionale reale. Quando non ce ne sono, lo step è no-op.
-- Pattern coerente con la filosofia kaora di "ridurre attrito cognitivo" (cfr. ADR-002 init istantaneo, ADR-007 modalità conversazionale).
-- Forma un trittico operativo con ADR-002 e ADR-007: kaora minimizza il context switch tra umano e agente in tutti i punti di scelta del prodotto.
+- The agent applies the rule **immediately** across all projects that adopt the template.
+- The opening ritual becomes more "dense" when there are open ADRs, but proportionally to the real decision load. When there are none, the step is a no-op.
+- Pattern consistent with the kaora philosophy of "reducing cognitive friction" (cf. ADR-002 instant init, ADR-007 conversational mode).
+- Forms an operational triptych with ADR-002 and ADR-007: kaora minimizes context switching between human and agent at all product choice points.
 
 ---
 
-## ADR-009 — Sub-agente vs Read diretto per ottimizzazione context e comportamento
+## ADR-009 — Sub-agent vs direct Read for context and behavior optimization
 
-**Data:** 2026-05-22
-**Stato:** Accepted
+**Date:** 2026-05-22
+**Status:** Accepted
 
-### Contesto
+### Context
 
-Quando un agente AI lavora su un progetto, ha bisogno di consultare file di memoria operativa (CLAUDE.md, AGENTS.md, docs/*, codice esistente). Il comportamento di default è "leggi il file con Read tool, poi decidi". Questo ha due costi non sempre giustificati:
+When an AI agent works on a project, it needs to consult operating-memory files (CLAUDE.md, AGENTS.md, docs/*, existing code). The default behavior is "read the file with the Read tool, then decide". This has two not-always-justified costs:
 
-1. **Costo token**: il file intero entra nel context window dell'agente principale e ci resta per tutta la conversazione, anche dopo che non serve più. Su sessioni lunghe questo accumula context inutile, riducendo lo spazio per il lavoro in corso e aumentando i costi di ogni risposta successiva.
+1. **Token cost**: the whole file enters the main agent's context window and stays there for the rest of the conversation, even after it's no longer needed. On long sessions this accumulates useless context, reducing the space for ongoing work and increasing the cost of every subsequent response.
 
-2. **Costo comportamentale**: la lettura generica "apro per vedere" non costringe l'agente a dichiarare *cosa cerca*. Pattern di letture esplorative ridondanti vs letture finalizzate.
+2. **Behavioral cost**: a generic "I'll open it to take a look" read doesn't force the agent to declare *what it's looking for*. Pattern of redundant exploratory reads vs purposeful reads.
 
-L'alternativa è delegare a un **sub-agente**: il sub-agente apre il file nel **suo** context, fa l'analisi, restituisce solo il summary (tipicamente ~5% dell'input). Il file completo non entra mai nel context principale.
+The alternative is to delegate to a **sub-agent**: the sub-agent opens the file in **its** context, does the analysis, returns only the summary (typically ~5% of the input). The full file never enters the main context.
 
-Però sub-agente **non è gratis**: ha latenza (30-90 secondi), overhead di setup (system prompt, tool descriptions), e rischio di *information loss* (restituisce quello che lui considera rilevante, può saltare dettagli).
+But sub-agents are **not free**: they have latency (30-90 seconds), setup overhead (system prompt, tool descriptions), and risk of *information loss* (returns what it considers relevant, may skip details).
 
-Domanda emersa nella sessione 22 maggio 2026 (Blocco 2 finale): codifichiamo una regola di decisione per orientare l'agente in modo prevedibile?
+Question that emerged in the May 22 2026 session (final Block 2): do we codify a decision rule to orient the agent in a predictable way?
 
-### Decisione
+### Decision
 
-L'agente applica la seguente **matrice di decisione**, basata su 3 variabili — *size, intent, post-action*:
+The agent applies the following **decision matrix**, based on 3 variables — *size, intent, post-action*:
 
-| Caso | Approccio |
+| Case | Approach |
 |---|---|
-| File < 200 righe | Read diretto (overhead sub-agente > risparmio) |
-| File 200-1000 righe + modificherai dopo | Read diretto (Edit richiede Read comunque) |
-| File 200-1000 righe + serve dettaglio fine | Read diretto (sub-agente perde sfumature) |
-| File 200-1000 righe + solo estrazione/sintesi | **Sub-agente** |
-| File > 1000 righe + non modifichi dopo | **Sub-agente** quasi sempre |
-| File > 1000 righe + serve dettaglio fine | Read diretto + accetta costo (caso raro) |
+| File < 200 lines | Direct Read (sub-agent overhead > savings) |
+| File 200-1000 lines + you'll modify after | Direct Read (Edit requires Read anyway) |
+| File 200-1000 lines + fine detail needed | Direct Read (sub-agent loses nuance) |
+| File 200-1000 lines + only extraction/synthesis | **Sub-agent** |
+| File > 1000 lines + no modification after | **Sub-agent** almost always |
+| File > 1000 lines + fine detail needed | Direct Read + accept the cost (rare case) |
 
-**Eccezione "già letto in sessione"**: se il file è già nel context dell'agente principale, ri-leggerlo via Read è no-op gratis. Niente sub-agente.
+**"Already read in session" exception**: if the file is already in the main agent's context, re-reading it via Read is a free no-op. No sub-agent.
 
-La regola è codificata in `AGENTS.md` § 10 (sotto-sezione "Lettura file: sub-agente vs Read diretto") nel template, e in `CLAUDE.md` del repo per applicazione immediata.
+The rule is codified in `AGENTS.md` § 10 (sub-section "File reading: sub-agent vs direct Read") in the template, and in the repo's `CLAUDE.md` for immediate application.
 
-### Alternative scartate
+### Rejected alternatives
 
-- **"Sempre Read diretto"** (status quo della maggior parte degli agenti): semplice ma spreca context su file grossi consultati solo per sintesi. Non scala su sessioni lunghe.
-- **"Sempre sub-agente"**: ideologicamente pulito ma falsamente economico — la latenza + i token totali (sub-agente + sommario) spesso superano la lettura diretta per file piccoli. Anti-pattern.
-- **Soglia singola (es. "file > 500 righe → sub-agente")**: ignora intent e post-action, due variabili che cambiano significativamente la decisione. Troppo grossolano.
+- **"Always direct Read"** (status quo for most agents): simple but wastes context on large files consulted only for synthesis. Doesn't scale on long sessions.
+- **"Always sub-agent"**: ideologically clean but falsely economical — latency + total tokens (sub-agent + summary) often exceed direct reading for small files. Anti-pattern.
+- **Single threshold (e.g. "file > 500 lines → sub-agent")**: ignores intent and post-action, two variables that significantly change the decision. Too coarse-grained.
 
-### Conseguenze
+### Consequences
 
-- L'agente in questo repo applica la regola **immediatamente** (CLAUDE.md § 10 aggiornato).
-- Tutti i progetti futuri che adottano kaora-memory ereditano la regola via template.
-- La regola codifica un atto di **metacognizione conditional** (Schraw & Moshman 1995: *"so quando applicare quale strategia"*). Forma trittico con ADR-001 (rituale: metacognizione di planning), ADR-007 (modalità conversazionale: metacognizione di Theory of Mind), ADR-009 (delegazione lettura: metacognizione di strategy selection).
-- Testabile in modo concreto: contare nelle sessioni future le letture indiscriminate vs delegazioni a sub-agente. Target qualitativo: l'agente delega ogni volta che la matrice lo prescrive.
-- Possibile evoluzione futura: tool nativo `kaora delegate-read` che wrappa il pattern in un comando esplicito (v0.2+, valuta dopo evidenza d'uso).
-
----
-
-## Catena causale aggiornata
-
-- **ADR-000** (dogfooding) → spiega perché esistono `CLAUDE.md` e `docs/*` nel repo stesso prima del Blocco 3
-- **ADR-001** (rituale universale) + **ADR-003** (cross-agent) si rafforzano: senza ADR-003 il rituale universale rimarrebbe Claude-only
-- **ADR-002** (init istantaneo) dipende da **ADR-001** (rituale): l'agente sa cosa fare anche senza input perché il rituale è codificato
-- **ADR-005** (canonico+import) raffina **ADR-003**: la direzione resta (cross-agent), il modo cambia (import invece di gemelli)
-- **ADR-006** (backup-first) implementa **ADR-002** per il caso brownfield: l'init resta istantaneo, il merge brownfield diventa lavoro autonomo dell'agente alla prima sessione tramite `<BOOTSTRAP/>`
-- **ADR-009** (sub-agente vs Read) completa il trittico metacognitivo con **ADR-001** (planning) e **ADR-007** (Theory of Mind interlocutore): codifica metacognizione *conditional* di strategy selection
-- **ADR-007** (modalità conversazionale) raffina **ADR-001** § 3 (Registro comunicazione) aggiungendo la distinzione Operativa/Apprendimento. Vale per tutti gli agenti, in ogni momento, non solo all'apertura
+- The agent in this repo applies the rule **immediately** (CLAUDE.md § 10 updated).
+- All future projects that adopt kaora-memory inherit the rule via template.
+- The rule codifies an act of **conditional metacognition** (Schraw & Moshman 1995: *"I know when to apply which strategy"*). Forms a triptych with ADR-001 (ritual: planning metacognition), ADR-007 (conversational mode: Theory of Mind metacognition), ADR-009 (read delegation: strategy-selection metacognition).
+- Concretely testable: count in future sessions indiscriminate reads vs sub-agent delegations. Qualitative target: the agent delegates every time the matrix prescribes it.
+- Possible future evolution: native `kaora delegate-read` tool that wraps the pattern in an explicit command (v0.2+, evaluate after usage evidence).
 
 ---
 
-## Versionamento ADR
+## Updated causal chain
 
-- v0.1.0 — ADR 000-004 (sessione 22 maggio 2026, Blocco 1, **Accepted**)
-- v0.1.1 — ADR 005-006 (sessione 22 maggio 2026, Blocco 2, **Accepted** — ADR-006 riscritta v2 con merge JSON prima di Accept)
-- v0.1.2 — ADR-007 (sessione 22 maggio 2026, Blocco 2 finale, **Accepted**)
-- v0.1.3 — ADR-008 (sessione 22 maggio 2026, emersa applicando ADR-007 in tempo reale, **Accepted**)
-- v0.1.4 — ADR-009 (sessione 22 maggio 2026, promossa da BACKLOG dopo discussione su ottimizzazione context e comportamento, **Accepted**)
+- **ADR-000** (dogfooding) → explains why `CLAUDE.md` and `docs/*` exist in the repo itself before Block 3
+- **ADR-001** (universal ritual) + **ADR-003** (cross-agent) reinforce each other: without ADR-003 the universal ritual would remain Claude-only
+- **ADR-002** (instant init) depends on **ADR-001** (ritual): the agent knows what to do even without input because the ritual is codified
+- **ADR-005** (canonical+import) refines **ADR-003**: the direction stays (cross-agent), the how changes (import instead of twins)
+- **ADR-006** (backup-first) implements **ADR-002** for the brownfield case: init stays instant, brownfield merge becomes autonomous agent work at the first session via `<BOOTSTRAP/>`
+- **ADR-009** (sub-agent vs Read) completes the metacognitive triptych with **ADR-001** (planning) and **ADR-007** (interlocutor Theory of Mind): codifies *conditional* metacognition of strategy selection
+- **ADR-007** (conversational mode) refines **ADR-001** § 3 (Communication register) by adding the Operative/Learning distinction. Valid for all agents, at every moment, not just at opening
+
+---
+
+## ADR versioning
+
+- v0.1.0 — ADR 000-004 (May 22 2026 session, Block 1, **Accepted**)
+- v0.1.1 — ADR 005-006 (May 22 2026 session, Block 2, **Accepted** — ADR-006 rewritten v2 with JSON merge before Accept)
+- v0.1.2 — ADR-007 (May 22 2026 session, final Block 2, **Accepted**)
+- v0.1.3 — ADR-008 (May 22 2026 session, emerged while applying ADR-007 in real time, **Accepted**)
+- v0.1.4 — ADR-009 (May 22 2026 session, promoted from BACKLOG after discussion on context and behavior optimization, **Accepted**)

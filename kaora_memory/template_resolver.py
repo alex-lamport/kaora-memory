@@ -1,17 +1,17 @@
-"""Risolve il path al template kaora-memory.
+"""Resolve the path to the kaora-memory template.
 
-Due modalità (decisione architetturale Blocco 3, ADR-005 coerente):
+Two modes (Block 3 architectural decision, consistent with ADR-005):
 
-1. **Wheel installato da PyPI:** la cartella `kaora_memory/_template/` esiste
-   fisicamente (force-include di hatch in pyproject.toml). Lettura via
+1. **Wheel installed from PyPI:** the `kaora_memory/_template/` folder exists
+   physically (hatch force-include in pyproject.toml). Read via
    `importlib.resources.files("kaora_memory") / "_template"`.
 
-2. **Dev mode (`pip install -e .`):** la cartella `_template/` NON esiste
-   dentro `kaora_memory/`. Fallback al `template/` top-level del repo
+2. **Dev mode (`pip install -e .`):** the `_template/` folder does NOT exist
+   inside `kaora_memory/`. Fallback to the top-level repo `template/`
    (`Path(__file__).parent.parent / "template"`).
 
-Il caller (`installer.py`) chiama `get_template_root()` e ottiene un `Path`
-verso una cartella che contiene `AGENTS.md`, `CLAUDE.md`, `docs/`, `.claude/`.
+The caller (`installer.py`) calls `get_template_root()` and gets a `Path`
+to a folder that contains `AGENTS.md`, `CLAUDE.md`, `docs/`, `.claude/`.
 """
 from __future__ import annotations
 
@@ -22,25 +22,25 @@ from pathlib import Path
 __all__ = ["get_template_root", "TemplateNotFoundError"]
 
 
-# Marker file che usiamo per validare che una candidate sia un template kaora valido.
-# Se esiste, è (quasi certamente) il template giusto.
+# Marker file used to validate that a candidate is a valid kaora template.
+# If it exists, this is (almost certainly) the right template.
 _TEMPLATE_MARKER = "AGENTS.md"
 
 
 class TemplateNotFoundError(RuntimeError):
-    """Sollevata se nessuna delle strategie di lookup trova un template valido."""
+    """Raised if none of the lookup strategies finds a valid template."""
 
 
 def get_template_root() -> Path:
-    """Ritorna il `Path` della radice del template kaora-memory.
+    """Return the `Path` to the root of the kaora-memory template.
 
-    Strategia:
-    1. Prova `importlib.resources.files("kaora_memory") / "_template"`
-       (funziona se il wheel ha incluso force-include la cartella).
-    2. Fallback a `Path(__file__).parent.parent / "template"`
-       (funziona in dev mode editable install).
+    Strategy:
+    1. Try `importlib.resources.files("kaora_memory") / "_template"`
+       (works if the wheel force-included the folder).
+    2. Fallback to `Path(__file__).parent.parent / "template"`
+       (works in dev mode editable install).
 
-    Solleva `TemplateNotFoundError` se nessuna funziona.
+    Raises `TemplateNotFoundError` if neither works.
     """
     wheel_candidate = _try_wheel_template()
     if wheel_candidate is not None:
@@ -51,9 +51,9 @@ def get_template_root() -> Path:
         return dev_candidate
 
     raise TemplateNotFoundError(
-        "Template kaora-memory non trovato. "
-        "Cercato in kaora_memory/_template/ (wheel) e in template/ (dev mode top-level). "
-        "Reinstalla con `pip install -e .` o `pip install kaora-memory`."
+        "kaora-memory template not found. "
+        "Searched in kaora_memory/_template/ (wheel) and in template/ (top-level dev mode). "
+        "Reinstall with `pip install -e .` or `pip install kaora-memory`."
     )
 
 
