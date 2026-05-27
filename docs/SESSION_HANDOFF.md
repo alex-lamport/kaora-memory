@@ -2,132 +2,87 @@
 
 > Leggi subito dopo `CLAUDE.md` e `CURRENT_STATE.md`.
 >
-> **Ultima sessione:** 2026-05-26 · Self-dogfooding ADR-000 APPLICATO + committato (`a9518d6`). Merge AGENTS.md guidato da agente naive in seconda sessione (con revisore in parallelo), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN RISOLTO (2026-05-24). Working tree pulito. Drift docs allineato 2026-05-27 in apertura sessione Blocco 4.
+> **Ultima sessione:** 2026-05-27 · **Blocco 4 chiuso** — `kaora check` linter integrità memoria operativa implementato TDD red→green→refactor. Sei categorie (structure, adr005, adr_state, placeholders, hooks, settings). 4 commit nuovi (`eabae39` drift docs · `29fa094` green · `a9e542a` 3 fix mirati · `607b5a9` fix4 `_strip_code_blocks` in placeholders). Suite 62/62 verdi. Working tree pulito, no push.
 
 ---
 
-## 🟢 PROSSIMA SESSIONE — Blocco 4: `kaora check`
+## 🟢 PROSSIMA SESSIONE — Blocco 5: README ricco + asset di lancio
 
-ADR 000-009 tutte `Accepted`. Blocco 3 chiuso. Self-dogfooding ADR-000 applicato e committato (`a9518d6`). Template § 11 step 5 già aggiornato con terza opzione "archive" (template/AGENTS.md:194). Pronto per Blocco 4 senza punti aperti bloccanti.
-
----
-
-## 🔵 PUNTI APERTI DA DECIDERE PRIMA DI PARTIRE
-
-### 1. Rituale di chiusura sessione — IMPLEMENTATO 2026-05-26 (era v0.2+, promosso a v0.1)
-
-Scoperta operativa dal dogfooding: senza rituale di chiusura simmetrico, i docs operativi divergono dallo stato reale. § 6bis aggiunta a `template/AGENTS.md` + `AGENTS.md` del repo. Comportamento: sintesi sessione → diff CURRENT_STATE → diff SESSION_HANDOFF → proposta commit, ognuno con Gate C. Vedi `docs/DOGFOODING_REPORT.md` § 4 per il contesto.
-
-`kaora handoff` CLI per automazione completa resta in v0.2+.
-
-### 2. Naming repo prima di PyPI (BACKLOG, Blocco 6)
-
-Non bloccante per Blocco 4, ma se vogliamo evitare di pubblicare con nome "sbagliato", decidere entro Blocco 5.
+ADR 000-009 tutte `Accepted`. Blocchi 1-4 chiusi. `kaora init` + `kaora check` entrambi funzionanti, dogfooding validato sul repo stesso. Pronto per Blocco 5 senza punti aperti bloccanti.
 
 ---
 
-### Obiettivo Blocco 4
+## 🔵 PUNTI APERTI
 
-Implementare `kaora check`: **linter per memoria operativa kaora installata**. Diagnostica integrità di un progetto post-`kaora init`. Pensato per:
-- Sviluppatori che vogliono validare il loro setup
-- Agenti AI che possono chiamarlo nel rituale di apertura per dare un report
-- CI in progetti che usano kaora
+### 1. Naming repo prima di PyPI (BACKLOG, Blocco 6)
 
-### Comportamento atteso
+Non bloccante per Blocco 5 ma se vogliamo evitare di pubblicare con nome "sbagliato", decidere entro fine Blocco 5. Vedi `BACKLOG.md` → naming.
 
-```
-$ kaora check [PATH]
+### 2. Pulizia placeholder strutturali in `template/docs/SESSION_HANDOFF.md` (basso costo, opzionale)
 
-Default PATH = directory corrente.
+`kaora check` post-fix4 NON li segnala più (sono dentro fenced code block, escluso da `_strip_code_blocks`). Ma se quei `{{project_path}}` e `{{year}}` nella spec stampata non sono volutamente esemplificativi, conviene pulirli alla fonte nel template. 30 secondi di edit.
 
-CHECKS (in ordine):
-1. Struttura minima:
-   - AGENTS.md presente (required)
-   - CLAUDE.md presente (required)
-   - docs/ presente con almeno DECISIONS.md + IDENTITY.md
-   - .claude/settings.json valido come JSON
-2. Coerenza ADR-005 (canonico + import):
-   - CLAUDE.md contiene direttiva `@AGENTS.md` (warn altrimenti)
-   - AGENTS.md ha contenuto ricco (>= N righe, soglia da definire)
-3. Stato ADR:
-   - docs/DECISIONS.md ha almeno una ADR `Accepted` (info se zero)
-   - ADR in stato `Proposed` segnalate (info, non error)
-4. Placeholder:
-   - {{project_name}}, {{project_path}}, {{year}} sostituiti (warn se ancora aperti)
-   - BOOTSTRAP markers ancora aperti (info, normale post-init)
-5. Hook eseguibili:
-   - .claude/hooks/*.sh hanno chmod +x (warn altrimenti)
-6. Settings:
-   - .claude/settings.json contiene hook kaora attesi (info se non match)
+### 3. Eventuale ADR-010 sul pattern `_strip_code_blocks` (formalizzazione)
 
-OUTPUT:
-- Sezioni colorate: ❌ ERROR / ⚠️ WARN / ℹ️ INFO / ✅ OK
-- Exit code: 0 se OK o solo warn/info, 1 se errors
+Pattern emerso 2 volte nello stesso Blocco 4 come fix coerente: "contenuto documentario interpretato come stato reale". Se emerge una terza categoria che richiede lo stesso fix, vale la pena formalizzare con ADR.
 
-FLAG:
-- --strict: warn diventano error (exit 1 anche su warn)
-- --quiet: mostra solo errors
-- --json: output machine-readable
-```
+---
 
-### File da creare
+## Obiettivo Blocco 5
 
-```
-kaora_memory/
-└── check.py                ✨ NUOVO — funzione check_project(target) -> CheckReport, plus CLI integration
+Asset di lancio pubblico. Far capire in 30 secondi a un visitatore del repo cosa è kaora-memory e perché dovrebbe usarlo. Brownfield-friendly: niente warning "solo greenfield", FAQ "ho già un CLAUDE.md?" → racconta backup-first + BOOTSTRAP-merge come *feature*.
 
-tests/
-└── test_check.py           ✨ NUOVO — coverage per ogni check definito sopra
-```
+### Output atteso a fine Blocco 5
 
-### Modifiche a file esistenti
+1. **`README.md` ricco** che sostituisce l'attuale minimal. Sezioni proposte (da validare in sessione):
+   - Hero: "Memoria operativa per agenti AI. Funziona su qualsiasi progetto, fresco o esistente."
+   - Problema: agenti AI senza memoria persistente, drift docs, sessioni isolate
+   - Soluzione: `pip install kaora-memory` → `kaora init` → ogni agente nuovo legge `AGENTS.md` + `CLAUDE.md` e parte coerente
+   - Quickstart: 3 comandi `pip install kaora-memory && cd mioprogetto && kaora init`
+   - FAQ brownfield: "ho già un CLAUDE.md?" → backup + merge guidato
+   - `kaora check` come strumento di validazione continua (output esempio)
+   - Link a `docs/PHILOSOPHY.md` per il *perché*
+2. **Demo del flow** (asciicast `asciinema` o GIF): `kaora init mioprogetto && kaora check mioprogetto`. Output reale visibile in poche righe.
+3. **Refresh asset esistenti** (vedi `CURRENT_STATE.md` → "Asset di comunicazione collegati"):
+   - `/tmp/kaora-memory-preview.html` — landing page premium, datata 22 maggio, da aggiornare con nuove feature (check, dogfooding)
+   - `/tmp/kaora-memory-launch-essay-brief.md` — brief saggio (sessione parallela)
+4. **Commit messaggio suggerito:** `feat(launch): README ricco + asciicast demo + landing refresh`
+5. **CURRENT_STATE.md + SESSION_HANDOFF.md** aggiornati con brief Blocco 6 (pubblicazione PyPI)
 
-- **`kaora_memory/cli.py`**: aggiungere `@main.command()` `check` (specchio di `init`)
-- **`docs/DECISIONS.md`**: eventuale ADR-010 (delegation depth: `/goal` vs delega normale kaora) o ADR su strategia `_template/`. Solo se decidi di formalizzare.
+### File da creare / modificare
+
+- `README.md` (riscrittura completa)
+- Eventuale `docs/quickstart.md` o `docs/faq.md` se README cresce troppo
+- Eventuale `assets/demo.cast` (asciinema) o `assets/demo.gif` (terminalizer)
+- Refresh `/tmp/kaora-memory-preview.html` (fuori repo)
+
+### Cosa NON toccare (Blocchi 1-4 chiusi)
+
+- ❌ `LICENSE`, `.gitignore`, `pyproject.toml` (salvo bump versione se servisse)
+- ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer, check}.py` — moduli stabili
+- ❌ `kaora_memory/cli.py` — salvo aggiunta di feature CLI legate al README (es. comando `kaora doctor` se emerge l'esigenza, ma è scope futuro)
+- ❌ `template/` salvo l'item v0.1 di pulizia placeholder strutturali (vedi PUNTI APERTI 2)
+- ❌ `bin/setup-dev.sh` — wrapper self-healing UF_HIDDEN stabile dal 2026-05-24
+- ❌ Riaprire ADR `Accepted` (000-009)
+- ❌ Push su GitHub — username finale ancora da decidere (vedi BACKLOG naming)
 
 ### Skill obbligatorie PRIMA di costruire (Gate A § 5.1)
 
-- **`tdd-workflows-tdd-cycle`** — pattern test-first applicato in Blocco 3, funziona bene per check.py (specifica come tests)
-- **`python-pro`** se serve refactor cli.py per sub-comandi multipli (non strettamente necessario, Click lo gestisce out-of-box)
-
-### Cosa NON toccare (Blocco 1+2+3 chiusi)
-
-- ❌ `LICENSE`, `.gitignore` finalizzati
-- ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer}.py` — moduli stabili Blocco 3
-- ❌ `template/` salvo: (a) bug critici scoperti durante implementazione `check`, (b) aggiornamento § 11 step 5 con terza opzione "archive" (item v0.1 in BACKLOG)
-- ❌ Riaprire ADR `Accepted` (000-009)
-- ❌ `bin/setup-dev.sh` — wrapper self-healing UF_HIDDEN già applicato 2026-05-24, non rivederlo
+- **Nessuna obbligatoria.** Blocco 5 è scrittura + asset visivi, non richiede skill tecniche specifiche di kaora.
+- *Opzionali*, se Alexis vuole struttura validata: `copywriting`, `marketing-psychology`, `landing-page-generator`. Decisione caso per caso.
 
 ### Check di apertura sessione
 
 ```bash
 cd ~/Desktop/kaora-memory
 python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
-ls template/ template/docs template/.claude/hooks
 git log --oneline -5
-grep -c "Proposed" docs/DECISIONS.md   # deve essere 0
-.venv/bin/python -m pytest -q && echo "TEST OK (33/33)"
+.venv/bin/python -m pytest -q && echo "TEST OK (62/62)"
 .venv/bin/kaora --version && echo "CLI OK"
+.venv/bin/kaora check . 2>&1 | tail -20   # dogfooding rapido stato repo
 ```
 
-Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalla wrapper self-healing su `.venv/bin/kaora`). Capita se hai rifatto `pip install -e .` manualmente bypassando lo script.
-
-### Output atteso a fine Blocco 4
-
-1. `kaora check` funzionante su:
-   - Progetto greenfield appena fatto `kaora init` → tutti i check OK
-   - Progetto con CLAUDE.md mancante → ERROR
-   - Progetto con BOOTSTRAP marker ancora aperti → INFO non bloccante
-   - Progetto con placeholder strutturali ancora aperti → WARN
-2. Test green: `pytest tests/test_check.py` + suite totale invariata
-3. Commit: `feat(cli): kaora check linter integrità memoria operativa`
-4. `CURRENT_STATE.md` e `SESSION_HANDOFF.md` aggiornati con brief Blocco 5
-
-### Cosa NON aprire in questa sessione
-
-- ❌ Blocco 5 (README ricco + asset di lancio) — solo dopo check validato
-- ❌ Pubblicazione PyPI — Blocco 6
-- ❌ Push su GitHub — username finale ancora da decidere (vedi BACKLOG naming repo)
+Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalla wrapper self-healing su `.venv/bin/kaora`). Capita se hai rifatto `pip install -e .` bypassando lo script.
 
 ---
 
@@ -136,4 +91,4 @@ Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh`
 - **Apri Claude Code in `~/Desktop/kaora-memory/`**
 - **Registro:** italiano · diretto · no preamboli · una decisione alla volta · modalità Operativa vs Apprendimento (ADR-007)
 - **Decisioni grandi** → nuova ADR in `docs/DECISIONS.md` (ADR-008 step 6 del rituale)
-- **Self-dogfooding:** APPLICATO 2026-05-26 con opzione A (esecuzione reale). Commit pending nel working tree.
+- **Modalità Blocco 5** è **scrittura ad alta densità**, non implementazione. Aspettati molta più modalità *Apprendimento* (esplorazione narrativa, scelta hero, tone of voice) rispetto a Blocco 4.

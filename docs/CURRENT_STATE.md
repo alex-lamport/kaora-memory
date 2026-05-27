@@ -2,14 +2,14 @@
 
 > Aggiornato a fine di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
 >
-> **Ultimo aggiornamento:** 2026-05-27 — Drift docs allineato post-commit dogfooding `a9518d6` (apertura sessione Blocco 4). Self-dogfooding ADR-000 APPLICATO (opzione A) e committato: `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato dall'agente completato, `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Bug UF_HIDDEN macOS RISOLTO via wrapper self-healing in `bin/setup-dev.sh` (2026-05-24).
+> **Ultimo aggiornamento:** 2026-05-27 — **Blocco 4 chiuso**: `kaora check` linter integrità memoria operativa implementato TDD (green `29fa094` + refactor `a9e542a` + fix4 `607b5a9`). 6 categorie di check (structure/adr005/adr_state/placeholders/hooks/settings), CLI `kaora check [PATH] --strict --quiet --json`. Suite 62/62 verdi. Re-dogfooding live ha rivelato pattern coerente: `_strip_code_blocks` applicato sia in `_check_adr_state` sia in `_check_placeholders` per escludere contenuto documentario fenced in ```.
 
 ---
 
 ## Snapshot oggi
 
-**Blocco corrente:** Blocco 3 ✅ chiuso · Self-dogfooding ✅ applicato e committato · Blocco 4 prossimo (`kaora check`)
-**Commit ultimo in main:** `a9518d6 feat(dogfooding): kaora init sul repo + rituale chiusura § 6bis + archive bak + report`. Blocchi 2+3 + dogfooding tutti committati. Working tree pulito.
+**Blocco corrente:** Blocco 4 ✅ chiuso (`kaora check`) · Blocco 5 prossimo (README ricco + asset di lancio)
+**Commit ultimo in main:** `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. Working tree pulito.
 **Branch:** `main`
 **Repo remoto:** non ancora configurato (placeholder URL `alex-lamport/kaora-memory` in pyproject)
 **ADR aperte:** nessuna · tutte 000-009 Accepted
@@ -28,18 +28,20 @@ kaora-memory/
 ├── AGENT_BRIEF.md                    ✨ NUOVO (post-dogfooding) — onboarding agenti
 ├── bin/
 │   └── setup-dev.sh                  ✨ AGGIORNATO 2026-05-24 — venv + pip -e .[dev] + installa wrapper self-healing su .venv/bin/kaora (fix UF_HIDDEN macOS)
-├── kaora_memory/                     ✨ ESPANSO (Blocco 3)
+├── kaora_memory/                     ✨ ESPANSO (Blocco 3) + Blocco 4
 │   ├── __init__.py                   (__version__ = "0.1.0")
-│   ├── settings_merger.py            ✨ NUOVO — merge JSON ADR-006 v2 (permissions union, hooks dedup by matcher)
-│   ├── template_resolver.py          ✨ NUOVO — get_template_root() con importlib.resources + fallback dev path
-│   ├── installer.py                  ✨ NUOVO — install_template() + InstallReport, policy 3 categorie
-│   └── cli.py                        ✨ NUOVO — Click app, comando `kaora init [PATH] [--force] [--dry-run] [--no-git-init]`
-├── tests/                            ✨ NUOVO (Blocco 3) — 33 test green
+│   ├── settings_merger.py            (Blocco 3) — merge JSON ADR-006 v2
+│   ├── template_resolver.py          (Blocco 3) — get_template_root() con importlib.resources + fallback dev
+│   ├── installer.py                  (Blocco 3) — install_template() + InstallReport, policy 3 categorie
+│   ├── check.py                      ✨ NUOVO (Blocco 4) — check_project() + CheckResult/CheckReport, 6 categorie, format_text/format_json
+│   └── cli.py                        ESPANSO (Blocco 4) — aggiunto sub-command `kaora check [PATH] [--strict] [--quiet] [--json]`
+├── tests/                            ESPANSO (Blocco 4) — 62 test green (33 Blocco 3 + 29 Blocco 4)
 │   ├── __init__.py
-│   ├── test_settings_merger.py       (8 cases)
-│   ├── test_template_resolver.py     (3 cases)
-│   ├── test_init.py                  (18 cases: greenfield/brownfield/dry-run/force/placeholder)
-│   └── test_cli.py                   (4 cases: --version, init greenfield, --dry-run, default cwd)
+│   ├── test_settings_merger.py       (8 cases, Blocco 3)
+│   ├── test_template_resolver.py     (3 cases, Blocco 3)
+│   ├── test_init.py                  (18 cases, Blocco 3)
+│   ├── test_cli.py                   (7 cases: 4 init + 3 check CLI smoke)
+│   └── test_check.py                 ✨ NUOVO (Blocco 4) — 26 cases (6 categorie + 3 format + 4 refactor regression)
 ├── docs/
 │   ├── CURRENT_STATE.md              (questo file)
 │   ├── SESSION_HANDOFF.md            (brief Blocco 4)
@@ -91,11 +93,20 @@ Modifica vs SESSION_HANDOFF Blocco 1: aggiunto `{{communication_language}}` per 
 
 ## Cosa manca (priorità ordinata)
 
-1. **`kaora_memory/check.py`** + tests — TUTTO Blocco 4 (`kaora check`: linter integrità memoria operativa)
-2. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti)
-3. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
-4. **Decisione naming repo** (`kaora-memory` vs `kaora-mc` vs altri) — prima di pubblicazione PyPI, vedi BACKLOG
-5. **Possibile ADR-010** "delegation depth selection: `/goal` vs delega kaora normale" — emersa durante Blocco 3 dopo test pratico di `/goal`, da scrivere quando il pattern d'uso si consolida
+1. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti, vedi sezione "Asset di comunicazione")
+2. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
+3. **Decisione naming repo** (`kaora-memory` vs `kaora-mc` vs altri) — prima di pubblicazione PyPI, vedi BACKLOG
+4. **Possibile ADR-010** "delegation depth selection: `/goal` vs delega kaora normale" — emersa durante Blocco 3 dopo test pratico di `/goal`, da scrivere quando il pattern d'uso si consolida
+5. **Pulizia placeholder strutturali in `docs/SESSION_HANDOFF.md` template** — `kaora check` post-fix4 non li segnala più (sono in fenced block), ma se non sono volutamente esemplificativi conviene pulirli alla fonte (`template/docs/SESSION_HANDOFF.md`). Basso costo.
+
+## Decisioni di design Blocco 4 (in attesa formalizzazione)
+
+- **CheckResult / CheckReport** dataclass con `level: Literal["error", "warn", "info", "ok"]` + `category: str` + `message + hint`. Severity separata dall'exit code: `CheckReport.exit_code(strict: bool = False)` promuove warn → 1 solo se `--strict`. Separation of concerns: la funzione check non cambia comportamento in strict, solo l'exit code lo fa.
+- **Soglia AGENTS.md min 50 righe** (`_AGENTS_MIN_LINES`): empirica, post-`kaora init` AGENTS canonico è ~150 righe. Sotto 50 = file mutilato.
+- **`_strip_code_blocks` riusato 2 volte** (adr_state + placeholders): pattern emerso durante re-dogfooding live. Stessa radice del falso positivo "contenuto documentario interpretato come stato reale". Da formalizzare eventualmente come funzione "documentary-content-aware" se compare un terzo caso.
+- **`_has_kaora_hook_command` con navigazione tipizzata** invece di `json.dumps + substring`: scelta più robusta dopo dogfooding-review, evita falsi positivi su campi arbitrari (`comment`, ecc.) che menzionano il nome dell'hook.
+- **`_placeholder_scan_paths` dinamico** (root .md + docs/**/*.md escluso archive/ e PHILOSOPHY.md): scala automaticamente quando il builder aggiunge `docs/NOTES.md`, `docs/CUSTOM.md`, ecc. Hardcoded list non scalava.
+- **Skill `tdd-workflows-tdd-cycle` invocata e scalata al contesto solo-builder**: la skill prescrive orchestrazione con 8 sub-agenti (architect-review, test-automator, backend-architect, code-reviewer), overkill per kaora. Pattern TDD red→green→refactor applicato direttamente dall'agente con checkpoint a Alexis ai passaggi chiave (Gate B). Coerente con § 3 "una direzione alla volta" + ADR-009 (skill skip se specifica già chiusa).
 
 ## Decisioni di design Blocco 3 (in attesa formalizzazione)
 
