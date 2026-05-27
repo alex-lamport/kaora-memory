@@ -144,12 +144,76 @@ Tempo totale per un brownfield medio: 20-40 minuti (la maggior parte in approval
 
 ## 7. Prossimi passi v0.1 derivati da questo report
 
-1. **Aggiunta § 6bis Rituale di chiusura** in `template/AGENTS.md` — fatto in questa sessione
-2. **Aggiornamento § 11 step 5** con terza opzione "archive" in `template/AGENTS.md` — in BACKLOG, da chiudere prima del lancio
-3. **Blocco 4: `kaora check`** — linter post-init per validare integrità memoria operativa
-4. **Blocco 5: README ricco + asset di lancio** — questo report diventa input narrativo per landing e saggio
-5. **Blocco 6: pubblicazione PyPI + naming repo**
+1. **Aggiunta § 6bis Rituale di chiusura** in `template/AGENTS.md` — ✅ fatto 2026-05-26
+2. **Aggiornamento § 11 step 5** con terza opzione "archive" — ✅ fatto 2026-05-27 (commit `a9518d6`)
+3. **Blocco 4: `kaora check`** — ✅ chiuso 2026-05-27 (5 commit, 62 test verdi, 4 raffinamenti coerenti)
+4. **Blocco 5: README ricco + asset di lancio** — 🟡 prossimo (questo report = input narrativo)
+5. **Blocco 6: pubblicazione PyPI + naming repo** — 🔵 pending
+
+## 8. Follow-up verifications (post-dogfooding)
+
+Iterazioni di validation eseguite **dopo** il dogfooding originale del 2026-05-26. Documentano il funzionamento del prodotto sotto condizioni reali ripetute.
+
+### 8.1 — 2026-05-27 mattina — Validation rituale di apertura post-aggiornamento
+
+**Setup:** nuova sessione Claude Code aperta in repo dopo che la sessione di dogfooding aveva applicato § 6bis (rituale di chiusura) + commit `a9518d6` + archive del `.kaora-bak` in `docs/archive/`.
+
+**Risultato:**
+- ✅ **Scan `.kaora-bak` pulito**: il glob in root + `docs/` direct-children non ha trovato nulla (il file archiviato in `docs/archive/` è correttamente escluso dallo scan rituale). Conferma che l'opzione 3 "archive" risolve il problema del rumore in apertura sessione.
+- ✅ **Drift detection proattivo**: l'agente naive ha notato di propria iniziativa che `CURRENT_STATE.md` + `SESSION_HANDOFF.md` segnavano *"commit dogfooding pending"* mentre `a9518d6` esisteva già in `git log`. Ha proposto auto-correzione, applicata in commit `eabae39`.
+- ✅ **Validazione indiretta del § 6bis**: il rituale di chiusura applicato in sessione precedente aveva lasciato docs in uno stato testabile (drift residuo limitato, narrazione del lavoro fatto coerente con git).
+
+**Implicazione di prodotto:** il pattern di drift detection in apertura sessione NON è oggi codificato esplicitamente nel rituale § 6, è emerso come comportamento naturale dell'agente. Da valutare se aggiungerlo come step esplicito ("step 4.5: confronta CURRENT_STATE.md con git log ultimo commit; se divergente, segnala") in v0.2. Item da aggiungere a BACKLOG.
+
+### 8.2 — 2026-05-27 sera — Blocco 4 `kaora check` con pattern dual-session
+
+**Setup:** nuova sessione Claude Code per implementare Blocco 4. In parallelo, sessione di revisione esperta (questo report scritto da quella).
+
+**Flusso eseguito:**
+1. **Skill loading**: `tdd-workflows-tdd-cycle` caricata prima del codice (Gate A § 5.1)
+2. **Spec test proposta**: 22 test in `test_check.py` + 3 CLI in `test_cli.py`, mappati 1:1 con i 6 check di SESSION_HANDOFF. Approvata dal revisore con micro-precisazioni (distinzione esplicita WARN strutturali vs INFO BOOTSTRAP).
+3. **Red phase**: 24 test scritti, tutti falliscono per i motivi giusti (`ModuleNotFoundError` + `Error: No such command 'check'`). Suite esistente 33 test intatta (zero regressione).
+4. **Green phase**: `kaora_memory/check.py` (299 LOC) implementato incrementalmente per categoria (structure → adr005 → adr_state → placeholders → hooks → settings → formatters). Pattern *"pytest dopo ogni categoria, delta verde sintetico"* (vedi memoria `feedback_tdd_incrementale_per_categoria.md`).
+5. **Commit feature base**: `29fa094 feat(cli): kaora check linter integrità memoria operativa`. 57/57 verdi (33 + 24).
+6. **Review post-green**: il revisore ha letto `check.py` completo e ha identificato 4 trade-off di design (falso positivo "Proposed" in code-block, settings stringy, file hardcoded, Level Literal solo statico). I primi 3 sostanziali.
+7. **Decisione utente**: chiudere i raffinamenti in v0.1 invece che rimandarli a v0.2 (preferenza esplicita: *"v0.1 chiusa bene > v0.1 con 3 cose da ricordare"*).
+8. **Refactor commit 1**: `a9e542a refactor(check): code-block exclusion + struct parsing + dynamic .md scan`. 3 fix mirati, ognuno preceduto dal proprio test rosso. 61/61 verdi.
+9. **Re-dogfooding live**: `kaora check .` sul repo ha rivelato 2 nuovi WARN reali su `docs/SESSION_HANDOFF.md` (placeholder `{{...}}` dentro fenced code block della spec). **Stesso pattern del falso "Proposed"** in versione placeholder.
+10. **Refactor commit 2**: `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. 1 riga di codice + 1 test, riusa la funzione esistente. 62/62 verdi.
+11. **Rituale di chiusura § 6bis**: applicato dall'agente naive. Diff CURRENT_STATE + SESSION_HANDOFF approvati dal revisore, commit `dae7126 chore(handoff): chiusura sessione Blocco 4 + brief Blocco 5`.
+
+**Pattern emerso (4 fix, una stessa radice):**
+
+Tutti e 4 i raffinamenti riducono al pattern **"contenuti documentari ≠ contenuti reali"**:
+- ADR Proposed dentro esempio template → non contare
+- Placeholder `{{...}}` dentro spec di kaora check → non contare
+- `<BOOTSTRAP/>` marker dentro esempio template → non contare
+- Hook name dentro campo arbitrario (commento, key) → non contare come hook attivo
+
+Tutti i fix usano la stessa tecnica: separare l'estrazione del contenuto rilevante dalla struttura documentaria che lo descrive. Materiale narrativo forte per Blocco 5: il prodotto ha imparato a distinguere "documentazione su X" da "X reale", che è esattamente la filosofia metacognitiva che vendiamo nel manifesto.
+
+**Risultato Blocco 4 finale:**
+- 62 test verdi (33 + 21 + 4 + 1 + 3 CLI)
+- 5 commit Blocco 4 (`29fa094` → `a9e542a` → `607b5a9` → `dae7126`) + 1 di drift `eabae39` in apertura
+- Memoria persistente arricchita con `feedback_tdd_incrementale_per_categoria.md` (pattern TDD step-by-step per moduli multi-categoria)
+
+### 8.3 — Pattern dual-session (agente naive + revisore esperto)
+
+Validato su due cicli consecutivi (dogfooding 2026-05-26 + Blocco 4 2026-05-27): la coppia *"sessione esecutiva naive con context fresh + sessione revisore con context completo"* produce qualità superiore al singolo agente.
+
+**Vantaggi osservati:**
+- L'agente naive trova naturalmente i punti di estensione del template (terza opzione archive emersa spontaneamente)
+- Il revisore cattura imprecisioni di sintesi e trade-off di design che l'esecutore non vede dal suo angolo
+- Il pattern test-first + revisione del codice prima del commit prende gli errori prima che diventino debt
+- Comunicazione tramite l'utente come ponte: l'utente passa diff/output, il revisore commenta, l'utente sintetizza la risposta per l'agente naive
+
+**Limite osservato:**
+- Costo cognitivo per l'utente (deve copia-incollare avanti e indietro)
+- Latency: ogni round trip aggiunge 30-60 secondi
+- Non scala a >2 sessioni simultanee (overhead diventa dominante)
+
+**Implicazione di prodotto:** il workflow dual-session **non è oggi parte del prodotto kaora-memory** (è un meta-pattern di utilizzo). Da considerare per documentazione di lancio (Blocco 5): può diventare un capitolo del README *"Come usare kaora-memory in scenari ad alta complessità"*. Oppure restare come pratica scoperta dagli utenti avanzati senza codificarla nel prodotto.
 
 ---
 
-*Report autoritativo, eventuali sessioni future di dogfooding aggiungono un nuovo report dedicato (es. `docs/DOGFOODING_REPORT_v0.1.1.md`) invece di modificare questo.*
+*Report autoritativo, eventuali sessioni future di dogfooding aggiungono un nuovo report dedicato (es. `docs/DOGFOODING_REPORT_v0.1.1.md`) invece di modificare questo. Le sezioni "Follow-up verifications" (§ 8+) sono l'eccezione: documentano iterazioni di validation sullo stesso ciclo v0.1, non nuovi cicli.*
