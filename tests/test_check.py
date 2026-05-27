@@ -241,6 +241,36 @@ def test_adr_state_has_accepted_is_ok(tmp_path: Path):
     assert "error" not in levels
 
 
+def test_adr_state_ignores_proposed_in_code_block(tmp_path: Path):
+    """Un **Stato:** Proposed dentro un fenced code block è un esempio template,
+    non un'ADR reale. Non deve generare INFO."""
+    _valid_project(tmp_path)
+    (tmp_path / "docs" / "DECISIONS.md").write_text(
+        "# DECISIONS\n\n"
+        "## ADR-001 Reale\n\n"
+        "**Stato:** Accepted\n\n"
+        "Decisione presa.\n\n"
+        "---\n\n"
+        "Template per nuove ADR (esempio, non un'ADR reale):\n\n"
+        "```\n"
+        "## ADR-XXX Titolo\n\n"
+        "**Stato:** Proposed\n"
+        "```\n",
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    proposed_infos = [
+        r for r in report.results
+        if r.category == "adr_state" and "Proposed" in r.message
+    ]
+    assert proposed_infos == [], (
+        f"Atteso 0 INFO 'Proposed' (sono dentro code-block), "
+        f"trovati {len(proposed_infos)}: {[r.message for r in proposed_infos]}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # 4. PLACEHOLDERS (3)
 # ---------------------------------------------------------------------------
@@ -287,6 +317,45 @@ def test_placeholders_clean_is_ok(tmp_path: Path):
     levels = _levels(report, "placeholders")
     assert "warn" not in levels
     assert "error" not in levels
+
+
+def test_placeholders_scans_all_md_in_docs(tmp_path: Path):
+    """File .md aggiuntivi in docs/ (es. CUSTOM.md, NOTES.md) devono essere
+    scansionati. Lista hardcoded non scala."""
+    _valid_project(tmp_path)
+    (tmp_path / "docs" / "CUSTOM.md").write_text(
+        "# Custom\n\nProject: {{project_name}}\n", encoding="utf-8"
+    )
+
+    report = check_project(tmp_path)
+
+    placeholder_warns = [r for r in report.warnings if r.category == "placeholders"]
+    assert any("CUSTOM.md" in r.message for r in placeholder_warns), (
+        f"Atteso warn su docs/CUSTOM.md, warnings trovati: "
+        f"{[r.message for r in placeholder_warns]}"
+    )
+
+
+def test_placeholders_skips_archive_and_philosophy(tmp_path: Path):
+    """docs/archive/** e docs/PHILOSOPHY.md non sono kaora-managed e devono
+    essere esclusi (contengono testo discorsivo, falsi positivi)."""
+    _valid_project(tmp_path)
+    archive = tmp_path / "docs" / "archive"
+    archive.mkdir()
+    (archive / "OLD.md").write_text(
+        "Memoria pre-install: {{project_name}}\n", encoding="utf-8"
+    )
+    (tmp_path / "docs" / "PHILOSOPHY.md").write_text(
+        "Esempio narrativo: {{project_name}} è un placeholder concettuale.\n",
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    placeholder_warns = [r for r in report.warnings if r.category == "placeholders"]
+    paths_with_warn = " ".join(r.message for r in placeholder_warns)
+    assert "archive" not in paths_with_warn
+    assert "PHILOSOPHY" not in paths_with_warn
 
 
 # ---------------------------------------------------------------------------
@@ -336,6 +405,28 @@ def test_settings_with_kaora_hooks_is_ok(tmp_path: Path):
     levels = _levels(report, "settings")
     assert "warn" not in levels
     assert "error" not in levels
+
+
+def test_settings_string_match_outside_hooks_struct_is_not_enough(tmp_path: Path):
+    """Stringy match è troppo permissivo: un campo arbitrario può menzionare il
+    nome dell'hook senza che sia effettivamente configurato. Il check deve
+    navigare hooks.<Event>[*].hooks[*].command, non fare substring sul blob."""
+    _valid_project(tmp_path)
+    (tmp_path / ".claude" / "settings.json").write_text(
+        json.dumps({
+            "theme": "dark",
+            "comment": "see protect-credentials.sh for details",
+            "hooks": {},  # nessun hook reale configurato
+        }),
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    assert "info" in _levels(report, "settings"), (
+        "string-match permissivo non basta: il check deve verificare la "
+        "struttura hooks.<Event>[*].hooks[*].command"
+    )
 
 
 # ---------------------------------------------------------------------------

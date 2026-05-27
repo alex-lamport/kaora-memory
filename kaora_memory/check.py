@@ -132,6 +132,12 @@ def _check_adr005(target: Path, report: CheckReport) -> None:
 
 _RE_ADR_ACCEPTED = re.compile(r"\*\*Stato:\*\*\s*Accepted", re.IGNORECASE)
 _RE_ADR_PROPOSED = re.compile(r"\*\*Stato:\*\*\s*Proposed", re.IGNORECASE)
+_RE_FENCED_CODE_BLOCK = re.compile(r"```.*?```", re.DOTALL)
+
+
+def _strip_code_blocks(content: str) -> str:
+    """Rimuove fenced code blocks per evitare di matchare esempi template."""
+    return _RE_FENCED_CODE_BLOCK.sub("", content)
 
 
 def _check_adr_state(target: Path, report: CheckReport) -> None:
@@ -139,7 +145,7 @@ def _check_adr_state(target: Path, report: CheckReport) -> None:
     if not decisions.is_file():
         return  # error già loggato in _check_structure
 
-    content = decisions.read_text(encoding="utf-8")
+    content = _strip_code_blocks(decisions.read_text(encoding="utf-8"))
     n_accepted = len(_RE_ADR_ACCEPTED.findall(content))
     n_proposed = len(_RE_ADR_PROPOSED.findall(content))
 
@@ -170,19 +176,30 @@ _BOOTSTRAP_PLACEHOLDERS = (
     "communication_language",
 )
 _RE_BOOTSTRAP_MARKER = re.compile(r"<BOOTSTRAP[^>]*/?>", re.IGNORECASE)
-_PLACEHOLDER_SCAN_FILES = (
-    "AGENTS.md",
-    "CLAUDE.md",
-    "docs/IDENTITY.md",
-    "docs/DECISIONS.md",
-)
+_PLACEHOLDER_EXCLUDE_NAMES = {"PHILOSOPHY.md"}
+_PLACEHOLDER_EXCLUDE_DIR_PARTS = {"archive"}
+
+
+def _placeholder_scan_paths(target: Path) -> list[Path]:
+    """Tutti i .md kaora-managed: root + docs/ ricorsivo, escluso
+    docs/archive/** e docs/PHILOSOPHY.md (contenuto narrativo non
+    soggetto a sostituzione)."""
+    paths: list[Path] = sorted(target.glob("*.md"))
+    docs = target / "docs"
+    if docs.is_dir():
+        for p in sorted(docs.rglob("*.md")):
+            parts = p.relative_to(target).parts
+            if _PLACEHOLDER_EXCLUDE_DIR_PARTS.intersection(parts):
+                continue
+            if p.name in _PLACEHOLDER_EXCLUDE_NAMES:
+                continue
+            paths.append(p)
+    return paths
 
 
 def _check_placeholders(target: Path, report: CheckReport) -> None:
-    for rel in _PLACEHOLDER_SCAN_FILES:
-        path = target / rel
-        if not path.is_file():
-            continue
+    for path in _placeholder_scan_paths(target):
+        rel = path.relative_to(target).as_posix()
         content = path.read_text(encoding="utf-8")
 
         for ph in _STRUCTURAL_PLACEHOLDERS:
@@ -248,8 +265,7 @@ def _check_settings(target: Path, report: CheckReport) -> None:
     except json.JSONDecodeError:
         return  # già loggato da _check_structure
 
-    blob = json.dumps(data)
-    if not any(name in blob for name in _KAORA_HOOK_NAMES):
+    if not _has_kaora_hook_command(data):
         report.results.append(CheckResult(
             level="info",
             category="settings",
@@ -259,6 +275,35 @@ def _check_settings(target: Path, report: CheckReport) -> None:
             ),
             hint="riesegui `kaora init` per aggiungere gli hook standard",
         ))
+
+
+def _has_kaora_hook_command(settings_data: object) -> bool:
+    """Naviga settings.json e cerca un command che termini con un hook kaora.
+
+    Struttura attesa Claude Code:
+      settings["hooks"][<Event>] = [{"matcher": ..., "hooks": [{"command": "..."}, ...]}, ...]
+    """
+    if not isinstance(settings_data, dict):
+        return False
+    hooks_root = settings_data.get("hooks")
+    if not isinstance(hooks_root, dict):
+        return False
+    for event_entries in hooks_root.values():
+        if not isinstance(event_entries, list):
+            continue
+        for entry in event_entries:
+            if not isinstance(entry, dict):
+                continue
+            for hook in entry.get("hooks", []) or []:
+                if not isinstance(hook, dict):
+                    continue
+                command = hook.get("command", "")
+                if isinstance(command, str) and any(
+                    command.endswith(name) or f"/{name}" in command
+                    for name in _KAORA_HOOK_NAMES
+                ):
+                    return True
+    return False
 
 
 # ---------------------------------------------------------------------------
