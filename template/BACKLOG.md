@@ -1,22 +1,22 @@
-# BACKLOG.md — idee fuori scope corrente
+# BACKLOG.md — ideas outside current scope
 
-> Tutto quello che non è "ora" vive qui. Quando una voce diventa "ora", si sposta in `docs/SESSION_HANDOFF.md` come obiettivo della prossima sessione.
+> Anything that isn't "now" lives here. When an item becomes "now", it moves into `docs/SESSION_HANDOFF.md` as the goal of the next session.
 >
-> **Regola:** una voce nel backlog non è una promessa. È una nota per non dimenticare.
+> **Rule:** an entry in the backlog is not a promise. It's a note so you don't forget.
 
 ---
 
-## Idee
+## Ideas
 
 <BOOTSTRAP need="initial-backlog" sources="README roadmap, TODO comments in code, prior conversation notes, .kaora-bak content"/>
 
 <!--
-Formato suggerito per ogni voce:
+Suggested format for each entry:
 
-## [Categoria] Titolo breve
+## [Category] Short title
 
-**Aggiunto:** YYYY-MM-DD
-**Stato:** idea | da-valutare | pronto-per-sessione
+**Added:** YYYY-MM-DD
+**Status:** idea | to-evaluate | session-ready
 
-Cosa significa concretamente, perché potrebbe valere la pena, cosa va deciso prima.
+What it means concretely, why it might be worth doing, what needs to be decided first.
 -->

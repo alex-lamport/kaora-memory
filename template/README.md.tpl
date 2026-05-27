@@ -2,11 +2,11 @@
 
 > {{project_oneliner}}
 
-**Owner:** {{owner_name}} · **Anno:** {{year}}
+**Owner:** {{owner_name}} · **Year:** {{year}}
 
 ---
 
-## Stato
+## Status
 
 <BOOTSTRAP need="readme-status" sources="docs/CURRENT_STATE.md stage section"/>
 
@@ -18,20 +18,20 @@
 
 <BOOTSTRAP need="readme-setup" sources="package.json scripts, Makefile, installation docs, README in .kaora-bak"/>
 
-## Comandi
+## Commands
 
 <BOOTSTRAP need="readme-commands" sources="package.json scripts, Makefile targets, justfile, taskfile"/>
 
-## Memoria operativa AI
+## AI operating memory
 
-Questo progetto usa [kaora-memory](https://pypi.org/project/kaora-memory/) per la memoria persistente di Claude Code / Codex CLI / Cursor / Aider / Gemini CLI.
+This project uses [kaora-memory](https://pypi.org/project/kaora-memory/) for persistent memory across Claude Code / Codex CLI / Cursor / Aider / Gemini CLI.
 
-- `AGENTS.md` — master context cross-agent
-- `CLAUDE.md` — import per Claude Code
-- `docs/CURRENT_STATE.md` · `docs/SESSION_HANDOFF.md` · `docs/DECISIONS.md` — stato vivo + brief + ADR log
+- `AGENTS.md` — cross-agent master context
+- `CLAUDE.md` — import for Claude Code
+- `docs/CURRENT_STATE.md` · `docs/SESSION_HANDOFF.md` · `docs/DECISIONS.md` — live state + brief + ADR log
 
-Apri il progetto in un agente e dai il via: il rituale di apertura ti aggiornerà sullo stato in 3 righe.
+Open the project in an agent and give it the go: the opening ritual will catch you up on the state in 3 lines.
 
-## Licenza
+## License
 
 <BOOTSTRAP need="readme-license" sources="LICENSE file, package.json license, pyproject.toml license"/>

@@ -1,77 +1,87 @@
-# SESSION_HANDOFF.md — brief per la prossima sessione
+# SESSION_HANDOFF.md — brief for the next session
 
-> Leggi subito dopo `CLAUDE.md` e `CURRENT_STATE.md`.
+> Read right after `CLAUDE.md` and `CURRENT_STATE.md`.
 >
-> **Ultima sessione:** 2026-05-27 · **Blocco 4 chiuso** — `kaora check` linter integrità memoria operativa implementato TDD red→green→refactor. Sei categorie (structure, adr005, adr_state, placeholders, hooks, settings). 4 commit nuovi (`eabae39` drift docs · `29fa094` green · `a9e542a` 3 fix mirati · `607b5a9` fix4 `_strip_code_blocks` in placeholders). Suite 62/62 verdi. Working tree pulito, no push.
+> **Last session:** 2026-05-27 · **Mini-Block 4.5 closed** — full IT→EN i18n refactor of the entire codebase (template + root docs + Python code + tests + bash). English is now the framework language; `{{communication_language}}` placeholder preserves multilingual runtime. Atomic regex update: `_RE_ADR_*` searches `**Status:**`. 5 sub-agent reviews GREEN (Wave A, B-1, B-2, C-1, C-2). Suite 62/62 green throughout. Working tree dirty: i18n refactor pending commit.
 
 ---
 
-## 🟢 PROSSIMA SESSIONE — Blocco 5: README ricco + asset di lancio
+## 🟢 NEXT SESSION — Block 5: rich README + launch assets (in English)
 
-ADR 000-009 tutte `Accepted`. Blocchi 1-4 chiusi. `kaora init` + `kaora check` entrambi funzionanti, dogfooding validato sul repo stesso. Pronto per Blocco 5 senza punti aperti bloccanti.
-
----
-
-## 🔵 PUNTI APERTI
-
-### 1. Naming repo prima di PyPI (BACKLOG, Blocco 6)
-
-Non bloccante per Blocco 5 ma se vogliamo evitare di pubblicare con nome "sbagliato", decidere entro fine Blocco 5. Vedi `BACKLOG.md` → naming.
-
-### 2. Pulizia placeholder strutturali in `template/docs/SESSION_HANDOFF.md` (basso costo, opzionale)
-
-`kaora check` post-fix4 NON li segnala più (sono dentro fenced code block, escluso da `_strip_code_blocks`). Ma se quei `{{project_path}}` e `{{year}}` nella spec stampata non sono volutamente esemplificativi, conviene pulirli alla fonte nel template. 30 secondi di edit.
-
-### 3. Eventuale ADR-010 sul pattern `_strip_code_blocks` (formalizzazione)
-
-Pattern emerso 2 volte nello stesso Blocco 4 come fix coerente: "contenuto documentario interpretato come stato reale". Se emerge una terza categoria che richiede lo stesso fix, vale la pena formalizzare con ADR.
+ADR 000-009 all `Accepted`. Blocks 1-4 closed. Block 4.5 (i18n) closed. `kaora init` + `kaora check` both working in EN, dogfooding validated. **README to write in English** (audience now: global open-source community).
 
 ---
 
-## Obiettivo Blocco 5
+## 🔵 OPEN POINTS
 
-Asset di lancio pubblico. Far capire in 30 secondi a un visitatore del repo cosa è kaora-memory e perché dovrebbe usarlo. Brownfield-friendly: niente warning "solo greenfield", FAQ "ho già un CLAUDE.md?" → racconta backup-first + BOOTSTRAP-merge come *feature*.
+### 1. Commit the Block 4.5 i18n refactor before starting Block 5
 
-### Output atteso a fine Blocco 5
+Working tree currently dirty with the full IT→EN translation. Suggested commit structure (proposed by the i18n session for review):
+- `refactor(i18n): translate framework + template to English` — all .md files (template/ + root + docs/), preserves `{{communication_language}}` placeholder
+- `refactor(check): regex match Status instead of Stato + Python/tests sync` — `kaora_memory/check.py` regex update, all Python module docstrings/comments/user-facing strings, test fixtures synced, `tests/test_check.py:190` and `tests/test_cli.py:27` updated, `bin/setup-dev.sh` comments translated
 
-1. **`README.md` ricco** che sostituisce l'attuale minimal. Sezioni proposte (da validare in sessione):
-   - Hero: "Memoria operativa per agenti AI. Funziona su qualsiasi progetto, fresco o esistente."
-   - Problema: agenti AI senza memoria persistente, drift docs, sessioni isolate
-   - Soluzione: `pip install kaora-memory` → `kaora init` → ogni agente nuovo legge `AGENTS.md` + `CLAUDE.md` e parte coerente
-   - Quickstart: 3 comandi `pip install kaora-memory && cd mioprogetto && kaora init`
-   - FAQ brownfield: "ho già un CLAUDE.md?" → backup + merge guidato
-   - `kaora check` come strumento di validazione continua (output esempio)
-   - Link a `docs/PHILOSOPHY.md` per il *perché*
-2. **Demo del flow** (asciicast `asciinema` o GIF): `kaora init mioprogetto && kaora check mioprogetto`. Output reale visibile in poche righe.
-3. **Refresh asset esistenti** (vedi `CURRENT_STATE.md` → "Asset di comunicazione collegati"):
-   - `/tmp/kaora-memory-preview.html` — landing page premium, datata 22 maggio, da aggiornare con nuove feature (check, dogfooding)
-   - `/tmp/kaora-memory-launch-essay-brief.md` — brief saggio (sessione parallela)
-4. **Commit messaggio suggerito:** `feat(launch): README ricco + asciicast demo + landing refresh`
-5. **CURRENT_STATE.md + SESSION_HANDOFF.md** aggiornati con brief Blocco 6 (pubblicazione PyPI)
+### 2. Repo naming before PyPI (BACKLOG, Block 6)
 
-### File da creare / modificare
+Not blocking for Block 5 but if we want to avoid publishing under the "wrong" name, decide by the end of Block 5. See `BACKLOG.md` → naming.
 
-- `README.md` (riscrittura completa)
-- Eventuale `docs/quickstart.md` o `docs/faq.md` se README cresce troppo
-- Eventuale `assets/demo.cast` (asciinema) o `assets/demo.gif` (terminalizer)
-- Refresh `/tmp/kaora-memory-preview.html` (fuori repo)
+### 3. Cleanup structural placeholders in `BACKLOG.md` + `docs/SESSION_HANDOFF.md`
 
-### Cosa NON toccare (Blocchi 1-4 chiusi)
+`kaora check .` post-i18n flags 3 WARN: `{{project_name}}` in BACKLOG.md (line 69, inside table cell, NOT in fenced block — therefore caught by the linter), `{{project_path}}` and `{{year}}` in this very file (in the opening-session check bash block — likely intentional examples but worth verifying). Low cost cleanup if you want a fully clean `kaora check`.
 
-- ❌ `LICENSE`, `.gitignore`, `pyproject.toml` (salvo bump versione se servisse)
-- ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer, check}.py` — moduli stabili
-- ❌ `kaora_memory/cli.py` — salvo aggiunta di feature CLI legate al README (es. comando `kaora doctor` se emerge l'esigenza, ma è scope futuro)
-- ❌ `template/` salvo l'item v0.1 di pulizia placeholder strutturali (vedi PUNTI APERTI 2)
-- ❌ `bin/setup-dev.sh` — wrapper self-healing UF_HIDDEN stabile dal 2026-05-24
-- ❌ Riaprire ADR `Accepted` (000-009)
-- ❌ Push su GitHub — username finale ancora da decidere (vedi BACKLOG naming)
+### 4. False positive: 1 INFO "ADR in Proposed state awaiting decision" on root DECISIONS.md
 
-### Skill obbligatorie PRIMA di costruire (Gate A § 5.1)
+`kaora check .` flags 1 INFO on docs/DECISIONS.md because line 360 (ADR-008 § Decision narrative) contains the literal pattern `` `**Status:** Proposed` `` inside an inline backtick — not a fenced code block. Inline backticks aren't stripped by `_strip_code_blocks` (which matches only ``` fenced blocks). Pre-existing pattern (was the same in IT with `**Stato:** Proposed`), not introduced by i18n. Potential future fix: extend `_strip_code_blocks` to also strip inline backtick spans.
 
-- **Nessuna obbligatoria.** Blocco 5 è scrittura + asset visivi, non richiede skill tecniche specifiche di kaora.
-- *Opzionali*, se Alexis vuole struttura validata: `copywriting`, `marketing-psychology`, `landing-page-generator`. Decisione caso per caso.
+### 5. Possible ADR-010 on the `_strip_code_blocks` pattern (formalization)
 
-### Check di apertura sessione
+Pattern that emerged twice in Block 4 as a coherent fix: "documentary content interpreted as real state". With open point 4 above, this becomes the third occurrence (inline backticks as a sub-case). Worth formalizing with an ADR.
+
+---
+
+## Block 5 goal
+
+Public launch assets. Make a repo visitor understand in 30 seconds what kaora-memory is and why they should use it. Brownfield-friendly: no "greenfield-only" warning, FAQ "I already have a CLAUDE.md?" → tell backup-first + BOOTSTRAP-merge as a *feature*.
+
+### Expected output at the end of Block 5
+
+1. **Rich `README.md`** replacing the current minimal one. Proposed sections (to validate in session):
+   - Hero: "Operating memory for AI agents. Works on any project, fresh or existing."
+   - Problem: AI agents without persistent memory, doc drift, isolated sessions
+   - Solution: `pip install kaora-memory` → `kaora init` → every new agent reads `AGENTS.md` + `CLAUDE.md` and starts coherent
+   - Quickstart: 3 commands `pip install kaora-memory && cd myproject && kaora init`
+   - Brownfield FAQ: "I already have a CLAUDE.md?" → backup + guided merge
+   - `kaora check` as a continuous validation tool (example output)
+   - Link to `docs/PHILOSOPHY.md` for the *why*
+2. **Flow demo** (asciicast or GIF): `kaora init myproject && kaora check myproject`. Real output visible in a few lines.
+3. **Refresh existing assets** (see `CURRENT_STATE.md` → "Linked communication assets"):
+   - `/tmp/kaora-memory-preview.html` — premium landing page, dated May 22, to update with new features (check, dogfooding)
+   - `/tmp/kaora-memory-launch-essay-brief.md` — essay brief (parallel session)
+4. **Suggested commit message:** `feat(launch): rich README + asciicast demo + landing refresh`
+5. **CURRENT_STATE.md + SESSION_HANDOFF.md** updated with the Block 6 brief (PyPI publication)
+
+### Files to create / modify
+
+- `README.md` (full rewrite)
+- Optional `docs/quickstart.md` or `docs/faq.md` if the README grows too much
+- Optional `assets/demo.cast` (asciinema) or `assets/demo.gif` (terminalizer)
+- Refresh `/tmp/kaora-memory-preview.html` (outside repo)
+
+### What NOT to touch (Blocks 1-4 closed)
+
+- ❌ `LICENSE`, `.gitignore`, `pyproject.toml` (unless a version bump is needed)
+- ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer, check}.py` — stable modules
+- ❌ `kaora_memory/cli.py` — unless adding CLI features tied to the README (e.g. a `kaora doctor` command if the need arises, but that's future scope)
+- ❌ `template/` except for the v0.1 cleanup of structural placeholders (see OPEN POINTS 2)
+- ❌ `bin/setup-dev.sh` — UF_HIDDEN self-healing wrapper stable since 2026-05-24
+- ❌ Reopen `Accepted` ADRs (000-009)
+- ❌ Push to GitHub — final username still to decide (see BACKLOG naming)
+
+### Mandatory skills BEFORE building (Gate A § 5.1)
+
+- **None mandatory.** Block 5 is writing + visual assets, doesn't require kaora-specific technical skills.
+- *Optional*, if Alexis wants validated structure: `copywriting`, `marketing-psychology`, `landing-page-generator`. Case-by-case decision.
+
+### Opening session check
 
 ```bash
 cd ~/Desktop/kaora-memory
@@ -79,16 +89,18 @@ python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "
 git log --oneline -5
 .venv/bin/python -m pytest -q && echo "TEST OK (62/62)"
 .venv/bin/kaora --version && echo "CLI OK"
-.venv/bin/kaora check . 2>&1 | tail -20   # dogfooding rapido stato repo
+.venv/bin/kaora check . 2>&1 | tail -20   # quick dogfooding of repo state
 ```
 
-Se `kaora --version` fallisce con `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalla wrapper self-healing su `.venv/bin/kaora`). Capita se hai rifatto `pip install -e .` bypassando lo script.
+If `kaora --version` fails with `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalls the self-healing wrapper on `.venv/bin/kaora`). Happens if you redid `pip install -e .` bypassing the script.
 
 ---
 
-## Note operative per la prossima sessione
+## Operational notes for the next session
 
-- **Apri Claude Code in `~/Desktop/kaora-memory/`**
-- **Registro:** italiano · diretto · no preamboli · una decisione alla volta · modalità Operativa vs Apprendimento (ADR-007)
-- **Decisioni grandi** → nuova ADR in `docs/DECISIONS.md` (ADR-008 step 6 del rituale)
-- **Modalità Blocco 5** è **scrittura ad alta densità**, non implementazione. Aspettati molta più modalità *Apprendimento* (esplorazione narrativa, scelta hero, tone of voice) rispetto a Blocco 4.
+- **Open Claude Code in `~/Desktop/kaora-memory/`**
+- **Register:** Italian for live conversation · direct · no preambles · one decision at a time · Operative vs Learning mode (ADR-007)
+- **Framework language:** English (post Block 4.5 i18n). All docs, code, tests, scripts on disk are EN. User-agent runtime conversation remains Italian (set via `{{communication_language}}` placeholder for user projects).
+- **Big decisions** → new ADR in `docs/DECISIONS.md` (ADR-008 step 6 of the ritual)
+- **Block 5 mode** is **high-density writing**, not implementation. Expect much more *Learning* mode (narrative exploration, hero choice, tone of voice) than Block 4.
+- **First task of Block 5:** commit the Block 4.5 i18n refactor (see OPEN POINTS 1) before starting any new file edits.

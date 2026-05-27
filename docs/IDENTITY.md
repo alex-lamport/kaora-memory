@@ -1,54 +1,54 @@
-# IDENTITY.md — chi è il builder, come comunica, anti-pattern
+# IDENTITY.md — who the builder is, how they communicate, anti-patterns
 
-> File compagno di `AGENTS.md`. Si concentra sulla **persona** dietro il progetto, non sulle regole operative.
-> Aggiornare quando il builder si accorge che l'agente sbaglia il tono o ripete pattern non voluti.
+> Companion file to `AGENTS.md`. Focuses on the **person** behind the project, not on operational rules.
+> Update whenever the builder notices the agent getting the tone wrong or repeating unwanted patterns.
 
 ---
 
-## 1. Chi sono io
+## 1. Who I am
 
 <BOOTSTRAP need="builder-identity" sources="git config user.name, git config user.email, README.md, package.json author, pyproject.toml authors, prior commit signatures"/>
 
-## 2. Come comunico
+## 2. How I communicate
 
 <BOOTSTRAP need="communication-register" sources="git log message style, README tone, prior conversation hints, comments in code"/>
 
-**Regole esplicite (valgono sempre):**
-- Italiano per docs, log, comunicazione conversazionale
-- Inglese per identificatori tecnici (variabili, funzioni, file di codice)
-- Diretto · conciso · niente preamboli · niente "perfetto" · niente "mi piacerebbe"
-- Una direzione alla volta, una domanda alla volta
-- Decisore vs Esecutore: io decido, l'agente esegue
+**Explicit rules (always apply):**
+- Italian for live conversation; English for docs, logs, code, and any written artifact on disk
+- English for technical identifiers (variables, functions, code files)
+- Direct · concise · no preambles · no "great" · no "I'd love to"
+- One direction at a time, one question at a time
+- Decider vs Executor: I decide, the agent executes
 
-## 3. Cosa NON fare con me
+## 3. What NOT to do with me
 
 <BOOTSTRAP need="anti-patterns" sources="prior session errors, docs/SESSION_ERRORS/, builder explicit preferences"/>
 
-**Anti-pattern universali (validi sempre):**
-- Mai proporre 4 alternative quando ne basta una
-- Mai costruire prima del "vai" esplicito
-- Mai modificare ADR `Accepted` senza nuova ADR `Supersedes`
-- Mai cancellare file `.kaora-bak` prima di averli letti
-- Mai sovrascrivere lavoro esistente del builder (`docs/`, `README.md`, `.claude/settings.json`)
-- Mai chiudere con domande operative ("vuoi che proceda?", "ok vado?") quando l'utente è in modalità Apprendimento. Vedi `AGENTS.md` § 3 "Modalità conversazionale".
+**Universal anti-patterns (always valid):**
+- Never propose 4 alternatives when one is enough
+- Never build before an explicit "go"
+- Never modify an `Accepted` ADR without a new `Supersedes` ADR
+- Never delete `.kaora-bak` files before reading them
+- Never overwrite existing builder work (`docs/`, `README.md`, `.claude/settings.json`)
+- Never close with operational questions ("want me to proceed?", "ok shall I go?") when the user is in Learning mode. See `AGENTS.md` § 3 "Conversational mode".
 
-## 4. Cosa apprezzo
+## 4. What I appreciate
 
 <BOOTSTRAP need="positive-patterns" sources="prior session feedback marked as positive, commit messages tone"/>
 
-- Risposte sintetiche: 3 righe quando bastano 3 righe
-- Tabelle al posto di paragrafi quando possibile
-- Riferimenti puntuali (file:line) invece di generici "vedi il codice"
-- Domande mirate prima di assunzioni
+- Concise responses: 3 lines when 3 lines suffice
+- Tables instead of paragraphs when possible
+- Precise references (file:line) instead of a generic "see the code"
+- Targeted questions before assumptions
 
-## 5. Linee guida tecniche del progetto
+## 5. Project tech guidelines
 
 <BOOTSTRAP need="tech-conventions" sources="package.json scripts, build tooling, linter config, formatter config, .editorconfig, framework choice"/>
 
-## 6. Glossario specifico del dominio
+## 6. Domain-specific glossary
 
 <BOOTSTRAP need="domain-glossary" sources="README, business docs, terminology in code comments, product name and pitch"/>
 
 ---
 
-**Aggiornamento:** ogni volta che l'agente sbaglia il tono o ripete un pattern che non ti piace, dillo esplicitamente *"aggiungi a IDENTITY.md anti-pattern: ..."*. L'agente integrerà alla sezione 3.
+**Update:** whenever the agent gets the tone wrong or repeats a pattern you don't like, say it explicitly *"add to IDENTITY.md anti-patterns: ..."*. The agent will integrate it into section 3.

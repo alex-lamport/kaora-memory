@@ -1,219 +1,219 @@
-# DOGFOODING_REPORT.md — Case study self-test 2026-05-26
+# DOGFOODING_REPORT.md — Self-test case study 2026-05-26
 
-> Report del test self-dogfooding del prodotto `kaora-memory` v0.1 sul repository che lo produce.
-> ADR-000 onorata letteralmente (opzione A): il repo `kaora-memory` è il primo utente reale del proprio prodotto.
+> Report of the self-dogfooding test of the `kaora-memory` v0.1 product on the repository that produces it.
+> ADR-000 honored literally (option A): the `kaora-memory` repo is the first real user of its own product.
 
 ---
 
-## 1. Contesto
+## 1. Context
 
-**Data:** 2026-05-26
-**Versione testata:** kaora-memory v0.1 (Blocco 3 chiuso, pre-Blocco 4)
-**Tester:** Alexis Rojas (builder) + 2 sessioni Claude Code in parallelo (Claude Opus 4.7 1M context)
+**Date:** 2026-05-26
+**Version tested:** kaora-memory v0.1 (Block 3 closed, pre-Block 4)
+**Tester:** Alexis Rojas (builder) + 2 parallel Claude Code sessions (Claude Opus 4.7 1M context)
 **Setup:**
-- Sessione A — *revisore con context completo*: aperta nel repo prima del test, ha tutta la storia di costruzione, agisce come quality controller in tempo reale
-- Sessione B — *agente naive*: aperta nel repo subito dopo `kaora init .`, parte fresh seguendo solo i file di memoria operativa (AGENTS.md, IDENTITY.md, DECISIONS.md, CURRENT_STATE.md, SESSION_HANDOFF.md)
+- Session A — *reviewer with full context*: opened in the repo before the test, has the entire construction history, acts as a real-time quality controller
+- Session B — *naive agent*: opened in the repo right after `kaora init .`, starts fresh following only the operating-memory files (AGENTS.md, IDENTITY.md, DECISIONS.md, CURRENT_STATE.md, SESSION_HANDOFF.md)
 
-**Stato repo pre-test:**
-- `CLAUDE.md` ricco (~10 sezioni, 8.7KB, master context kaora-memory specifico)
-- `AGENTS.md` inesistente
-- Memoria operativa scritta a mano in stile pre-kaora
-- 33/33 pytest green, wheel buildable, smoke greenfield/dry-run/brownfield validati su `tmp_path`
+**Pre-test repo state:**
+- Rich `CLAUDE.md` (~10 sections, 8.7KB, kaora-memory-specific master context)
+- `AGENTS.md` non-existent
+- Operating memory hand-written in pre-kaora style
+- 33/33 pytest green, buildable wheel, greenfield/dry-run/brownfield smoke tests validated on `tmp_path`
 
-## 2. Cosa è stato testato
+## 2. What was tested
 
-Il flusso completo dell'esperienza utente brownfield:
+The full brownfield user experience flow:
 
 ```
-1. kaora init . (CLI puro, da terminale di sistema)
-2. Apertura sessione AI nuova nel repo post-init
-3. Esecuzione rituale di apertura § 6 (incluso scan obbligatorio § 4 dei *.kaora-bak)
-4. Segnalazione del .kaora-bak in chat (step 6 del rituale)
-5. Procedura § 11 di merge guidato del .kaora-bak in AGENTS.md
-6. Distribuzione dei contenuti del bak nel nuovo schema canonico
-7. § 11 step 5 — decisione finale sul destino del .kaora-bak
+1. kaora init . (pure CLI, from system terminal)
+2. Open a new AI session in the post-init repo
+3. Run opening ritual § 6 (including the mandatory § 4 scan of *.kaora-bak files)
+4. Signal the .kaora-bak in chat (step 6 of the ritual)
+5. § 11 procedure for guided merge of the .kaora-bak into AGENTS.md
+6. Distribute the bak content into the new canonical schema
+7. § 11 step 5 — final decision on the fate of the .kaora-bak
 ```
 
-## 3. Risultati
+## 3. Results
 
-### 3.1 Layer Python (kaora init)
+### 3.1 Python layer (kaora init)
 
-✅ **Esecuzione pulita.** `kaora init .` ha prodotto esattamente quanto previsto da ADR-006 v2:
+✅ **Clean execution.** `kaora init .` produced exactly what was foreseen by ADR-006 v2:
 
-| Categoria | File | Esito |
+| Category | Files | Outcome |
 |---|---|---|
-| Creati ex-novo | `AGENTS.md`, `AGENT_BRIEF.md`, `docs/IDENTITY.md`, `docs/SESSION_ERRORS_TEMPLATE.md`, `.claude/hooks/log-api-calls.sh`, `.claude/hooks/protect-credentials.sh`, `.claude/settings.json` | ✅ 7 file scritti |
-| Backup + overwrite | `CLAUDE.md` (ricco → `.kaora-bak`, nuovo 4-righe `@AGENTS.md`) | ✅ Backup creato |
-| Skip-preservati | `BACKLOG.md`, `README.md`, `docs/CURRENT_STATE.md`, `docs/DECISIONS.md`, `docs/SESSION_HANDOFF.md` | ✅ Memoria vivente intatta |
-| Non toccati | `pyproject.toml`, `LICENSE`, `.gitignore`, `kaora_memory/`, `tests/`, `template/`, `bin/`, `docs/PHILOSOPHY.md` | ✅ Codice e asset custom intoccati |
+| Created from scratch | `AGENTS.md`, `AGENT_BRIEF.md`, `docs/IDENTITY.md`, `docs/SESSION_ERRORS_TEMPLATE.md`, `.claude/hooks/log-api-calls.sh`, `.claude/hooks/protect-credentials.sh`, `.claude/settings.json` | ✅ 7 files written |
+| Backup + overwrite | `CLAUDE.md` (rich → `.kaora-bak`, new 4-line `@AGENTS.md`) | ✅ Backup created |
+| Skip-preserved | `BACKLOG.md`, `README.md`, `docs/CURRENT_STATE.md`, `docs/DECISIONS.md`, `docs/SESSION_HANDOFF.md` | ✅ Living memory intact |
+| Untouched | `pyproject.toml`, `LICENSE`, `.gitignore`, `kaora_memory/`, `tests/`, `template/`, `bin/`, `docs/PHILOSOPHY.md` | ✅ Code and custom assets untouched |
 
-Zero crash, zero perdite. Il dry-run di prima validazione (eseguito 2026-05-22 e 2026-05-26) corrispondeva esattamente all'esecuzione reale.
+Zero crashes, zero losses. The first-validation dry-run (run 2026-05-22 and 2026-05-26) matched exactly the real execution.
 
-### 3.2 Layer agente — rituale di apertura
+### 3.2 Agent layer — opening ritual
 
-✅ **Scan obbligatorio § 6 step 4 funzionante.** L'agente naive (sessione B), avendo letto `template/AGENTS.md` rinforzato, ha:
+✅ **Mandatory § 6 step 4 scan working.** The naive agent (session B), having read the reinforced `template/AGENTS.md`, did:
 
-1. Eseguito glob `*.kaora-bak` in root e `docs/`
-2. Trovato `CLAUDE.md.kaora-bak`
-3. Segnalato in chat secondo formato prescritto: *"Trovato CLAUDE.md.kaora-bak in root — memoria pre-install da processare via § 11 quando vuoi"*
-4. Atteso conferma utente prima di processare (non ha tentato il merge proattivamente)
+1. Ran glob `*.kaora-bak` in root and `docs/`
+2. Found `CLAUDE.md.kaora-bak`
+3. Signaled in chat according to the prescribed format: *"Found CLAUDE.md.kaora-bak in root — pre-install memory to process via § 11 whenever you want"*
+4. Waited for user confirmation before processing (didn't try the merge proactively)
 
-Comportamento esemplare. Il rinforzo applicato al template § 6 step 4 — da "se troverai un bak..." (sezione passiva) a "scan obbligatorio + segnalazione in chat" — ha eliminato il rischio di skip silenzioso.
+Exemplary behavior. The reinforcement applied to template § 6 step 4 — from "if you find a bak..." (passive section) to "mandatory scan + in-chat signal" — eliminated the risk of silent skip.
 
-### 3.3 Layer agente — modalità conversazionale (ADR-007)
+### 3.3 Agent layer — conversational mode (ADR-007)
 
-⚠️ **Prima violazione, poi correzione.** Nella sintesi di apertura, l'agente naive ha chiuso con **tre domande in una**: *"Confermi di partire con Blocco 4? E come gestiamo i due punti aperti?"* — violazione esplicita di § 3 "una domanda alla volta".
+⚠️ **First violation, then correction.** In the opening summary, the naive agent closed with **three questions in one**: *"Confirm starting with Block 4? And how do we handle the two open points?"* — explicit violation of § 3 "one question at a time".
 
-Dopo intervento del revisore (sessione A) che ha segnalato la violazione, nelle proposte successive l'agente ha rispettato la regola: **una sola domanda finale** ("quale form per l'owner — handle X / gmail / entrambi?"). Lezione assorbita in-context.
+After the reviewer (session A) intervention flagging the violation, in subsequent proposals the agent respected the rule: **one final question only** ("which form for the owner — X handle / gmail / both?"). Lesson absorbed in-context.
 
-**Implicazione di prodotto:** la regola ADR-007 nel template è leggibile dall'agente ma non sempre interiorizzata al primo turno. Pattern emerso ricorrente, vale la pena monitorarlo nei prossimi dogfooding utenti.
+**Product implication:** the ADR-007 rule in the template is readable by the agent but not always internalized at the first turn. Recurring pattern observed, worth monitoring in future user dogfooding.
 
-### 3.4 Layer agente — merge guidato § 11
+### 3.4 Agent layer — guided merge § 11
 
-✅ **Comportamento eccellente.** L'agente naive ha eseguito § 11 con qualità superiore a quanto specificato:
+✅ **Excellent behavior.** The naive agent ran § 11 with higher quality than what was specified:
 
-- **Confronto preliminare:** prima di proporre il diff ha letto il nuovo `AGENTS.md` canonico + `docs/IDENTITY.md` per identificare cosa era già coperto. Esplicito intento: evitare duplicazioni (§ 11 step 4).
-- **Distinzione stale vs valido:** ha usato il bak per stack tecnico/identità (ancora veri), ma ha usato `CURRENT_STATE.md` + `SESSION_HANDOFF.md` per "scope corrente" perché il bak diceva "Blocco 2 prossimo" mentre la realtà era "Blocco 4 prossimo".
-- **Diff strutturato per sezione (A-G):** un diff atomico per sezione, facile da approvare a pezzi.
-- **Trasparenza piena:** ha esplicitato cosa NON portava dentro (§§ 3-6 modalità/rituale/gate, § 10 matrice ADR-009) perché già canonico nel template.
+- **Preliminary comparison:** before proposing the diff, it read the new canonical `AGENTS.md` + `docs/IDENTITY.md` to identify what was already covered. Explicit intent: avoid duplications (§ 11 step 4).
+- **Stale vs valid distinction:** it used the bak for tech stack/identity (still true), but used `CURRENT_STATE.md` + `SESSION_HANDOFF.md` for "current scope" because the bak said "Block 2 next" while reality was "Block 4 next".
+- **Diff structured by section (A-G):** one atomic diff per section, easy to approve piece by piece.
+- **Full transparency:** it explicitly stated what it was NOT bringing in (§§ 3-6 mode/ritual/gate, § 10 ADR-009 matrix) because already canonical in the template.
 
-7 diff proposti, 7 approvati. Sessione A ha segnalato micro-imprecisioni (info datate ereditate da `CURRENT_STATE.md` non aggiornato), non-blocking.
+7 diffs proposed, 7 approved. Session A flagged micro-imprecisions (stale info inherited from a non-updated `CURRENT_STATE.md`), non-blocking.
 
-### 3.5 § 11 step 5 — decisione finale
+### 3.5 § 11 step 5 — final decision
 
-🎯 **Valore inatteso aggiunto.** Il template § 11 step 5 prescrive due opzioni: *"chiedi se conservare o eliminare"*. L'agente naive ha **inventato spontaneamente una terza opzione**:
+🎯 **Unexpected added value.** The template § 11 step 5 prescribes two options: *"ask whether to keep or delete"*. The naive agent **spontaneously invented a third option**:
 
-> *"Se lo conservi a scopo archivio storico, suggerisco di spostarlo fuori da root/docs/ (es. docs/archive/) per non far scattare lo scan."*
+> *"If you keep it for historical archival, I suggest moving it outside root/docs/ (e.g. docs/archive/) so it doesn't trigger the scan."*
 
-Riconoscimento del trade-off implicito:
-- Eliminare → perdi l'asset storico
-- Conservare in root → il rituale § 6 step 4 lo trova ogni apertura sessione, rumore inutile
-- Archiviare → conserva l'artefatto, non genera rumore, demonstrability del pattern di migrazione
+Recognition of the implicit trade-off:
+- Delete → lose the historical asset
+- Keep in root → ritual § 6 step 4 finds it at every session opening, useless noise
+- Archive → preserve the artifact, no noise, demonstrability of the migration pattern
 
-Decisione finale: opzione 3 (archive). Il file vive in `docs/archive/CLAUDE.md.kaora-bak`.
+Final decision: option 3 (archive). The file lives in `docs/archive/CLAUDE.md.kaora-bak`.
 
-**Implicazione di prodotto:** scoperta da formalizzare nel template prima della v0.1 (item BACKLOG → Template). L'agente ha dimostrato che la convenzione "archive" è intuitiva — basta codificarla.
+**Product implication:** discovery to formalize in the template before v0.1 (BACKLOG → Template item). The agent demonstrated that the "archive" convention is intuitive — it just needs to be codified.
 
-## 4. Limite emerso
+## 4. Limit that emerged
 
-⚠️ **Manca un rituale di chiusura simmetrico.**
+⚠️ **A symmetric closing ritual is missing.**
 
-`CURRENT_STATE.md` e `SESSION_HANDOFF.md` contenevano info datate al momento del dogfooding:
-- "Commit ultimo: ce588e9" → realtà: 66e0c48 in main
-- "Self-dogfooding ADR-000 dry-run validato, applicazione piena open" → realtà: stavamo applicando proprio quel passaggio
-- "Bug UF_HIDDEN, workaround chflags" → realtà: risolto via wrapper self-healing 2026-05-24
+`CURRENT_STATE.md` and `SESSION_HANDOFF.md` contained stale info at the time of the dogfooding:
+- "Last commit: ce588e9" → reality: 66e0c48 on main
+- "Self-dogfooding ADR-000 dry-run validated, full application open" → reality: we were applying that very step
+- "UF_HIDDEN bug, chflags workaround" → reality: resolved via self-healing wrapper 2026-05-24
 
-L'agente naive ha riportato fedelmente quei dati obsoleti, perché il template kaora ha un rituale di **apertura** ben formalizzato (§ 6) ma **nessun rituale di chiusura** che forzi l'aggiornamento dei docs operativi a fine sessione.
+The naive agent faithfully reported that obsolete data, because the kaora template has a well-formalized **opening** ritual (§ 6) but **no closing ritual** that forces the operating docs to update at session end.
 
-**Conseguenza:** ogni sessione futura eredita il drift dei docs della sessione precedente, in proporzione a quanto è stata "trascurata" la chiusura.
+**Consequence:** every future session inherits the doc drift of the previous session, in proportion to how much closure was "neglected".
 
-**Fix introdotto in v0.1 (post-dogfooding):** nuova sezione § 6bis "Rituale di chiusura sessione" nel template, che istruisce l'agente a:
-1. Sintetizzare sessione in 3 righe
-2. Proporre aggiornamento CURRENT_STATE.md
-3. Proporre aggiornamento SESSION_HANDOFF.md
-4. Proporre commit con suggested message
+**Fix introduced in v0.1 (post-dogfooding):** new § 6bis "Session closing ritual" section in the template, which instructs the agent to:
+1. Synthesize the session in 3 lines
+2. Propose CURRENT_STATE.md update
+3. Propose SESSION_HANDOFF.md update
+4. Propose commit with suggested message
 
-In v0.2+ verrà supportato dal comando CLI dedicato `kaora handoff` (vedi BACKLOG → Comandi CLI futuri).
+In v0.2+ it will be supported by the dedicated `kaora handoff` CLI command (see BACKLOG → Future CLI commands).
 
-## 5. Bug minore non bloccante
+## 5. Minor non-blocking bug
 
-⚠️ Wrapper self-healing macOS UF_HIDDEN — gestito automaticamente.
+⚠️ macOS UF_HIDDEN self-healing wrapper — handled automatically.
 
-Lo script `bin/setup-dev.sh` aggiornato 2026-05-24 installa un wrapper su `.venv/bin/kaora` che fa `chflags nohidden` ad ogni invocazione. Durante il dogfooding il flag UF_HIDDEN era già stato ri-applicato da macOS spontaneamente, ma `kaora init .` è girato senza problemi grazie al wrapper. Test indiretto del fix UF_HIDDEN superato.
+The `bin/setup-dev.sh` script updated 2026-05-24 installs a wrapper on `.venv/bin/kaora` that runs `chflags nohidden` at every invocation. During dogfooding the UF_HIDDEN flag had already been spontaneously re-applied by macOS, but `kaora init .` ran without issues thanks to the wrapper. Indirect test of the UF_HIDDEN fix passed.
 
-## 6. Conclusioni
+## 6. Conclusions
 
-**Test passato pieno.** Il prodotto v0.1 ha funzionato end-to-end sul produttore stesso, sia sul layer Python (kaora init) sia sul layer agente (rituale + merge guidato).
+**Full test passed.** The v0.1 product worked end-to-end on its own producer, both at the Python layer (kaora init) and at the agent layer (ritual + guided merge).
 
-**Valore narrativo del dogfooding:**
-- Validation strutturale del prodotto in condizioni reali (no test mockati su `tmp_path`)
-- Caso di **co-evoluzione**: il dogfooding ha rivelato due micro-feature da aggiungere prima del lancio (archive option, rituale di chiusura). Entrambe ora codificate in v0.1.
-- Material narrativo concreto per Blocco 5 (README + asset di lancio): *"abbiamo usato kaora-memory su kaora-memory stesso. Ecco cosa è successo."*
+**Narrative value of dogfooding:**
+- Structural validation of the product in real conditions (no mocked tests on `tmp_path`)
+- Case of **co-evolution**: dogfooding revealed two micro-features to add before launch (archive option, closing ritual). Both now codified in v0.1.
+- Concrete narrative material for Block 5 (README + launch assets): *"we used kaora-memory on kaora-memory itself. Here's what happened."*
 
-**Pattern riusabile per futuri utenti brownfield:**
-1. Esegui `kaora init . --dry-run` per validare il piano
-2. Esegui `kaora init .` (CLI puro, terminale)
-3. Apri agente AI nuovo nel repo post-init
-4. Lascia che il rituale di apertura trovi e segnali i `.kaora-bak`
-5. Conferma "ok processa" → l'agente esegue § 11 con confronto preliminare anti-duplicazione, distinzione stale/valido, diff sezione per sezione
-6. Approva i diff
-7. Archivia il bak in `docs/archive/` (opzione 3 raccomandata)
-8. Esegui rituale di chiusura: aggiorna CURRENT_STATE + SESSION_HANDOFF + commit
+**Reusable pattern for future brownfield users:**
+1. Run `kaora init . --dry-run` to validate the plan
+2. Run `kaora init .` (pure CLI, terminal)
+3. Open a new AI agent in the post-init repo
+4. Let the opening ritual find and signal the `.kaora-bak`
+5. Confirm "ok process" → the agent runs § 11 with preliminary anti-duplication comparison, stale/valid distinction, section-by-section diff
+6. Approve the diffs
+7. Archive the bak in `docs/archive/` (option 3 recommended)
+8. Run the closing ritual: update CURRENT_STATE + SESSION_HANDOFF + commit
 
-Tempo totale per un brownfield medio: 20-40 minuti (la maggior parte in approval dei diff).
+Total time for an average brownfield: 20-40 minutes (most of it spent approving diffs).
 
-## 7. Prossimi passi v0.1 derivati da questo report
+## 7. Next v0.1 steps derived from this report
 
-1. **Aggiunta § 6bis Rituale di chiusura** in `template/AGENTS.md` — ✅ fatto 2026-05-26
-2. **Aggiornamento § 11 step 5** con terza opzione "archive" — ✅ fatto 2026-05-27 (commit `a9518d6`)
-3. **Blocco 4: `kaora check`** — ✅ chiuso 2026-05-27 (5 commit, 62 test verdi, 4 raffinamenti coerenti)
-4. **Blocco 5: README ricco + asset di lancio** — 🟡 prossimo (questo report = input narrativo)
-5. **Blocco 6: pubblicazione PyPI + naming repo** — 🔵 pending
+1. **Added § 6bis Closing ritual** in `template/AGENTS.md` — ✅ done 2026-05-26
+2. **Updated § 11 step 5** with the third "archive" option — ✅ done 2026-05-27 (commit `a9518d6`)
+3. **Block 4: `kaora check`** — ✅ closed 2026-05-27 (5 commits, 62 green tests, 4 consistent refinements)
+4. **Block 5: rich README + launch assets** — 🟡 next (this report = narrative input)
+5. **Block 6: PyPI publication + repo naming** — 🔵 pending
 
 ## 8. Follow-up verifications (post-dogfooding)
 
-Iterazioni di validation eseguite **dopo** il dogfooding originale del 2026-05-26. Documentano il funzionamento del prodotto sotto condizioni reali ripetute.
+Validation iterations run **after** the original 2026-05-26 dogfooding. They document product behavior under repeated real conditions.
 
-### 8.1 — 2026-05-27 mattina — Validation rituale di apertura post-aggiornamento
+### 8.1 — 2026-05-27 morning — Opening-ritual validation post-update
 
-**Setup:** nuova sessione Claude Code aperta in repo dopo che la sessione di dogfooding aveva applicato § 6bis (rituale di chiusura) + commit `a9518d6` + archive del `.kaora-bak` in `docs/archive/`.
+**Setup:** new Claude Code session opened in the repo after the dogfooding session had applied § 6bis (closing ritual) + commit `a9518d6` + archive of the `.kaora-bak` to `docs/archive/`.
 
-**Risultato:**
-- ✅ **Scan `.kaora-bak` pulito**: il glob in root + `docs/` direct-children non ha trovato nulla (il file archiviato in `docs/archive/` è correttamente escluso dallo scan rituale). Conferma che l'opzione 3 "archive" risolve il problema del rumore in apertura sessione.
-- ✅ **Drift detection proattivo**: l'agente naive ha notato di propria iniziativa che `CURRENT_STATE.md` + `SESSION_HANDOFF.md` segnavano *"commit dogfooding pending"* mentre `a9518d6` esisteva già in `git log`. Ha proposto auto-correzione, applicata in commit `eabae39`.
-- ✅ **Validazione indiretta del § 6bis**: il rituale di chiusura applicato in sessione precedente aveva lasciato docs in uno stato testabile (drift residuo limitato, narrazione del lavoro fatto coerente con git).
+**Result:**
+- ✅ **Clean `.kaora-bak` scan**: the glob in root + `docs/` direct-children found nothing (the file archived in `docs/archive/` is correctly excluded from the ritual scan). Confirms that option 3 "archive" solves the opening-session noise problem.
+- ✅ **Proactive drift detection**: the naive agent noticed on its own initiative that `CURRENT_STATE.md` + `SESSION_HANDOFF.md` marked *"dogfooding commit pending"* while `a9518d6` already existed in `git log`. It proposed an auto-correction, applied in commit `eabae39`.
+- ✅ **Indirect validation of § 6bis**: the closing ritual applied in the previous session had left the docs in a testable state (limited residual drift, narrative of work done consistent with git).
 
-**Implicazione di prodotto:** il pattern di drift detection in apertura sessione NON è oggi codificato esplicitamente nel rituale § 6, è emerso come comportamento naturale dell'agente. Da valutare se aggiungerlo come step esplicito ("step 4.5: confronta CURRENT_STATE.md con git log ultimo commit; se divergente, segnala") in v0.2. Item da aggiungere a BACKLOG.
+**Product implication:** the opening-session drift detection pattern is NOT explicitly codified today in ritual § 6, it emerged as natural agent behavior. To evaluate whether to add it as an explicit step ("step 4.5: compare CURRENT_STATE.md with git log latest commit; if divergent, flag") in v0.2. Item to add to BACKLOG.
 
-### 8.2 — 2026-05-27 sera — Blocco 4 `kaora check` con pattern dual-session
+### 8.2 — 2026-05-27 evening — Block 4 `kaora check` with dual-session pattern
 
-**Setup:** nuova sessione Claude Code per implementare Blocco 4. In parallelo, sessione di revisione esperta (questo report scritto da quella).
+**Setup:** new Claude Code session to implement Block 4. In parallel, an expert review session (this report written by that one).
 
-**Flusso eseguito:**
-1. **Skill loading**: `tdd-workflows-tdd-cycle` caricata prima del codice (Gate A § 5.1)
-2. **Spec test proposta**: 22 test in `test_check.py` + 3 CLI in `test_cli.py`, mappati 1:1 con i 6 check di SESSION_HANDOFF. Approvata dal revisore con micro-precisazioni (distinzione esplicita WARN strutturali vs INFO BOOTSTRAP).
-3. **Red phase**: 24 test scritti, tutti falliscono per i motivi giusti (`ModuleNotFoundError` + `Error: No such command 'check'`). Suite esistente 33 test intatta (zero regressione).
-4. **Green phase**: `kaora_memory/check.py` (299 LOC) implementato incrementalmente per categoria (structure → adr005 → adr_state → placeholders → hooks → settings → formatters). Pattern *"pytest dopo ogni categoria, delta verde sintetico"* (vedi memoria `feedback_tdd_incrementale_per_categoria.md`).
-5. **Commit feature base**: `29fa094 feat(cli): kaora check linter integrità memoria operativa`. 57/57 verdi (33 + 24).
-6. **Review post-green**: il revisore ha letto `check.py` completo e ha identificato 4 trade-off di design (falso positivo "Proposed" in code-block, settings stringy, file hardcoded, Level Literal solo statico). I primi 3 sostanziali.
-7. **Decisione utente**: chiudere i raffinamenti in v0.1 invece che rimandarli a v0.2 (preferenza esplicita: *"v0.1 chiusa bene > v0.1 con 3 cose da ricordare"*).
-8. **Refactor commit 1**: `a9e542a refactor(check): code-block exclusion + struct parsing + dynamic .md scan`. 3 fix mirati, ognuno preceduto dal proprio test rosso. 61/61 verdi.
-9. **Re-dogfooding live**: `kaora check .` sul repo ha rivelato 2 nuovi WARN reali su `docs/SESSION_HANDOFF.md` (placeholder `{{...}}` dentro fenced code block della spec). **Stesso pattern del falso "Proposed"** in versione placeholder.
-10. **Refactor commit 2**: `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. 1 riga di codice + 1 test, riusa la funzione esistente. 62/62 verdi.
-11. **Rituale di chiusura § 6bis**: applicato dall'agente naive. Diff CURRENT_STATE + SESSION_HANDOFF approvati dal revisore, commit `dae7126 chore(handoff): chiusura sessione Blocco 4 + brief Blocco 5`.
+**Flow executed:**
+1. **Skill loading**: `tdd-workflows-tdd-cycle` loaded before code (Gate A § 5.1)
+2. **Proposed test spec**: 22 tests in `test_check.py` + 3 CLI in `test_cli.py`, mapped 1:1 to the 6 checks in SESSION_HANDOFF. Approved by the reviewer with micro-precisions (explicit distinction WARN structural vs INFO BOOTSTRAP).
+3. **Red phase**: 24 tests written, all fail for the right reasons (`ModuleNotFoundError` + `Error: No such command 'check'`). Existing 33-test suite intact (zero regression).
+4. **Green phase**: `kaora_memory/check.py` (299 LOC) implemented incrementally by category (structure → adr005 → adr_state → placeholders → hooks → settings → formatters). Pattern *"pytest after every category, synthetic green delta"* (see memory `feedback_tdd_incrementale_per_categoria.md`).
+5. **Base feature commit**: `29fa094 feat(cli): kaora check operating-memory integrity linter`. 57/57 green (33 + 24).
+6. **Post-green review**: the reviewer read the full `check.py` and identified 4 design trade-offs (false positive "Proposed" in code-block, stringy settings, hardcoded files, statically-only Literal Level). The first 3 substantial.
+7. **User decision**: close the refinements in v0.1 rather than postpone to v0.2 (explicit preference: *"v0.1 closed well > v0.1 with 3 things to remember"*).
+8. **Refactor commit 1**: `a9e542a refactor(check): code-block exclusion + struct parsing + dynamic .md scan`. 3 targeted fixes, each preceded by its own red test. 61/61 green.
+9. **Live re-dogfooding**: `kaora check .` on the repo revealed 2 new real WARNs on `docs/SESSION_HANDOFF.md` (placeholders `{{...}}` inside fenced code block of the spec). **Same pattern as the false "Proposed"** in placeholder version.
+10. **Refactor commit 2**: `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. 1 line of code + 1 test, reuses the existing function. 62/62 green.
+11. **Closing ritual § 6bis**: applied by the naive agent. CURRENT_STATE + SESSION_HANDOFF diffs approved by the reviewer, commit `dae7126 chore(handoff): chiusura sessione Blocco 4 + brief Blocco 5`.
 
-**Pattern emerso (4 fix, una stessa radice):**
+**Pattern that emerged (4 fixes, one same root):**
 
-Tutti e 4 i raffinamenti riducono al pattern **"contenuti documentari ≠ contenuti reali"**:
-- ADR Proposed dentro esempio template → non contare
-- Placeholder `{{...}}` dentro spec di kaora check → non contare
-- `<BOOTSTRAP/>` marker dentro esempio template → non contare
-- Hook name dentro campo arbitrario (commento, key) → non contare come hook attivo
+All 4 refinements reduce to the pattern **"documentary content ≠ real content"**:
+- ADR Proposed inside a template example → don't count
+- Placeholder `{{...}}` inside the kaora check spec → don't count
+- `<BOOTSTRAP/>` marker inside template example → don't count
+- Hook name inside an arbitrary field (comment, key) → don't count as an active hook
 
-Tutti i fix usano la stessa tecnica: separare l'estrazione del contenuto rilevante dalla struttura documentaria che lo descrive. Materiale narrativo forte per Blocco 5: il prodotto ha imparato a distinguere "documentazione su X" da "X reale", che è esattamente la filosofia metacognitiva che vendiamo nel manifesto.
+All fixes use the same technique: separate the extraction of relevant content from the documentary structure that describes it. Strong narrative material for Block 5: the product learned to distinguish "documentation about X" from "real X", which is exactly the metacognitive philosophy we sell in the manifesto.
 
-**Risultato Blocco 4 finale:**
-- 62 test verdi (33 + 21 + 4 + 1 + 3 CLI)
-- 5 commit Blocco 4 (`29fa094` → `a9e542a` → `607b5a9` → `dae7126`) + 1 di drift `eabae39` in apertura
-- Memoria persistente arricchita con `feedback_tdd_incrementale_per_categoria.md` (pattern TDD step-by-step per moduli multi-categoria)
+**Final Block 4 result:**
+- 62 green tests (33 + 21 + 4 + 1 + 3 CLI)
+- 5 Block 4 commits (`29fa094` → `a9e542a` → `607b5a9` → `dae7126`) + 1 drift `eabae39` at opening
+- Persistent memory enriched with `feedback_tdd_incrementale_per_categoria.md` (step-by-step TDD pattern for multi-category modules)
 
-### 8.3 — Pattern dual-session (agente naive + revisore esperto)
+### 8.3 — Dual-session pattern (naive agent + expert reviewer)
 
-Validato su due cicli consecutivi (dogfooding 2026-05-26 + Blocco 4 2026-05-27): la coppia *"sessione esecutiva naive con context fresh + sessione revisore con context completo"* produce qualità superiore al singolo agente.
+Validated over two consecutive cycles (dogfooding 2026-05-26 + Block 4 2026-05-27): the pair *"naive executive session with fresh context + reviewer session with full context"* produces higher quality than a single agent.
 
-**Vantaggi osservati:**
-- L'agente naive trova naturalmente i punti di estensione del template (terza opzione archive emersa spontaneamente)
-- Il revisore cattura imprecisioni di sintesi e trade-off di design che l'esecutore non vede dal suo angolo
-- Il pattern test-first + revisione del codice prima del commit prende gli errori prima che diventino debt
-- Comunicazione tramite l'utente come ponte: l'utente passa diff/output, il revisore commenta, l'utente sintetizza la risposta per l'agente naive
+**Observed advantages:**
+- The naive agent naturally finds template extension points (the third archive option emerged spontaneously)
+- The reviewer catches synthesis imprecisions and design trade-offs the executor doesn't see from its angle
+- The test-first + code-review-before-commit pattern catches errors before they become debt
+- Communication via the user as a bridge: the user passes diff/output, the reviewer comments, the user synthesizes the answer for the naive agent
 
-**Limite osservato:**
-- Costo cognitivo per l'utente (deve copia-incollare avanti e indietro)
-- Latency: ogni round trip aggiunge 30-60 secondi
-- Non scala a >2 sessioni simultanee (overhead diventa dominante)
+**Observed limitations:**
+- Cognitive cost for the user (must copy-paste back and forth)
+- Latency: every round trip adds 30-60 seconds
+- Doesn't scale to >2 simultaneous sessions (overhead becomes dominant)
 
-**Implicazione di prodotto:** il workflow dual-session **non è oggi parte del prodotto kaora-memory** (è un meta-pattern di utilizzo). Da considerare per documentazione di lancio (Blocco 5): può diventare un capitolo del README *"Come usare kaora-memory in scenari ad alta complessità"*. Oppure restare come pratica scoperta dagli utenti avanzati senza codificarla nel prodotto.
+**Product implication:** the dual-session workflow **is not part of the kaora-memory product today** (it's a meta usage pattern). Worth considering for launch documentation (Block 5): could become a README chapter *"How to use kaora-memory in high-complexity scenarios"*. Or stay as a practice discovered by advanced users without being codified in the product.
 
 ---
 
-*Report autoritativo, eventuali sessioni future di dogfooding aggiungono un nuovo report dedicato (es. `docs/DOGFOODING_REPORT_v0.1.1.md`) invece di modificare questo. Le sezioni "Follow-up verifications" (§ 8+) sono l'eccezione: documentano iterazioni di validation sullo stesso ciclo v0.1, non nuovi cicli.*
+*Authoritative report, any future dogfooding sessions add a new dedicated report (e.g. `docs/DOGFOODING_REPORT_v0.1.1.md`) rather than modifying this one. The "Follow-up verifications" sections (§ 8+) are the exception: they document validation iterations on the same v0.1 cycle, not new cycles.*

@@ -1,68 +1,68 @@
-# SESSION_HANDOFF.md — brief per la prossima sessione
+# SESSION_HANDOFF.md — brief for the next session
 
-> Leggi subito dopo `AGENTS.md` e `CURRENT_STATE.md`.
+> Read right after `AGENTS.md` and `CURRENT_STATE.md`.
 >
-> **Ultima sessione:** {{year}}-MM-GG · scaffolding kaora installato.
+> **Last session:** {{year}}-MM-DD · kaora scaffolding installed.
 
 ---
 
-## 🟢 PROSSIMA SESSIONE — Bootstrap del progetto
+## 🟢 NEXT SESSION — Project bootstrap
 
-### Obiettivo
+### Goal
 
-Trasformare il template installato in una memoria operativa specifica per **{{project_name}}**. Cioè: compilare tutti i marker `<BOOTSTRAP/>` rimasti nei file e — se esistono — leggere e integrare i file `.kaora-bak`.
+Turn the installed template into operating memory specific to **{{project_name}}**. That is: fill all remaining `<BOOTSTRAP/>` markers in the files and — if present — read and integrate the `.kaora-bak` files.
 
-### Cosa farai (sequenza)
+### What you'll do (sequence)
 
-1. **Apri il progetto in un agente** (Claude Code, Codex CLI, Cursor, Aider o Gemini CLI)
-2. L'agente eseguirà il **rituale di apertura** (§ 6 di `AGENTS.md`)
-3. Dopo il "vai" tuo, l'agente:
-   - Cerca file `*.kaora-bak` in root e `docs/` — se trova, li legge e propone integrazione
-   - Scansiona i marker `<BOOTSTRAP/>` in tutti i file template
-   - Compila bozze autonomamente leggendo `package.json`, `pyproject.toml`, `Cargo.toml`, `git config`, `README.md`, struttura cartelle
-   - Ti chiede **1-2 domande mirate** solo per i buchi (es. registro tono preferito, anti-pattern personali)
-   - Mostra un diff completo
-   - Applica solo dopo "vai" esplicito
+1. **Open the project in an agent** (Claude Code, Codex CLI, Cursor, Aider, or Gemini CLI)
+2. The agent will run the **opening ritual** (§ 6 of `AGENTS.md`)
+3. After your "go", the agent:
+   - Searches for `*.kaora-bak` files in root and `docs/` — if found, reads them and proposes integration
+   - Scans the `<BOOTSTRAP/>` markers across all template files
+   - Drafts content autonomously by reading `package.json`, `pyproject.toml`, `Cargo.toml`, `git config`, `README.md`, folder structure
+   - Asks you **1-2 targeted questions** only for the gaps (e.g. preferred tone register, personal anti-patterns)
+   - Shows a full diff
+   - Applies only after an explicit "go"
 
-### File coinvolti dal BOOTSTRAP
+### Files involved in BOOTSTRAP
 
-| File | Cosa compila |
+| File | What it fills |
 |---|---|
-| `AGENTS.md` | Stack tecnico, stage corrente, scope, file chiave, skill mapping, health check |
-| `docs/IDENTITY.md` | Identità builder, registro comunicazione, anti-pattern, conventions, glossario dominio |
-| `docs/CURRENT_STATE.md` | Commit/branch correnti, file esistenti, feature funzionanti, todo |
+| `AGENTS.md` | Tech stack, current stage, scope, key files, skill mapping, health check |
+| `docs/IDENTITY.md` | Builder identity, communication register, anti-patterns, conventions, domain glossary |
+| `docs/CURRENT_STATE.md` | Current commit/branch, existing files, working features, todo |
 
-### Tempo stimato
+### Estimated time
 
-~30 secondi di domande utente · ~2-3 minuti di lavoro autonomo dell'agente · ~1 minuto di review del diff.
+~30 seconds of user questions · ~2-3 minutes of autonomous agent work · ~1 minute of diff review.
 
-### Cosa NON aprire in questa prima sessione
+### What NOT to open in this first session
 
-- ❌ Implementazione di feature di prodotto (prima la memoria, poi il codice)
-- ❌ Modifica `.claude/settings.json` o `hooks/` (sono pre-configurati)
-- ❌ Cancellazione `.kaora-bak` (mai senza review esplicita)
+- ❌ Product feature implementation (memory first, code after)
+- ❌ Modify `.claude/settings.json` or `hooks/` (they're pre-configured)
+- ❌ Delete `.kaora-bak` (never without explicit review)
 
-### Check di apertura sessione
+### Opening session check
 
 ```bash
 ls AGENTS.md CLAUDE.md AGENT_BRIEF.md BACKLOG.md docs/ .claude/ 2>/dev/null
-ls *.kaora-bak docs/*.kaora-bak 2>/dev/null  # se torna risultati: file backup da leggere
+ls *.kaora-bak docs/*.kaora-bak 2>/dev/null  # if it returns results: backup files to read
 git log --oneline -3
 ```
 
-### Output atteso a fine prima sessione
+### Expected output at the end of the first session
 
-1. Tutti i marker `<BOOTSTRAP/>` sostituiti con contenuti specifici al progetto
-2. Eventuale contenuto dei `.kaora-bak` integrato nelle sezioni appropriate
-3. `docs/CURRENT_STATE.md` aggiornato con stato reale post-bootstrap
-4. `docs/SESSION_HANDOFF.md` aggiornato con brief della seconda sessione (es. "iniziamo prima feature X")
-5. Commit pulito: `chore: bootstrap memoria operativa via kaora`
+1. All `<BOOTSTRAP/>` markers replaced with project-specific content
+2. Any `.kaora-bak` content integrated into the appropriate sections
+3. `docs/CURRENT_STATE.md` updated with the real post-bootstrap state
+4. `docs/SESSION_HANDOFF.md` updated with the second-session brief (e.g. "we start feature X")
+5. Clean commit: `chore: bootstrap operating memory via kaora`
 
 ---
 
-## Note operative per la prima sessione
+## Operational notes for the first session
 
-- **Apri l'agente nella root del progetto** ({{project_path}})
-- **Registro:** {{communication_register}}
-- **Decisioni grandi** → nuova ADR in `docs/DECISIONS.md`, mai annotazioni libere
-- **Se l'agente sbaglia tono** → digli *"aggiungi anti-pattern a IDENTITY.md: ..."*
+- **Open the agent in the project root** ({{project_path}})
+- **Register:** {{communication_register}}
+- **Big decisions** → new ADR in `docs/DECISIONS.md`, never freeform notes
+- **If the agent gets the tone wrong** → tell it *"add anti-pattern to IDENTITY.md: ..."*

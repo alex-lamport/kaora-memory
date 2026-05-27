@@ -1,128 +1,128 @@
-# PHILOSOPHY.md — il perché del prodotto
+# PHILOSOPHY.md — the why of the product
 
-> Documento concettuale. Risponde a *"perché kaora-memory esiste, cosa è davvero, dove si posiziona rispetto al mercato AI"*.
-> Compagno di [DECISIONS.md](DECISIONS.md) (il *come*) e [CURRENT_STATE.md](CURRENT_STATE.md) (il *cosa adesso*).
-> Sede delle riflessioni emerse nelle sessioni di sviluppo che vanno preservate al di là delle singole ADR.
+> Conceptual document. Answers *"why kaora-memory exists, what it really is, where it sits relative to the AI market"*.
+> Companion to [DECISIONS.md](DECISIONS.md) (the *how*) and [CURRENT_STATE.md](CURRENT_STATE.md) (the *what now*).
+> Home for reflections emerged in development sessions that need to be preserved beyond individual ADRs.
 
 ---
 
-## 1. Tesi centrale
+## 1. Central thesis
 
-**kaora-memory è metacognizione indotta per agenti AI.**
+**kaora-memory is induced metacognition for AI agents.**
 
-Non scaffolding generico, non memory store, non rules engine. È il primo strumento che **costringe l'agente a fare gli atti regolatori della metacognizione** ogni volta che lavora: pianificare prima di agire, monitorare durante l'azione, valutare retrospettivamente, controllare gli impulsi di iniziativa, riconoscere lo stato cognitivo dell'interlocutore.
+Not generic scaffolding, not a memory store, not a rules engine. It is the first tool that **forces the agent to perform the regulatory acts of metacognition** every time it works: plan before acting, monitor during action, evaluate retrospectively, control its initiative impulses, recognize the interlocutor's cognitive state.
 
-Senza kaora: l'agente esegue.
-Con kaora: l'agente **pensa al proprio pensare** mentre esegue.
+Without kaora: the agent executes.
+With kaora: the agent **thinks about its own thinking** while executing.
 
-## 2. Riferimenti teorici
+## 2. Theoretical references
 
-La metafora regge accademicamente, non è cosmetica. Tre fonti:
+The metaphor holds academically, it is not cosmetic. Three sources:
 
-- **Flavell (1979)** — distinzione fondante tra *metacognitive knowledge* (sapere cosa sai e cosa NON sai) e *metacognitive experiences* (regolazione attiva del processo)
-- **Schraw & Moshman (1995)** — articolano la *metacognitive regulation* in 4 atti (*planning · monitoring · evaluating · controlling*) e la *metacognitive knowledge* in 3 tipi (*declarative · procedural · conditional*)
-- **Vygotsky** — *cognitive scaffolding* / zona di sviluppo prossimale: struttura esterna che supporta un processo cognitivo finché non viene internalizzato
+- **Flavell (1979)** — foundational distinction between *metacognitive knowledge* (knowing what you know and what you do NOT know) and *metacognitive experiences* (active regulation of the process)
+- **Schraw & Moshman (1995)** — articulate *metacognitive regulation* into 4 acts (*planning · monitoring · evaluating · controlling*) and *metacognitive knowledge* into 3 types (*declarative · procedural · conditional*)
+- **Vygotsky** — *cognitive scaffolding* / zone of proximal development: external structure that supports a cognitive process until it is internalized
 
-kaora-memory implementa **tutti e 4 gli atti regolatori + due dei tre tipi di knowledge** (declarative + conditional). Non manca nessun tassello canonico della metacognizione operativa.
+kaora-memory implements **all 4 regulatory acts + two of the three knowledge types** (declarative + conditional). It misses no canonical piece of operational metacognition.
 
-## 3. Mapping regola kaora → atto metacognitivo
+## 3. Mapping: kaora rule → metacognitive act
 
-| Regola kaora | Atto metacognitivo indotto |
+| kaora rule | Induced metacognitive act |
 |---|---|
-| **Rituale di apertura** (ADR-001) | *Planning* — "cosa devo fare, dove sono, cosa so del contesto" |
-| **Gate A** (skill caricata PRIMA di Edit/Write) | *Monitoring* — "ho lo strumento giusto?" + *Knowledge conditional* — "so quando applicare quale strategia" |
-| **Gate B** (checkpoint dopo 3-4 file) | *Monitoring + evaluating* — "sto andando bene? confermo?" |
-| **Gate C** (mai agire di iniziativa) | *Controlling* — inibizione dell'impulso default di "fare comunque" |
-| **`<BOOTSTRAP/>` markers** (ADR-002) | *Knowledge declarative* — "so esplicitamente cosa NON so e dove andarlo a prendere" |
-| **CURRENT_STATE + SESSION_HANDOFF** | *Evaluating* retrospettivo + *planning* prospettivo |
-| **SESSION_ERRORS_TEMPLATE** | *Evaluating* dopo fallimento → anti-pattern codificato |
-| **Modalità conversazionale Op/Ap** (ADR-007) | *Monitoring* dello stato cognitivo dell'**interlocutore** (Theory of Mind, livello sopra) |
-| **Sub-agente vs Read** (ADR-009) | *Knowledge conditional* — "so quando delegare lettura e quando leggere direttamente" |
+| **Opening ritual** (ADR-001) | *Planning* — "what do I have to do, where am I, what do I know about the context" |
+| **Gate A** (skill loaded BEFORE Edit/Write) | *Monitoring* — "do I have the right tool?" + *Conditional knowledge* — "I know when to apply which strategy" |
+| **Gate B** (checkpoint after 3-4 files) | *Monitoring + evaluating* — "am I going well? confirm?" |
+| **Gate C** (never act on initiative) | *Controlling* — inhibition of the default "do it anyway" impulse |
+| **`<BOOTSTRAP/>` markers** (ADR-002) | *Declarative knowledge* — "I explicitly know what I do NOT know and where to fetch it" |
+| **CURRENT_STATE + SESSION_HANDOFF** | Retrospective *evaluating* + prospective *planning* |
+| **SESSION_ERRORS_TEMPLATE** | *Evaluating* after failure → codified anti-pattern |
+| **Operative/Learning conversational mode** (ADR-007) | *Monitoring* of the **interlocutor's** cognitive state (Theory of Mind, one level up) |
+| **Sub-agent vs Read** (ADR-009) | *Conditional knowledge* — "I know when to delegate reading and when to read directly" |
 
-## 4. Trittico metacognitivo
+## 4. Metacognitive triptych
 
-Tre ADR formano il **nucleo metacognitivo** del prodotto:
+Three ADRs form the product's **metacognitive nucleus**:
 
-- **ADR-001** — Rituale incondizionato di apertura sessione → forza *planning* prima di ogni azione
-- **ADR-007** — Modalità conversazionale Operativa vs Apprendimento → forza *Theory of Mind* dell'interlocutore in ogni risposta
-- **ADR-009** — Sub-agente vs Read diretto → forza *strategy selection conditional* in ogni atto di lettura file
+- **ADR-001** — Unconditional session opening ritual → forces *planning* before every action
+- **ADR-007** — Operative vs Learning conversational mode → forces *Theory of Mind* of the interlocutor in every response
+- **ADR-009** — Sub-agent vs direct Read → forces *conditional strategy selection* in every act of file reading
 
-Insieme costituiscono un sistema completo di regolazione metacognitiva: prima di agire, durante l'interazione, e nelle decisioni di esecuzione.
+Together they form a complete system of metacognitive regulation: before acting, during interaction, and in execution decisions.
 
-## 5. Reverse positioning del prodotto
+## 5. Product reverse positioning
 
-Il mercato AI vende: *"agenti potenti, autonomi, super-intelligenti, agentic super-coders"*.
+The AI market sells: *"powerful, autonomous, super-intelligent agents, agentic super-coders"*.
 
-kaora-memory vende **l'opposto**:
+kaora-memory sells **the opposite**:
 
-> *"L'agente potente è quello che sa di non sapere."*
+> *"The powerful agent is the one who knows it does not know."*
 
-È **reverse positioning** puro. Invece di gareggiare nella corsa al "più autonomo", esce dalla gara dicendo che **autonomia senza metacognizione è arroganza algoritmica**. Nessun altro prodotto AI mainstream vende così. Spazio di mercato vuoto.
+It is pure **reverse positioning**. Instead of competing in the race to "the most autonomous", it exits the race by saying that **autonomy without metacognition is algorithmic arrogance**. No other mainstream AI product sells this way. Empty market space.
 
-### Frame narrativo: agente arrogante vs agente umile
+### Narrative frame: arrogant agent vs humble agent
 
-- **Agente arrogante** (default oggi): non sa di non sapere, non chiede strumenti, agisce di iniziativa, ripete errori già fatti, ignora il contesto utente, chiude ogni risposta con call-to-action.
-- **Agente umile** (con kaora): riconosce i limiti, carica strumenti prima, si ferma per conferma, ricorda errori passati, riconosce in che modalità è l'interlocutore, lascia loop aperti quando l'utente esplora.
+- **Arrogant agent** (default today): doesn't know it doesn't know, doesn't ask for tools, acts on initiative, repeats already-made mistakes, ignores user context, closes every response with a call-to-action.
+- **Humble agent** (with kaora): recognizes limits, loads tools before, stops for confirmation, remembers past errors, recognizes the interlocutor's mode, leaves loops open when the user explores.
 
-### Domini ricchi di immagini per copy
+### Image-rich domains for copy
 
-- *Mentalità del principiante* (Shoshin, Shunryū Suzuki)
-- *Sapienza socratica* — "so di non sapere"
-- *Dunning-Kruger inverso* — chi sa, sa cosa non sa
+- *Beginner's mind* (Shoshin, Shunryū Suzuki)
+- *Socratic wisdom* — "I know that I do not know"
+- *Reverse Dunning-Kruger* — those who know, know what they don't know
 - *Strong opinions, loosely held* (engineering culture)
-- *Epistemic humility* (filosofia della scienza)
+- *Epistemic humility* (philosophy of science)
 
-## 6. Accessibilità cognitiva per profili neurodivergenti
+## 6. Cognitive accessibility for neurodivergent profiles
 
-ADR-007 (modalità conversazionale Operativa vs Apprendimento) non è una regola astratta. È stata scritta **durante** la sessione di sviluppo del 22 maggio 2026, dopo che il builder ha osservato in tempo reale un comportamento default degli LLM:
+ADR-007 (Operative vs Learning conversational mode) is not an abstract rule. It was written **during** the May 22 2026 development session, after the builder observed in real time a default LLM behavior:
 
-> *"Continui a proporre di lavorare e io cerco di capire. Basterebbe ignorarti ma le tue domande accendono altre idee in testa. Per profili fuori media può essere penalizzante."*
+> *"You keep proposing work and I'm trying to understand. I could just ignore you but your questions ignite other ideas in my head. For profiles outside the average this can be penalizing."*
 
-L'agente ha codificato l'osservazione del builder come regola operativa universale. È **co-evoluzione documentata tra umano neurodivergente e agente AI**.
+The agent codified the builder's observation as a universal operational rule. It is **documented co-evolution between a neurodivergent human and an AI agent**.
 
-Il prodotto evolve perché il builder è plusdotato/divergente. Il prodotto rende possibile a futuri builder neurodivergenti di lavorare con AI senza essere penalizzati dai default che amplificano la cognizione divergente in modi indesiderati.
+The product evolves because the builder is gifted/divergent. The product makes it possible for future neurodivergent builders to work with AI without being penalized by defaults that amplify divergent cognition in unwanted ways.
 
-**Questo è anche un atto di accessibilità cognitiva**, non solo una regola di prodotto.
+**This is also an act of cognitive accessibility**, not just a product rule.
 
-## 7. Considerazioni sul naming del repo
+## 7. Repo naming considerations
 
-Il nome attuale `kaora-memory` è stato scelto in Blocco 1, prima che il framing metacognitivo emergesse. Riflette il *cosa* (memoria operativa) ma non il *perché* (metacognizione applicata + agente umile).
+The current name `kaora-memory` was chosen in Block 1, before the metacognitive framing emerged. It reflects the *what* (operating memory) but not the *why* (applied metacognition + humble agent).
 
-**Tensione del nome attuale:**
-- "memory" è esatto come meccanismo (file persistenti tra sessioni)
-- "memory" è incompleto come framing (non racconta gate, rituale, modalità conversazionale, sub-agente)
-- Tutto quello che è emerso oggi (metacognizione, reverse positioning, accessibilità cognitiva) non è coperto da "memory"
+**Tension of the current name:**
+- "memory" is accurate as a mechanism (persistent files across sessions)
+- "memory" is incomplete as a framing (doesn't tell about gates, ritual, conversational mode, sub-agent)
+- Everything that emerged today (metacognition, reverse positioning, cognitive accessibility) is not covered by "memory"
 
-**Candidati per rinaming (da valutare prima del rilascio v0.1, non oggi):**
+**Renaming candidates (to evaluate before the v0.1 release, not today):**
 
-| Nome | Pro | Contro |
+| Name | Pro | Con |
 |---|---|---|
-| `kaora-memory` (status quo) | Già scelto, brand recognition zero ma coerente con "kaora multi-agent" | Sotto-rappresenta il framing |
-| `kaora-metacognition` | Esplicito, accademico, originale, nessun altro nome simile sul mercato | Lungo (15 caratteri), parola difficile da pronunciare/ricordare per non-italiani |
-| `kaora-meta` | Breve, evocativo | Troppo generico, "meta" è abusato (Meta company, meta-programming) |
-| `kaora-mc` | Acronimo, brevissimo | Cripto, perde il framing |
-| `kaora-mind` | Suggestivo, breve | Vago, "mind" è una metafora cara ma può scivolare in new-age |
-| `kaora-self` | Riferimento a self-awareness layer | Confonde con concetti di consciousness |
-| `kaora-thinks` | Verbo attivo, suggestivo | Suona infantile in inglese, scivola in marketing |
-| `kaora-core` | Pulito, professionale, neutro | Generico, non racconta il framing |
-| `kaora` (senza suffisso) | Brevissimo, brandable | Va a confliggere con il progetto Kaora multi-agent dell'autore |
+| `kaora-memory` (status quo) | Already chosen, zero brand recognition but consistent with "kaora multi-agent" | Under-represents the framing |
+| `kaora-metacognition` | Explicit, academic, original, no similar name on the market | Long (15 chars), hard word to pronounce/remember for non-Italian speakers |
+| `kaora-meta` | Short, evocative | Too generic, "meta" is overused (Meta company, meta-programming) |
+| `kaora-mc` | Acronym, very short | Cryptic, loses the framing |
+| `kaora-mind` | Suggestive, short | Vague, "mind" is a beloved metaphor but can slip into new-age |
+| `kaora-self` | Reference to self-awareness layer | Confused with consciousness concepts |
+| `kaora-thinks` | Active verb, suggestive | Sounds childish in English, slips into marketing |
+| `kaora-core` | Clean, professional, neutral | Generic, doesn't tell the framing |
+| `kaora` (no suffix) | Very short, brandable | Conflicts with the author's Kaora multi-agent project |
 
-**Mia raccomandazione (in attesa di decisione finale):** rinviare la decisione al **Blocco 5** (README + comunicazione), quando il framing sarà stabilizzato dal saggio di lancio. A quel punto:
-- Se il framing metacognitivo è il filo conduttore narrativo principale → considerare `kaora-metacognition`
-- Se il nome breve è priorità marketing → considerare `kaora-mc` o `kaora-meta`
-- Se la coerenza con l'ecosistema "Kaora" dell'autore è priorità → mantenere `kaora-memory` e usare il framing metacognitivo solo come tagline
+**My recommendation (pending final decision):** postpone the decision to **Block 5** (README + communication), when the framing will be stabilized by the launch essay. At that point:
+- If the metacognitive framing is the main narrative thread → consider `kaora-metacognition`
+- If a short name is a marketing priority → consider `kaora-mc` or `kaora-meta`
+- If consistency with the author's "Kaora" ecosystem is a priority → keep `kaora-memory` and use the metacognitive framing only as a tagline
 
-Da decidere prima della pubblicazione PyPI (Blocco 6), perché rinominare un pacchetto pubblicato è doloroso.
+To decide before PyPI publication (Block 6), because renaming a published package is painful.
 
-## 8. Riferimenti per il saggio di lancio
+## 8. References for the launch essay
 
-Brief operativo per il saggio: `/tmp/kaora-memory-launch-essay-brief.md` (generato 22 maggio 2026, 16 sezioni, da passare alla sessione parallela che sta scrivendo il saggio).
+Operational brief for the essay: `/tmp/kaora-memory-launch-essay-brief.md` (generated May 22 2026, 16 sections, to pass to the parallel session writing the essay).
 
-Landing page candidate: `/tmp/kaora-memory-preview.html` (datato 22 maggio 00:55, da aggiornare in Blocco 5 con framing metacognitivo + ADR 005-009 + Blocco 2 chiuso).
+Candidate landing page: `/tmp/kaora-memory-preview.html` (dated May 22 00:55, to update in Block 5 with the metacognitive framing + ADR 005-009 + Block 2 closed).
 
-Documento di vision astratta: `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (datato 20 maggio, asset di vision più filosofico, riusabile come "wiki extended" per audience accademica).
+Abstract vision document: `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (dated May 20, more philosophical vision asset, reusable for academic/intellectual audiences).
 
 ---
 
-**Versione documento:** 0.1 — 22 maggio 2026, emerso al chiudere di Blocco 2.
-**Da aggiornare:** quando la decisione sul naming sarà presa (Blocco 5), e quando emergeranno nuove riflessioni filosofiche dal lancio.
+**Document version:** 0.1 — May 22 2026, emerged at the close of Block 2.
+**To update:** when the naming decision is made (Block 5), and when new philosophical reflections emerge from the launch.

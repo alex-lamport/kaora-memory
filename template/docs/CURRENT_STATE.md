@@ -1,32 +1,32 @@
-# CURRENT_STATE.md — stato operativo
+# CURRENT_STATE.md — operational state
 
-> Aggiornato a **fine** di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
+> Updated at the **end** of every session. Answers "where are we, what works, what's missing right now".
 >
-> **Ultimo aggiornamento:** {{year}}-MM-GG — scaffolding iniziale via `kaora init`.
+> **Last update:** {{year}}-MM-DD — initial scaffolding via `kaora init`.
 
 ---
 
-## Snapshot oggi
+## Snapshot today
 
-**Stage corrente:** scaffolding iniziale — memoria operativa installata, BOOTSTRAP da compilare.
-**Commit ultimo:** <BOOTSTRAP need="last-commit" sources="git log -1 --oneline"/>
+**Current stage:** initial scaffolding — operating memory installed, BOOTSTRAP to fill.
+**Last commit:** <BOOTSTRAP need="last-commit" sources="git log -1 --oneline"/>
 **Branch:** <BOOTSTRAP need="current-branch" sources="git branch --show-current"/>
-**Repo remoto:** <BOOTSTRAP need="remote-url" sources="git remote -v"/>
+**Remote repo:** <BOOTSTRAP need="remote-url" sources="git remote -v"/>
 
-## Cosa esiste
+## What exists
 
 ```
 {{project_name}}/
-├── AGENTS.md                          (canonico cross-agent)
-├── CLAUDE.md                          (entry point Claude Code, import @AGENTS.md)
-├── AGENT_BRIEF.md                     (onboarding 3-min)
-├── BACKLOG.md                         (idee fuori scope corrente)
+├── AGENTS.md                          (cross-agent canonical)
+├── CLAUDE.md                          (Claude Code entry point, imports @AGENTS.md)
+├── AGENT_BRIEF.md                     (3-min onboarding)
+├── BACKLOG.md                         (ideas outside current scope)
 ├── docs/
-│   ├── IDENTITY.md                    (chi sono io, come comunico)
-│   ├── CURRENT_STATE.md               (questo file)
-│   ├── SESSION_HANDOFF.md             (brief prima sessione)
+│   ├── IDENTITY.md                    (who I am, how I communicate)
+│   ├── CURRENT_STATE.md               (this file)
+│   ├── SESSION_HANDOFF.md             (first-session brief)
 │   ├── DECISIONS.md                   (ADR log, append-only)
-│   └── SESSION_ERRORS_TEMPLATE.md     (template post-mortem)
+│   └── SESSION_ERRORS_TEMPLATE.md     (post-mortem template)
 └── .claude/
     ├── settings.json                  (hook config)
     └── hooks/
@@ -36,25 +36,25 @@
 
 <BOOTSTRAP need="existing-project-files" sources="ls -la, ls src/, ls lib/, package.json, README, prior .kaora-bak files content"/>
 
-## Cosa funziona
+## What works
 
-- ✅ Memoria operativa kaora installata (`AGENTS.md`, `CLAUDE.md`, `docs/*`)
-- ✅ Hook protezione credenziali attivi (`.claude/hooks/protect-credentials.sh`)
-- ✅ Hook log API calls attivi (`.claude/hooks/log-api-calls.sh`)
+- ✅ kaora operating memory installed (`AGENTS.md`, `CLAUDE.md`, `docs/*`)
+- ✅ Credential-protection hook active (`.claude/hooks/protect-credentials.sh`)
+- ✅ API-call logging hook active (`.claude/hooks/log-api-calls.sh`)
 <BOOTSTRAP need="working-features" sources="tests passing, build green, deploy status"/>
 
-## Cosa manca (priorità ordinata)
+## What's missing (priority-ordered)
 
-1. **Compilazione marker `<BOOTSTRAP/>`** — la prima sessione AI deve scansionarli e compilarli (vedi `AGENT_BRIEF.md` § 3)
-2. **Lettura file `.kaora-bak`** se presenti — estrarre setup tecnico esistente e integrarlo
-3. **Prima ADR del progetto** in `docs/DECISIONS.md` — qualsiasi decisione iniziale di architettura
+1. **Fill `<BOOTSTRAP/>` markers** — the first AI session must scan and fill them (see `AGENT_BRIEF.md` § 3)
+2. **Read `.kaora-bak` files** if present — extract existing tech setup and integrate it
+3. **First project ADR** in `docs/DECISIONS.md` — any initial architectural decision
 <BOOTSTRAP need="project-todo" sources="TODO comments in code, GitHub issues if remote configured, README roadmap section"/>
 
-## Asset di comunicazione collegati
+## Linked communication assets
 
 <BOOTSTRAP need="comms-assets" sources="docs/, .figma/, .canva/, marketing/, design/"/>
 
-## Note operative
+## Operational notes
 
-- **Memoria persistente:** non ancora popolata, si arricchirà sessione dopo sessione
-- **File `.kaora-bak` da gestire:** <BOOTSTRAP need="kaora-bak-list" sources="ls *.kaora-bak, ls docs/*.kaora-bak"/>
+- **Persistent memory:** not yet populated, it will grow session by session
+- **`.kaora-bak` files to handle:** <BOOTSTRAP need="kaora-bak-list" sources="ls *.kaora-bak, ls docs/*.kaora-bak"/>

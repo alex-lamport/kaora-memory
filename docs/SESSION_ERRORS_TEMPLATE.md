@@ -1,70 +1,70 @@
-# SESSION_ERRORS_TEMPLATE.md — template post-mortem per sessione fallita
+# SESSION_ERRORS_TEMPLATE.md — post-mortem template for a failed session
 
-> Copia questo file in `docs/SESSION_ERRORS/YYYY-MM-DD-slug-breve.md` quando una sessione produce un errore significativo (decisione sbagliata, codice che ha rotto, tempo perso per malinteso, anti-pattern dell'agente non corretto in tempo).
+> Copy this file into `docs/SESSION_ERRORS/YYYY-MM-DD-short-slug.md` when a session produces a significant error (wrong decision, code that broke things, time lost to a misunderstanding, agent anti-pattern not corrected in time).
 >
-> **Obiettivo:** trasformare ogni errore in apprendimento codificato. Il file finisce in `docs/IDENTITY.md` § 3 (anti-pattern) o `docs/DECISIONS.md` (nuova ADR) a seconda della natura.
+> **Goal:** turn every error into codified learning. The file ends up in `docs/IDENTITY.md` § 3 (anti-patterns) or `docs/DECISIONS.md` (new ADR) depending on its nature.
 
 ---
 
-## Cosa è successo
+## What happened
 
-[Descrizione fattuale, 2-4 righe. Nessun tono accusatorio.]
+[Factual description, 2-4 lines. No accusatory tone.]
 
-## Quando
+## When
 
-- **Data:** YYYY-MM-DD
-- **Agente coinvolto:** [Claude Code / Codex / Cursor / Aider / Gemini CLI / altro]
-- **Modello:** [es. claude-sonnet-4.6, gpt-5, gemini-2.5-pro]
-- **Durata sessione:** ~X minuti
-- **Tempo perso stimato:** ~Y minuti
+- **Date:** YYYY-MM-DD
+- **Agent involved:** [Claude Code / Codex / Cursor / Aider / Gemini CLI / other]
+- **Model:** [e.g. claude-sonnet-4.6, gpt-5, gemini-2.5-pro]
+- **Session duration:** ~X minutes
+- **Estimated time lost:** ~Y minutes
 
-## Cosa si voleva ottenere
+## What you wanted to achieve
 
-[Obiettivo originale della sessione]
+[Original session goal]
 
-## Cosa è andato storto
+## What went wrong
 
-[Cronologia dell'errore. Indica file, comandi, decisioni nel punto preciso in cui la sessione ha deviato.]
+[Error chronology. Indicate files, commands, decisions at the exact point where the session deviated.]
 
-## Causa radice
+## Root cause
 
-[Una sola causa principale. Se ce ne sono più, scegli quella senza la quale l'errore non sarebbe successo.]
+[One main cause. If there are several, pick the one without which the error wouldn't have happened.]
 
-Categoria probabile (cerchia una):
-- Skip del rituale di apertura
-- Violazione Gate A (skill non caricata prima di Write)
-- Violazione Gate B (3-4 file modificati senza checkpoint)
-- Violazione Gate C (azione di iniziativa senza "vai")
-- ADR esistente ignorata
-- Anti-pattern in IDENTITY.md non rispettato
-- Memoria pre-esistente (`.kaora-bak`) non letta
-- Specifica utente ambigua, agente non ha chiesto
-- Bug genuino nel codice / tool / libreria
+Probable category (circle one):
+- Skipped opening ritual
+- Gate A violation (skill not loaded before Write)
+- Gate B violation (3-4 files modified without checkpoint)
+- Gate C violation (initiative action without "go")
+- Existing ADR ignored
+- Anti-pattern in IDENTITY.md not respected
+- Pre-existing memory (`.kaora-bak`) not read
+- User spec ambiguous, agent didn't ask
+- Genuine bug in code / tool / library
 
-## Cosa abbiamo riparato
+## What we repaired
 
-[Comandi/diff/decisioni che hanno chiuso l'incidente]
+[Commands/diffs/decisions that closed the incident]
 
-## Cosa codificare per evitare ripetizione
+## What to codify to prevent repetition
 
-Scegli **una** delle azioni seguenti (può essere combinata):
+Pick **one** of the actions below (can be combined):
 
-- [ ] **Anti-pattern in `docs/IDENTITY.md` § 3** — aggiungi una riga concreta
-- [ ] **Nuova ADR in `docs/DECISIONS.md`** — se è una decisione architetturale
-- [ ] **Skill da aggiungere a `AGENTS.md` § 10** — se mancava il sapere di dominio
-- [ ] **Hook in `.claude/hooks/`** — se la prevenzione automatica è fattibile
-- [ ] **Modifica `AGENTS.md` § 9 (Cosa NON fare)** — se è una regola universale
+- [ ] **Anti-pattern in `docs/IDENTITY.md` § 3** — add a concrete line
+- [ ] **New ADR in `docs/DECISIONS.md`** — if it's an architectural decision
+- [ ] **Skill to add in `AGENTS.md` § 10** — if domain knowledge was missing
+- [ ] **Hook in `.claude/hooks/`** — if automated prevention is feasible
+- [ ] **Edit to `AGENTS.md` § 9 (What NOT to do)** — if it's a universal rule
 
-Concretamente:
+Concretely:
 
 ```
-[diff o testo aggiunto]
+[diff or added text]
 ```
 
-## Lezione in una frase
+## Lesson in one sentence
 
-[Una sola frase, secca. Sarà quella che ricorderai tra 3 mesi.]
+[A single, sharp sentence. This is what you'll remember 3 months from now.]
 
 ---
 
-**Indicizzazione:** alla fine di questo post-mortem, aggiorna `docs/CURRENT_STATE.md` con un'eventuale nota sotto "Note operative" se serve memoria attiva nelle sessioni future.
+**Indexing:** at the end of this post-mortem, update `docs/CURRENT_STATE.md` with an optional note under "Operational notes" if active memory is needed in future sessions.

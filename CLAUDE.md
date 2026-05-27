@@ -1,6 +1,6 @@
 # CLAUDE.md — kaora-memory
 
-> Entry point per Claude Code. Il contenuto canonico vive in `AGENTS.md` e viene importato sotto.
-> Modifica `AGENTS.md`, non questo file.
+> Entry point for Claude Code. The canonical content lives in `AGENTS.md` and is imported below.
+> Edit `AGENTS.md`, not this file.
 
 @AGENTS.md

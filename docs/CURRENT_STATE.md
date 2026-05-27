@@ -1,62 +1,62 @@
-# CURRENT_STATE.md — stato operativo
+# CURRENT_STATE.md — operational state
 
-> Aggiornato a fine di ogni sessione. Risponde a "dove siamo, cosa funziona, cosa manca adesso".
+> Updated at the end of every session. Answers "where are we, what works, what's missing right now".
 >
-> **Ultimo aggiornamento:** 2026-05-27 — **Blocco 4 chiuso**: `kaora check` linter integrità memoria operativa implementato TDD (green `29fa094` + refactor `a9e542a` + fix4 `607b5a9`). 6 categorie di check (structure/adr005/adr_state/placeholders/hooks/settings), CLI `kaora check [PATH] --strict --quiet --json`. Suite 62/62 verdi. Re-dogfooding live ha rivelato pattern coerente: `_strip_code_blocks` applicato sia in `_check_adr_state` sia in `_check_placeholders` per escludere contenuto documentario fenced in ```.
+> **Last update:** 2026-05-27 — **Mini-Block 4.5 closed**: full IT→EN i18n refactor of the entire codebase (template + root docs + Python code + tests + setup-dev.sh). English becomes the framework language; the user-agent runtime conversation language remains multilingual via the `{{communication_language}}` placeholder. Atomic regex+test fix: `_RE_ADR_*` now searches `**Status:**` (was `**Stato:**`). Suite 62/62 green throughout every wave. Sub-agent review GREEN on Wave A (10 template files), Wave B-1 (5 root files), Wave B-2 (6 docs), Wave C-1 (6 code modules), Wave C-2 (5 test files + bash script).
 
 ---
 
-## Snapshot oggi
+## Snapshot today
 
-**Blocco corrente:** Blocco 4 ✅ chiuso (`kaora check`) · Blocco 5 prossimo (README ricco + asset di lancio)
-**Commit ultimo in main:** `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. Working tree pulito.
+**Current block:** Block 4 ✅ closed (`kaora check`) · Block 4.5 ✅ closed (i18n EN-first refactor) · Block 5 next (rich README + launch assets — now to write in English)
+**Last commit on main:** `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. Working tree dirty: i18n refactor pending commit.
 **Branch:** `main`
-**Repo remoto:** non ancora configurato (placeholder URL `alex-lamport/kaora-memory` in pyproject)
-**ADR aperte:** nessuna · tutte 000-009 Accepted
+**Remote repo:** not configured yet (placeholder URL `alex-lamport/kaora-memory` in pyproject)
+**Open ADRs:** none · all 000-009 Accepted
 
-## Cosa esiste
+## What exists
 
 ```
 kaora-memory/
 ├── .gitignore                        (.venv/, dist/, .pytest_cache/, ...)
-├── BACKLOG.md                        (+sezione "Issue noti": UF_HIDDEN macOS)
+├── BACKLOG.md                        (+"Known issues" section: UF_HIDDEN macOS)
 ├── LICENSE
-├── README.md                         (minimal, ricco in Blocco 5)
+├── README.md                         (minimal, will be rich in Block 5)
 ├── pyproject.toml                    (hatchling, py>=3.10, entry `kaora`, force-include `template/` → `kaora_memory/_template/`)
-├── CLAUDE.md                         (4 righe `@AGENTS.md` — post-dogfooding 2026-05-26)
-├── AGENTS.md                         ✨ NUOVO (post-dogfooding) — master context canonico, popolato via merge guidato del .kaora-bak
-├── AGENT_BRIEF.md                    ✨ NUOVO (post-dogfooding) — onboarding agenti
+├── CLAUDE.md                         (4 lines `@AGENTS.md` — post-dogfooding 2026-05-26)
+├── AGENTS.md                         ✨ NEW (post-dogfooding) — canonical master context, populated via guided merge of the .kaora-bak
+├── AGENT_BRIEF.md                    ✨ NEW (post-dogfooding) — agent onboarding
 ├── bin/
-│   └── setup-dev.sh                  ✨ AGGIORNATO 2026-05-24 — venv + pip -e .[dev] + installa wrapper self-healing su .venv/bin/kaora (fix UF_HIDDEN macOS)
-├── kaora_memory/                     ✨ ESPANSO (Blocco 3) + Blocco 4
+│   └── setup-dev.sh                  ✨ UPDATED 2026-05-24 — venv + pip -e .[dev] + installs self-healing wrapper on .venv/bin/kaora (macOS UF_HIDDEN fix)
+├── kaora_memory/                     ✨ EXPANDED (Block 3) + Block 4
 │   ├── __init__.py                   (__version__ = "0.1.0")
-│   ├── settings_merger.py            (Blocco 3) — merge JSON ADR-006 v2
-│   ├── template_resolver.py          (Blocco 3) — get_template_root() con importlib.resources + fallback dev
-│   ├── installer.py                  (Blocco 3) — install_template() + InstallReport, policy 3 categorie
-│   ├── check.py                      ✨ NUOVO (Blocco 4) — check_project() + CheckResult/CheckReport, 6 categorie, format_text/format_json
-│   └── cli.py                        ESPANSO (Blocco 4) — aggiunto sub-command `kaora check [PATH] [--strict] [--quiet] [--json]`
-├── tests/                            ESPANSO (Blocco 4) — 62 test green (33 Blocco 3 + 29 Blocco 4)
+│   ├── settings_merger.py            (Block 3) — JSON merge ADR-006 v2
+│   ├── template_resolver.py          (Block 3) — get_template_root() with importlib.resources + dev fallback
+│   ├── installer.py                  (Block 3) — install_template() + InstallReport, 3-category policy
+│   ├── check.py                      ✨ NEW (Block 4) — check_project() + CheckResult/CheckReport, 6 categories, format_text/format_json
+│   └── cli.py                        EXPANDED (Block 4) — added sub-command `kaora check [PATH] [--strict] [--quiet] [--json]`
+├── tests/                            EXPANDED (Block 4) — 62 green tests (33 Block 3 + 29 Block 4)
 │   ├── __init__.py
-│   ├── test_settings_merger.py       (8 cases, Blocco 3)
-│   ├── test_template_resolver.py     (3 cases, Blocco 3)
-│   ├── test_init.py                  (18 cases, Blocco 3)
+│   ├── test_settings_merger.py       (8 cases, Block 3)
+│   ├── test_template_resolver.py     (3 cases, Block 3)
+│   ├── test_init.py                  (18 cases, Block 3)
 │   ├── test_cli.py                   (7 cases: 4 init + 3 check CLI smoke)
-│   └── test_check.py                 ✨ NUOVO (Blocco 4) — 26 cases (6 categorie + 3 format + 4 refactor regression)
+│   └── test_check.py                 ✨ NEW (Block 4) — 26 cases (6 categories + 3 format + 4 refactor regression)
 ├── docs/
-│   ├── CURRENT_STATE.md              (questo file)
-│   ├── SESSION_HANDOFF.md            (brief Blocco 4)
+│   ├── CURRENT_STATE.md              (this file)
+│   ├── SESSION_HANDOFF.md            (Block 4 brief)
 │   ├── DECISIONS.md                  (ADR 000-009 Accepted)
-│   ├── PHILOSOPHY.md                 (perché del prodotto, metacognizione applicata)
-│   ├── IDENTITY.md                   ✨ NUOVO (post-dogfooding) — chi è il builder, come comunica, anti-pattern
-│   ├── SESSION_ERRORS_TEMPLATE.md    ✨ NUOVO (post-dogfooding) — template post-mortem
-│   ├── DOGFOODING_REPORT.md          ✨ NUOVO (post-dogfooding) — case study completo del test self-dogfooding 2026-05-26
+│   ├── PHILOSOPHY.md                 (the product's why, applied metacognition)
+│   ├── IDENTITY.md                   ✨ NEW (post-dogfooding) — who the builder is, how they communicate, anti-patterns
+│   ├── SESSION_ERRORS_TEMPLATE.md    ✨ NEW (post-dogfooding) — post-mortem template
+│   ├── DOGFOODING_REPORT.md          ✨ NEW (post-dogfooding) — full case study of the self-dogfooding test 2026-05-26
 │   └── archive/
-│       └── CLAUDE.md.kaora-bak       ✨ NUOVO (post-dogfooding) — vecchio master context, archiviato per non far scattare lo scan rituale
-└── template/                         (Blocco 2, sorgente unica, force-include nel wheel)
-    ├── AGENTS.md                     (canonico cross-agent)
-    ├── CLAUDE.md                     (4 righe: @AGENTS.md)
-    ├── AGENT_BRIEF.md                (onboarding agenti)
-    ├── README.md.tpl                 (→ rinomina a README.md in init)
+│       └── CLAUDE.md.kaora-bak       ✨ NEW (post-dogfooding) — old master context, archived to avoid triggering the ritual scan
+└── template/                         (Block 2, single source, force-included in the wheel)
+    ├── AGENTS.md                     (cross-agent canonical)
+    ├── CLAUDE.md                     (4 lines: @AGENTS.md)
+    ├── AGENT_BRIEF.md                (agent onboarding)
+    ├── README.md.tpl                 (→ renamed to README.md at init)
     ├── BACKLOG.md
     ├── docs/{IDENTITY,CURRENT_STATE,SESSION_HANDOFF,DECISIONS,SESSION_ERRORS_TEMPLATE}.md
     └── .claude/
@@ -64,91 +64,99 @@ kaora-memory/
         └── hooks/{protect-credentials.sh, log-api-calls.sh}
 ```
 
-**Verifiche eseguite in Blocco 3:**
+**Verifications run in Block 3:**
 - ✅ Pytest 33/33 green via `.venv/bin/python -m pytest`
-- ✅ `python -m build` produce `dist/kaora_memory-0.1.0-py3-none-any.whl` con 13 file `_template/` dentro (verificato via `zipfile`)
-- ✅ Smoke `kaora init /tmp/kaora-smoke --no-git-init`: 13 file creati, hook `protect-credentials.sh` eseguibile, placeholder `{{project_name}}` sostituito con basename
-- ✅ Smoke `kaora init --dry-run`: piano stampato, zero file scritti
-- ✅ Smoke brownfield CLAUDE.md preesistente: backup `.kaora-bak` preserva contenuto utente, nuovo CLAUDE.md contiene `@AGENTS.md`
+- ✅ `python -m build` produces `dist/kaora_memory-0.1.0-py3-none-any.whl` with 13 `_template/` files inside (verified via `zipfile`)
+- ✅ Smoke `kaora init /tmp/kaora-smoke --no-git-init`: 13 files created, `protect-credentials.sh` hook executable, `{{project_name}}` placeholder replaced with basename
+- ✅ Smoke `kaora init --dry-run`: plan printed, zero files written
+- ✅ Brownfield smoke pre-existing CLAUDE.md: `.kaora-bak` backup preserves user content, new CLAUDE.md contains `@AGENTS.md`
 
-**Verifiche eseguite 2026-05-24 / 2026-05-26:**
-- ✅ **Bug UF_HIDDEN macOS RISOLTO** via wrapper self-healing in `bin/setup-dev.sh`. Stress test confermato: forzando `chflags hidden` sul `.pth`, `kaora --version` continua a funzionare e rimuove il flag al volo. Vedi BACKLOG → "Issue noti" sezione marcata RISOLTO 2026-05-24.
-- ✅ **Self-dogfooding ADR-000 applicato 2026-05-26** (opzione A): `kaora init .` eseguito sul repo stesso, merge AGENTS.md guidato da agente naive in seconda sessione Claude Code (con questa sessione come revisore), `CLAUDE.md.kaora-bak` archiviato in `docs/archive/`. Validazione end-to-end del prodotto sul produttore. Report completo in `docs/DOGFOODING_REPORT.md`.
-- ✅ **Rituale di chiusura sessione (§ 6bis)** aggiunto al template + AGENTS.md del repo. Scoperta operativa dal dogfooding (originariamente v0.2+, promosso a v0.1). Senza chiusura ordinata, i docs operativi divergevano dallo stato reale. Ora codificato.
+**Verifications run 2026-05-24 / 2026-05-26:**
+- ✅ **macOS UF_HIDDEN bug RESOLVED** via self-healing wrapper in `bin/setup-dev.sh`. Stress test confirmed: forcing `chflags hidden` on the `.pth`, `kaora --version` keeps working and removes the flag on the fly. See BACKLOG → "Known issues" section marked RESOLVED 2026-05-24.
+- ✅ **Self-dogfooding ADR-000 applied 2026-05-26** (option A): `kaora init .` run on the repo itself, guided AGENTS.md merge by a naive agent in a second Claude Code session (with this session as reviewer), `CLAUDE.md.kaora-bak` archived in `docs/archive/`. End-to-end validation of the product on its producer. Full report in `docs/DOGFOODING_REPORT.md`.
+- ✅ **Session closing ritual (§ 6bis)** added to the template + repo AGENTS.md. Operational discovery from dogfooding (originally v0.2+, promoted to v0.1). Without an orderly closure, operating docs drifted from the real state. Now codified.
 
-## Placeholder definitivi (v0.1.1)
+**Block 4.5 i18n EN-first refactor — 2026-05-27:**
+- ✅ **Full IT→EN translation** of template/ (10 files), root .md (4 files), docs/ (6 files), kaora_memory/*.py (6 modules), tests/*.py (5 files), bin/setup-dev.sh. Voice preserved (direct, no preambles, "go" as imperative).
+- ✅ **Atomic regex contract update**: `_RE_ADR_ACCEPTED` and `_RE_ADR_PROPOSED` in `kaora_memory/check.py` now search `**Status:**` (was `**Stato:**`). All ADR markers in template and root DECISIONS.md updated coherently. Test fixtures in `tests/test_check.py` synchronized.
+- ✅ **Test-source sync**: `tests/test_cli.py:27` updated `"kaora init complete"`, `tests/test_check.py:190` updated `"lines"` to match translated production strings.
+- ✅ **Multilingual runtime preserved**: `{{communication_language}}` placeholder kept intact in template. Repo root `AGENTS.md` § 3 + `docs/IDENTITY.md` § 2 explicit: "Italian for live conversation with the user. English for docs, logs, code, comments, and any written artifact on disk."
+- ✅ **Sub-agent review GREEN on all 5 waves** (A, B-1, B-2, C-1, C-2). Zero critical issues. Minor polish applied inline (e.g. "where do we start?" instead of "starting point?", "intentional CI/automation use" instead of "conscious", "expected at least N" instead of "minimum expected N").
+- ✅ **Pytest 62/62 green throughout every wave** (atomic incremental verification). Final `kaora check .` clean (3 known structural-placeholder WARN on BACKLOG/SESSION_HANDOFF unchanged from pre-refactor, 1 INFO on inline-backtick `Proposed` false positive in ADR-008 narrative — pre-existing pattern, not regression).
 
-| Placeholder | Significato | Esempio |
+## Final placeholders (v0.1.1)
+
+| Placeholder | Meaning | Example |
 |---|---|---|
-| `{{project_name}}` | Nome progetto utente | `MioProgetto` |
-| `{{project_oneliner}}` | Pitch in una riga | `App SaaS per dentisti italiani` |
-| `{{project_path}}` | Path assoluto progetto | `/Users/alex/Desktop/mioprogetto` |
-| `{{owner_name}}` | Nome builder | `Alex Rojas` |
+| `{{project_name}}` | User project name | `MyProject` |
+| `{{project_oneliner}}` | One-line pitch | `SaaS app for Italian dentists` |
+| `{{project_path}}` | Absolute project path | `/Users/alex/Desktop/myproject` |
+| `{{owner_name}}` | Builder name | `Alex Rojas` |
 | `{{owner_email}}` | Email | `alex@example.com` |
-| `{{communication_register}}` | Tono preferito | `diretto, conciso, no preamboli` |
-| `{{communication_language}}` | Lingua docs/log | `italiano` |
-| `{{year}}` | Anno corrente | `2026` |
+| `{{communication_register}}` | Preferred tone | `direct, concise, no preambles` |
+| `{{communication_language}}` | Docs/log language | `english` |
+| `{{year}}` | Current year | `2026` |
 
-Modifica vs SESSION_HANDOFF Blocco 1: aggiunto `{{communication_language}}` per i18n futura.
+Change vs SESSION_HANDOFF Block 1: added `{{communication_language}}` for future i18n.
 
-## Cosa manca (priorità ordinata)
+## What's missing (priority-ordered)
 
-1. **README ricco + demo** — Blocco 5 (asset di lancio in BACKLOG già pronti, vedi sezione "Asset di comunicazione")
-2. **Setup pubblicazione PyPI** (`.pypirc`, token test.pypi) — Blocco 6
-3. **Decisione naming repo** (`kaora-memory` vs `kaora-mc` vs altri) — prima di pubblicazione PyPI, vedi BACKLOG
-4. **Possibile ADR-010** "delegation depth selection: `/goal` vs delega kaora normale" — emersa durante Blocco 3 dopo test pratico di `/goal`, da scrivere quando il pattern d'uso si consolida
-5. **Pulizia placeholder strutturali in `docs/SESSION_HANDOFF.md` template** — `kaora check` post-fix4 non li segnala più (sono in fenced block), ma se non sono volutamente esemplificativi conviene pulirli alla fonte (`template/docs/SESSION_HANDOFF.md`). Basso costo.
+1. **Rich README + demo** — Block 5 (launch assets in BACKLOG already ready, see "Communication assets" section)
+2. **PyPI publication setup** (`.pypirc`, test.pypi token) — Block 6
+3. **Repo naming decision** (`kaora-memory` vs `kaora-mc` vs others) — before PyPI publication, see BACKLOG
+4. **Possible ADR-010** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates
+5. **Structural placeholder cleanup in template `docs/SESSION_HANDOFF.md`** — `kaora check` post-fix4 no longer flags them (they're inside fenced blocks), but if they're not intentionally illustrative it's worth cleaning them at the source (`template/docs/SESSION_HANDOFF.md`). Low cost.
 
-## Decisioni di design Blocco 4 (in attesa formalizzazione)
+## Block 4 design decisions (pending formalization)
 
-- **CheckResult / CheckReport** dataclass con `level: Literal["error", "warn", "info", "ok"]` + `category: str` + `message + hint`. Severity separata dall'exit code: `CheckReport.exit_code(strict: bool = False)` promuove warn → 1 solo se `--strict`. Separation of concerns: la funzione check non cambia comportamento in strict, solo l'exit code lo fa.
-- **Soglia AGENTS.md min 50 righe** (`_AGENTS_MIN_LINES`): empirica, post-`kaora init` AGENTS canonico è ~150 righe. Sotto 50 = file mutilato.
-- **`_strip_code_blocks` riusato 2 volte** (adr_state + placeholders): pattern emerso durante re-dogfooding live. Stessa radice del falso positivo "contenuto documentario interpretato come stato reale". Da formalizzare eventualmente come funzione "documentary-content-aware" se compare un terzo caso.
-- **`_has_kaora_hook_command` con navigazione tipizzata** invece di `json.dumps + substring`: scelta più robusta dopo dogfooding-review, evita falsi positivi su campi arbitrari (`comment`, ecc.) che menzionano il nome dell'hook.
-- **`_placeholder_scan_paths` dinamico** (root .md + docs/**/*.md escluso archive/ e PHILOSOPHY.md): scala automaticamente quando il builder aggiunge `docs/NOTES.md`, `docs/CUSTOM.md`, ecc. Hardcoded list non scalava.
-- **Skill `tdd-workflows-tdd-cycle` invocata e scalata al contesto solo-builder**: la skill prescrive orchestrazione con 8 sub-agenti (architect-review, test-automator, backend-architect, code-reviewer), overkill per kaora. Pattern TDD red→green→refactor applicato direttamente dall'agente con checkpoint a Alexis ai passaggi chiave (Gate B). Coerente con § 3 "una direzione alla volta" + ADR-009 (skill skip se specifica già chiusa).
+- **CheckResult / CheckReport** dataclass with `level: Literal["error", "warn", "info", "ok"]` + `category: str` + `message + hint`. Severity separate from the exit code: `CheckReport.exit_code(strict: bool = False)` promotes warn → 1 only if `--strict`. Separation of concerns: the check function doesn't change behavior in strict, only the exit code does.
+- **AGENTS.md min 50-line threshold** (`_AGENTS_MIN_LINES`): empirical, post-`kaora init` the canonical AGENTS is ~150 lines. Below 50 = mutilated file.
+- **`_strip_code_blocks` reused twice** (adr_state + placeholders): pattern that emerged during live re-dogfooding. Same root as the false positive "documentary content interpreted as real state". To formalize eventually as a "documentary-content-aware" function if a third case appears.
+- **`_has_kaora_hook_command` with typed navigation** instead of `json.dumps + substring`: more robust choice after dogfooding-review, avoids false positives on arbitrary fields (`comment`, etc.) mentioning the hook name.
+- **Dynamic `_placeholder_scan_paths`** (root .md + docs/**/*.md excluding archive/ and PHILOSOPHY.md): scales automatically when the builder adds `docs/NOTES.md`, `docs/CUSTOM.md`, etc. A hardcoded list didn't scale.
+- **Skill `tdd-workflows-tdd-cycle` invoked and scaled down to the solo-builder context**: the skill prescribes orchestration with 8 sub-agents (architect-review, test-automator, backend-architect, code-reviewer), overkill for kaora. TDD red→green→refactor pattern applied directly by the agent with checkpoints to Alexis at the key transitions (Gate B). Consistent with § 3 "one direction at a time" + ADR-009 (skill skip if the spec is already closed).
 
-## Decisioni di design Blocco 3 (in attesa formalizzazione)
+## Block 3 design decisions (pending formalization)
 
-- **Strategia `_template/` (a):** `importlib.resources.files("kaora_memory") / "_template"` con fallback a `Path(__file__).parent.parent / "template"` per dev mode. Coerente con ADR-005 (niente symlink). Codificata in `kaora_memory/template_resolver.py`. **Potrebbe diventare ADR se vogliamo formalizzarla.**
-- **Categorie file installer ADR-006 v2:** `CANONICAL_MARKDOWN` (CLAUDE/AGENTS/AGENT_BRIEF backup+overwrite), `JSON_MERGE_FILES` (.claude/settings.json), tutto il resto skip-if-exists, `RENAME` {README.md.tpl → README.md}. Codificate come costanti in `installer.py`.
-- **Flag aggiuntivo `--no-git-init`** non in HANDOFF originale: necessario per testabilità (tests non devono creare repo git in `tmp_path`). Compromesso ragionevole.
-- **Skill `python-pro` skippata** per installer/cli: specifica ADR-006 v2 + test scritti erano sufficienti. Coerente con ADR-009 (skill skip se specifica chiusa). Lo annoteremo in eventuale ADR-010.
+- **`_template/` strategy (a):** `importlib.resources.files("kaora_memory") / "_template"` with fallback to `Path(__file__).parent.parent / "template"` for dev mode. Consistent with ADR-005 (no symlinks). Codified in `kaora_memory/template_resolver.py`. **Could become an ADR if we want to formalize it.**
+- **Installer file categories ADR-006 v2:** `CANONICAL_MARKDOWN` (CLAUDE/AGENTS/AGENT_BRIEF backup+overwrite), `JSON_MERGE_FILES` (.claude/settings.json), everything else skip-if-exists, `RENAME` {README.md.tpl → README.md}. Codified as constants in `installer.py`.
+- **Extra flag `--no-git-init`** not in the original HANDOFF: needed for testability (tests must not create a git repo in `tmp_path`). Reasonable compromise.
+- **Skill `python-pro` skipped** for installer/cli: the ADR-006 v2 spec + written tests were enough. Consistent with ADR-009 (skill skip if the spec is closed). We'll note this in a possible ADR-010.
 
-## Decisioni di design Blocco 2 (Accepted)
+## Block 2 design decisions (Accepted)
 
-- **ADR-005** Canonico `AGENTS.md` + import `@AGENTS.md` in `CLAUDE.md`. Supersedes ADR-003 sul *modo*, non sulla *direzione*. Elimina drift per costruzione, validato in Claude Code 2.1.119 (Test 2).
-- **ADR-006 v2** Policy install brownfield in 3 categorie: markdown (backup + BOOTSTRAP-merge), JSON (merge intelligente per `.claude/settings.json`), tutto-il-resto (skip-conservative). Riscritta v2 prima di Accept perché v1 (skip + warn per settings.json) avrebbe lasciato hook kaora inattivi su brownfield.
-- **ADR-007** Modalità conversazionale Operativa vs Apprendimento. Nata dall'osservazione del builder in tempo reale, applicata immediatamente.
-- **ADR-008** Zero attrito per decisioni ADR `Proposed`. Step 7 del rituale: mostra ADR aperte direttamente in chat senza far aprire `docs/DECISIONS.md`. Emersa applicando ADR-007.
-- **ADR-009** Sub-agente vs Read diretto: matrice di decisione su 3 variabili (size, intent, post-action) per ottimizzazione token + comportamento. Promossa da BACKLOG dopo discussione in sessione. Completa il trittico metacognitivo con ADR-001 (planning) e ADR-007 (Theory of Mind).
+- **ADR-005** Canonical `AGENTS.md` + import `@AGENTS.md` in `CLAUDE.md`. Supersedes ADR-003 on the *how*, not the *direction*. Eliminates drift by construction, validated in Claude Code 2.1.119 (Test 2).
+- **ADR-006 v2** Brownfield install policy in 3 categories: markdown (backup + BOOTSTRAP-merge), JSON (intelligent merge for `.claude/settings.json`), everything-else (skip-conservative). Rewritten v2 before Accept because v1 (skip + warn for settings.json) would have left kaora hooks inactive on brownfield.
+- **ADR-007** Conversational mode Operative vs Learning. Born from observing the builder in real time, applied immediately.
+- **ADR-008** Zero friction for `Proposed` ADR decisions. Ritual step 7: show open ADRs directly in chat without making the user open `docs/DECISIONS.md`. Emerged while applying ADR-007.
+- **ADR-009** Sub-agent vs direct Read: decision matrix on 3 variables (size, intent, post-action) for token + behavior optimization. Promoted from BACKLOG after in-session discussion. Completes the metacognitive triptych with ADR-001 (planning) and ADR-007 (Theory of Mind).
 
-Tutte e 5 **Accepted** dopo Test 1-5 e revisione in chat.
+All 5 **Accepted** after Tests 1-5 and in-chat review.
 
-## Annotazioni per Blocco 5 (README)
+## Annotations for Block 5 (README)
 
-- Brownfield-friendly: niente warning "solo greenfield", FAQ "ho già un CLAUDE.md?" → racconta backup-first + BOOTSTRAP-merge come feature
-- Hero: "Memoria operativa per agenti AI. Funziona su qualsiasi progetto, fresco o esistente."
+- Brownfield-friendly: no "greenfield-only" warnings, FAQ "I already have a CLAUDE.md?" → tell backup-first + BOOTSTRAP-merge as a feature
+- Hero: "Operating memory for AI agents. Works on any project, fresh or existing."
 
-## Asset di comunicazione collegati
+## Linked communication assets
 
-- `/tmp/kaora-memory-preview.html` — landing page premium anteprima v0.1 (datata 22 maggio 00:55, da aggiornare in Blocco 5)
-- `/tmp/kaora-memory-launch-essay-brief.md` — brief operativo 16 sezioni per il saggio di lancio (sessione parallela)
-- `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` — documento di vision astratta "LLM Wiki Extended" (datato 20 maggio, riusabile per audience accademica)
-- `docs/PHILOSOPHY.md` — il *perché* del prodotto: metacognizione applicata, trittico ADR-001/007/009, reverse positioning agente umile, accessibilità cognitiva, considerazioni naming repo
+- `/tmp/kaora-memory-preview.html` — premium v0.1 preview landing page (dated May 22 00:55, to update in Block 5)
+- `/tmp/kaora-memory-launch-essay-brief.md` — operational brief 16 sections for the launch essay (parallel session)
+- `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` — abstract vision document "LLM Wiki Extended" (dated May 20, reusable for academic audience)
+- `docs/PHILOSOPHY.md` — the product's *why*: applied metacognition, ADR-001/007/009 triptych, humble-agent reverse positioning, cognitive accessibility, repo naming considerations
 
-## Note operative
+## Operational notes
 
-- **Repo NON ancora pushato** su GitHub
-- **Setup dev (one-liner):** `bash bin/setup-dev.sh` — crea venv, `pip install -e ".[dev]"`, installa wrapper self-healing su `.venv/bin/kaora` (auto-fix UF_HIDDEN macOS ad ogni esecuzione, ~5ms overhead), esegue `kaora --version` e pytest. Da rieseguire dopo `pip install -e .` per ripristinare il wrapper.
-- **Run test:** `.venv/bin/python -m pytest` (oppure `source .venv/bin/activate && pytest`). Per agenti AI: preferire `.venv/bin/...` perché `activate` non sopravvive tra chiamate shell isolate.
+- **Repo NOT yet pushed** to GitHub
+- **Dev setup (one-liner):** `bash bin/setup-dev.sh` — creates venv, `pip install -e ".[dev]"`, installs self-healing wrapper on `.venv/bin/kaora` (auto-fix UF_HIDDEN macOS at every execution, ~5ms overhead), runs `kaora --version` and pytest. Re-run after `pip install -e .` to restore the wrapper.
+- **Run tests:** `.venv/bin/python -m pytest` (or `source .venv/bin/activate && pytest`). For AI agents: prefer `.venv/bin/...` because `activate` doesn't survive between isolated shell calls.
 - **Run CLI:** `.venv/bin/kaora init [PATH] [--force] [--dry-run] [--no-git-init]`
-- **Test rapido salute:**
+- **Quick health test:**
   ```bash
   python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
-  ls template/ template/docs template/.claude/hooks && echo "template completo"
-  .venv/bin/python -m pytest -q && echo "TEST OK (33/33)"
+  ls template/ template/docs template/.claude/hooks && echo "template complete"
+  .venv/bin/python -m pytest -q && echo "TEST OK (62/62)"
   .venv/bin/kaora --version && echo "CLI OK"
   ```
 - **Build wheel:** `.venv/bin/python -m build --wheel` → `dist/kaora_memory-0.1.0-py3-none-any.whl`
-- **Memoria persistente Claude Code:** non ancora popolata per questo progetto
+- **Claude Code persistent memory:** not yet populated for this project

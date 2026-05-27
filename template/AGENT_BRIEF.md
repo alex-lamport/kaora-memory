@@ -1,87 +1,87 @@
-# AGENT_BRIEF.md — onboarding 3 minuti
+# AGENT_BRIEF.md — 3-minute onboarding
 
-> Per agenti AI (Claude Code, Codex, Cursor, Aider, Gemini CLI) e per nuovi builder che entrano in questo progetto.
-> Se hai già letto `AGENTS.md`, qui trovi solo i "perché" dietro le convenzioni.
+> For AI agents (Claude Code, Codex, Cursor, Aider, Gemini CLI) and for new builders joining this project.
+> If you already read `AGENTS.md`, here you'll only find the *why* behind the conventions.
 
 ---
 
-## 1. Cos'è questo progetto a livello di memoria
+## 1. What this project is at the memory layer
 
-Questo repo usa **kaora-memory** — uno scaffolding di memoria operativa per agenti AI. Significa che:
+This repo uses **kaora-memory** — an operating-memory scaffolding for AI agents. That means:
 
-- `AGENTS.md` (o `CLAUDE.md` via import) ti dice chi sei, come lavori, cosa non fare
-- `docs/CURRENT_STATE.md` ti dice dove sei adesso
-- `docs/SESSION_HANDOFF.md` ti dice cosa fare prossimo
-- `docs/DECISIONS.md` ti dice perché certe scelte sono chiuse
-- `docs/IDENTITY.md` ti dice chi è il builder e come comunica
-- `.claude/hooks/` proteggono credenziali e loggano API calls
+- `AGENTS.md` (or `CLAUDE.md` via import) tells you who you are, how you work, what not to do
+- `docs/CURRENT_STATE.md` tells you where you are right now
+- `docs/SESSION_HANDOFF.md` tells you what to do next
+- `docs/DECISIONS.md` tells you why certain choices are closed
+- `docs/IDENTITY.md` tells you who the builder is and how they communicate
+- `.claude/hooks/` protect credentials and log API calls
 
-Ogni sessione AI inizia con il **rituale di apertura** (§ 6 di `AGENTS.md`). Non saltarlo a meno di skip esplicito.
+Every AI session starts with the **opening ritual** (§ 6 of `AGENTS.md`). Don't skip it unless skip is explicit.
 
-## 2. Filosofia in 3 frasi
+## 2. Philosophy in 3 sentences
 
-1. **L'agente è esecutore, il builder è decisore.** Mai agire di iniziativa.
-2. **Una direzione alla volta.** Mai 4 opzioni in batch, mai 3 domande in una.
-3. **La memoria è il prodotto.** Se non aggiorni `docs/CURRENT_STATE.md` e `docs/SESSION_HANDOFF.md` a fine sessione, la prossima sessione riparte da zero.
+1. **The agent is the executor, the builder is the decider.** Never act on your own initiative.
+2. **One direction at a time.** Never propose 4 options in a batch, never bundle 3 questions into one.
+3. **Memory is the product.** If you don't update `docs/CURRENT_STATE.md` and `docs/SESSION_HANDOFF.md` at the end of the session, the next session starts from scratch.
 
-## 3. Cosa farai alla prima sessione (BOOTSTRAP)
+## 3. What you'll do in the first session (BOOTSTRAP)
 
-`kaora init` ha appena copiato questo template nel progetto. Diversi file contengono marker così:
+`kaora init` just copied this template into the project. Several files contain markers like:
 
 ```markdown
 <BOOTSTRAP need="tech-stack" sources="package.json, pyproject.toml, ..."/>
 ```
 
-Alla **prima sessione AI** del progetto, dopo il rituale:
+In the **first AI session** of the project, after the ritual:
 
-1. Scansiona i file `<BOOTSTRAP/>` nei file template
-2. Per ciascuno, ispeziona le `sources` indicate (es. `package.json`, `pyproject.toml`, `git log`, `README.md`)
-3. Compila bozze di sostituzione **autonomamente** dove possibile (es. stack tecnico, comandi build/test)
-4. Chiedi **1-2 domande mirate** solo per i buchi che non puoi inferire (es. registro tono preferito, anti-pattern personali)
-5. Mostra un diff completo prima di applicare
-6. Applica solo dopo "vai" esplicito (Gate C)
+1. Scan `<BOOTSTRAP/>` markers across the template files
+2. For each, inspect the indicated `sources` (e.g. `package.json`, `pyproject.toml`, `git log`, `README.md`)
+3. Draft substitutions **autonomously** wherever possible (e.g. tech stack, build/test commands)
+4. Ask **1-2 targeted questions** only for the gaps you cannot infer (e.g. preferred tone register, personal anti-patterns)
+5. Show a full diff before applying
+6. Apply only after an explicit "go" (Gate C)
 
-L'obiettivo è far passare il builder da scrittura manuale (~10 min) a 2 risposte mirate (~30 sec).
+The goal is to move the builder from manual writing (~10 min) to 2 targeted answers (~30 sec).
 
-## 4. Cosa significano i gate (§ 5 di `AGENTS.md`)
+## 4. What the gates mean (§ 5 of `AGENTS.md`)
 
-- **Gate A** — Prima di scrivere/editare un file: ADR rispettata? Skill caricata? Valore verificato?
-- **Gate B** — Dopo 3-4 file: riepiloga e aspetta "ok".
-- **Gate C** — Niente è "ovvio". Nessuna azione senza "vai" esplicito.
+- **Gate A** — Before writing/editing a file: ADR respected? Skill loaded? Value verified?
+- **Gate B** — After 3-4 files: summarize and wait for "ok".
+- **Gate C** — Nothing is "obvious". No action without an explicit "go".
 
-Questi non sono suggerimenti. Sono regole ferree. Se non sei sicuro, fermati e chiedi.
+These are not suggestions. They are iron rules. If you're not sure, stop and ask.
 
-## 5. File `.kaora-bak` — memoria pre-esistente
+## 5. `.kaora-bak` files — pre-existing memory
 
-`kaora init` non distrugge mai file esistenti. Se il progetto aveva già:
+`kaora init` never destroys existing files. If the project already had:
 
 - `CLAUDE.md` → backup in `CLAUDE.md.kaora-bak`
 - `AGENTS.md` → backup in `AGENTS.md.kaora-bak`
-- altri file di documentazione operativa esistenti → eventualmente backuppati con suffisso `.kaora-bak`
+- other existing operating-documentation files → possibly backed up with `.kaora-bak` suffix
 
-I file `.kaora-bak` sono **fonte autorevole** per il primo BOOTSTRAP: contengono setup tecnico, comandi, conventions specifiche al progetto che il builder aveva già curato. Estrai il valore tecnico, integralo nel nuovo `AGENTS.md` o `docs/IDENTITY.md`, poi chiedi al builder se può cancellarli.
+`.kaora-bak` files are an **authoritative source** for the first BOOTSTRAP: they contain tech setup, commands, project-specific conventions the builder had already curated. Extract the technical value, integrate it into the new `AGENTS.md` or `docs/IDENTITY.md`, then ask the builder whether they can be deleted.
 
-**NON cancellare mai un `.kaora-bak` senza averlo letto e mostrato il merge al builder.**
+**Never delete a `.kaora-bak` without reading it and showing the merge to the builder.**
 
-## 6. Glossario rapido
+## 6. Quick glossary
 
-| Termine | Significato |
+| Term | Meaning |
 |---|---|
-| **Rituale** | Sequenza di apertura sessione (§ 6 `AGENTS.md`). Incondizionato a meno di skip naturale. |
-| **Gate A/B/C** | Tre vincoli operativi: pre-write, checkpoint, no-initiative. |
-| **ADR** | Architecture Decision Record. Vive in `docs/DECISIONS.md`, append-only, mai modificata dopo `Accepted`. |
-| **`<BOOTSTRAP/>`** | Marker per sezioni che l'agente compila ispezionando il progetto. |
-| **`.kaora-bak`** | Backup di file esistenti prima di `kaora init`. Fonte di valore, non spazzatura. |
-| **Skip naturale** | Riconoscimento semantico (non sintattico) dell'intent di saltare il rituale. |
-| **Decisore vs Esecutore** | Il builder decide, l'agente esegue. Consigli solo se chiesto. |
-| **Modalità conversazionale** | Operativa (vai/fai) vs Apprendimento (perché/come). L'agente riconosce e adatta. Mai chiudere con domande operative in modalità Apprendimento. Vedi `AGENTS.md` § 3. |
+| **Ritual** | Session opening sequence (§ 6 `AGENTS.md`). Unconditional unless natural skip. |
+| **Gate A/B/C** | Three operational constraints: pre-write, checkpoint, no-initiative. |
+| **ADR** | Architecture Decision Record. Lives in `docs/DECISIONS.md`, append-only, never modified after `Accepted`. |
+| **`<BOOTSTRAP/>`** | Marker for sections the agent fills by inspecting the project. |
+| **`.kaora-bak`** | Backup of existing files before `kaora init`. Source of value, not garbage. |
+| **Natural skip** | Semantic (not syntactic) recognition of intent to skip the ritual. |
+| **Decider vs Executor** | The builder decides, the agent executes. Advice only if asked. |
+| **Conversational mode** | Operative (go/do) vs Learning (why/how). The agent recognizes and adapts. Never close with operational questions in Learning mode. See `AGENTS.md` § 3. |
 
-## 7. Cosa fare se sei confuso
+## 7. What to do if you're confused
 
-- Domanda diretta in chat. Una sola, mirata.
-- Niente assunzioni "ovvie", niente azioni "preventive".
-- Se la tua azione contraddice una sezione di `AGENTS.md` o un'ADR `Accepted` → STOP.
+- Direct question in chat. One only, targeted.
+- No "obvious" assumptions, no "preventive" actions.
+- If your action contradicts a section of `AGENTS.md` or an `Accepted` ADR → STOP.
 
 ---
 
-**Tempo di lettura stimato: 3 minuti. Hai finito. Ora torna ad `AGENTS.md` e segui il rituale.**
+**Estimated reading time: 3 minutes. You're done. Now go back to `AGENTS.md` and follow the ritual.**

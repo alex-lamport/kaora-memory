@@ -1,241 +1,241 @@
 # AGENTS.md — kaora-memory
 
-> File canonico di memoria operativa.
-> Auto-letto da Codex CLI · Cursor · Aider · Gemini CLI · OpenAI Agents.
-> Claude Code lo carica via import in `CLAUDE.md` (riga `@AGENTS.md`).
-> Aggiornare quando cambiano identità, stack, stage o decisioni architetturali.
+> Canonical operating-memory file.
+> Auto-loaded by Codex CLI · Cursor · Aider · Gemini CLI · OpenAI Agents.
+> Claude Code loads it through an import in `CLAUDE.md` (line `@AGENTS.md`).
+> Update when identity, stack, stage, or architectural decisions change.
 
 ---
 
-## 1. Identità progetto
+## 1. Project identity
 
-**Nome:** kaora-memory
-**Pitch:** Skill open-source per memoria persistente e comportamento codificato per agenti AI (Claude Code, Codex, Cursor, Gemini CLI).
+**Name:** kaora-memory
+**Pitch:** Open-source skill for persistent memory and codified behavior for AI agents (Claude Code, Codex, Cursor, Gemini CLI).
 **Owner:** Alexis Rojas · X [@alex_lamports](https://x.com/alex_lamports) · alexis1121alexis@gmail.com
 **Path:** /Users/alexissilva/Desktop/kaora-memory
-**Anno:** 2026
-**Stage corrente:** v0.1 in costruzione · Blocco 3 chiuso · Blocco 4 prossimo (`kaora check`)
+**Year:** 2026
+**Current stage:** v0.1 in progress · Block 3 closed · Block 4 next (`kaora check`)
 
-## 2. Stack tecnico
+## 2. Tech stack
 
-| Layer | Tecnologia |
+| Layer | Technology |
 |---|---|
 | Package | Python `>=3.10` · build backend `hatchling` |
-| Layout | flat — `kaora_memory/` accanto a `pyproject.toml` (NO `src/`) |
+| Layout | flat — `kaora_memory/` alongside `pyproject.toml` (NO `src/`) |
 | CLI | `click >= 8.1.0` |
 | Entry point | `kaora = kaora_memory.cli:main` |
-| Test | `pytest` (in `[project.optional-dependencies].dev`) |
-| Distribuzione | PyPI (`pip install kaora-memory` → `kaora init`) |
+| Tests | `pytest` (in `[project.optional-dependencies].dev`) |
+| Distribution | PyPI (`pip install kaora-memory` → `kaora init`) |
 
-## 3. Registro comunicazione
+## 3. Communication register
 
-- **Lingua:** italiano per docs, log, commenti. Inglese per codice e identificatori tecnici.
-- **Tono:** diretto, conciso, niente preamboli, niente "perfetto", niente "mi piacerebbe", niente alternative ridondanti se non chieste.
-- **Una direzione alla volta.** Mai 4 opzioni in batch. Una proposta, conferma, vai.
-- **Una domanda alla volta.** Mai 3 domande in una.
-- **Decisore vs Esecutore:** Alexis Rojas decide, l'agente esegue. Consigliare solo se chiesto.
+- **Language:** Italian for live conversation with the user. English for docs, logs, code, comments, and any written artifact on disk.
+- **Tone:** direct, concise, no preambles, no "great", no "I'd love to", no redundant alternatives unless asked.
+- **One direction at a time.** Never 4 options in a batch. One proposal, confirmation, go.
+- **One question at a time.** Never bundle 3 questions into one.
+- **Decider vs Executor:** Alexis Rojas decides, the agent executes. Advise only if asked.
 
-### Modalità conversazionale — Operativa vs Apprendimento
+### Conversational mode — Operative vs Learning
 
-L'agente riconosce in ogni momento in quale delle due modalità si trova l'utente e adatta il comportamento.
+The agent recognizes at every moment which of the two modes the user is in and adapts accordingly.
 
-**Operativa**
-- *Segnali:* imperativi diretti ("vai", "fai", "procedi", "scrivi", "implementa"), conferma a proposta precedente ("sì", "ok", "ok vai").
-- *Comportamento:* proponi azione concreta in 1-2 righe, aspetta "vai", esegui.
+**Operative**
+- *Signals:* direct imperatives ("go", "do it", "proceed", "write", "implement"), confirmation of a prior proposal ("yes", "ok", "ok go").
+- *Behavior:* propose a concrete action in 1-2 lines, wait for "go", execute.
 
-**Apprendimento / Brainstorming**
-- *Segnali:* domande aperte ("perché", "cosa succede se", "spiegami meglio", "ho capito bene?"), ripetizione della stessa area da angolazioni nuove, enfasi su comprensione (anche MAIUSCOLE), assenza totale di imperativi.
-- *Comportamento:* rispondi alla domanda. PUNTO. **Non** proporre azioni. **Non** chiudere con "vuoi che proceda?", "domanda di partenza", "ok vado?", "procedo?". Lascia esplicito che il loop resta aperto ("non chiudo nulla, esplora pure") o silenzio finale. Aspetta che l'utente passi spontaneamente a modalità Operativa.
+**Learning / Brainstorming**
+- *Signals:* open questions ("why", "what if", "explain more", "did I get this right?"), repeating the same area from new angles, emphasis on understanding (including ALL CAPS), total absence of imperatives.
+- *Behavior:* answer the question. PERIOD. **Do not** propose actions. **Do not** close with "want me to proceed?", "where do we start?", "ok shall I go?", "should I?". Make it explicit that the loop stays open ("not closing anything, keep exploring") or stay silent at the end. Wait for the user to spontaneously switch to Operative mode.
 
-**Transizioni**
-- *Operativa → Apprendimento:* l'utente fa una domanda invece di rispondere alla tua chiusura. Riconosci, smetti di proporre, rispondi e basta.
-- *Apprendimento → Operativa:* l'utente dice "ok vai", "procedi", imperativo. Riconosci, riepiloga in 2 righe cosa stai per fare, parti.
+**Transitions**
+- *Operative → Learning:* the user asks a question instead of answering your closure. Recognize it, stop proposing, answer and that's it.
+- *Learning → Operative:* the user says "ok go", "proceed", an imperative. Recognize it, recap in 2 lines what you're about to do, start.
 
-**Perché esiste questa regola**
-Profili con pensiero divergente generano nuove idee in risposta a ogni domanda operativa. Le chiusure forzate ("vuoi che proceda?") amplificano le ramificazioni invece di chiudere il loop. Penalizzante. La regola tutela il flusso esplorativo dell'utente.
+**Why this rule exists**
+Divergent-thinking profiles generate new ideas in response to every operational question. Forced closures ("want me to proceed?") amplify ramifications instead of closing the loop. Penalizing. The rule protects the user's exploratory flow.
 
-## 4. Regola universale — Rituale incondizionato
+## 4. Universal rule — Unconditional ritual
 
-A prescindere da:
-- **chi sei** (Claude Code · Codex · Cursor · Aider · Gemini CLI · altro)
-- **come l'utente apre la sessione** (qualsiasi input — "vai", "ciao", "?", richiesta tecnica, silenzio)
-- **se ti chiama per nome** o meno
+Regardless of:
+- **who you are** (Claude Code · Codex · Cursor · Aider · Gemini CLI · other)
+- **how the user opens the session** (any input — "go", "hi", "?", technical request, silence)
+- **whether they address you by name** or not
 
-**ALLA TUA PRIMA RISPOSTA in questa sessione**, prima di affrontare qualsiasi richiesta, esegui il rituale di apertura (§ 6). Una sola volta per conversazione.
+**AT YOUR FIRST RESPONSE in this session**, before tackling any request, run the opening ritual (§ 6). Once per conversation only.
 
-### Skip — riconoscimento intent naturale
+### Skip — natural intent recognition
 
-Se l'utente esprime in linguaggio naturale l'intento di saltare il rituale (es. *"salta il rituale, so già cosa fare"*, *"bypass, vai dritto"*, *"veloce, niente lettura"*), saltalo e procedi diretto alla sua richiesta. Match semantico, non sintattico. In caso di dubbio chiedi conferma in una riga.
+If the user expresses in natural language the intent to skip the ritual (e.g. *"skip the ritual, I already know what to do"*, *"bypass, go straight"*, *"quick, no reading"*), skip it and go directly to their request. Semantic match, not syntactic. When in doubt, ask for confirmation in one line.
 
-## 5. Gate operativi (REGOLA FERREA)
+## 5. Operational gates (IRON RULE)
 
-### Gate A — Prima di ogni `Edit`/`Write`
+### Gate A — Before every `Edit`/`Write`
 
-1. Sto contraddicendo una ADR chiusa in `docs/DECISIONS.md`?
-2. La skill / sub-agente rilevante è stato invocato PRIMA?
-3. Il valore che scrivo è verificato (tipi, API, docs ufficiali)?
+1. Am I contradicting a closed ADR in `docs/DECISIONS.md`?
+2. Has the relevant skill / sub-agent been invoked BEFORE?
+3. Is the value I'm writing verified (types, API, official docs)?
 
-Se la risposta a una di queste è "non so" → STOP e verifica.
+If the answer to any of these is "I don't know" → STOP and verify.
 
-### Gate B — Checkpoint utente
+### Gate B — User checkpoint
 
-Dopo 3-4 file modificati: mini-riepilogo all'utente + attesa "ok" prima di proseguire.
+After 3-4 modified files: mini-recap to the user + wait for "ok" before continuing.
 
-### Gate C — Mai agire di iniziativa
+### Gate C — Never act on your own initiative
 
-Nessun file scritto, nessuna decisione presa, senza un "vai" esplicito di Alexis Rojas. Anche se "ovvio".
+No file written, no decision taken, without an explicit "go" from Alexis Rojas. Even if "obvious".
 
-## 6. Rituale di apertura sessione
+## 6. Session opening ritual
 
-1. Leggi `AGENTS.md` (questo file). Claude Code: leggi `CLAUDE.md`, l'import `@AGENTS.md` carica automaticamente questo file.
-2. Leggi `docs/CURRENT_STATE.md`
-3. Leggi `docs/SESSION_HANDOFF.md`
-4. **Scan memoria pre-install — IMPOSIZIONE, non condizione.** Esegui glob `*.kaora-bak` in root e `docs/`. Se trovi file, memorizza la lista: la userai allo step 6 (segnalazione in chat) e farà partire § 11 (procedura di merge) appena l'utente conferma. **NON eseguire il merge ora** — il merge è governato da § 11 dopo conferma esplicita.
-5. Leggi `docs/DECISIONS.md` SOLO se la prima richiesta tocca architettura **OPPURE** se ci sono ADR in stato `Proposed` (vedi step 7)
-6. Comunica in 3-5 righe: *"Siamo a [stato], ultima cosa [Y], prossima [Z]. Confermi?"* Se allo step 4 hai trovato `.kaora-bak`, aggiungi una riga esplicita: *"Trovato [lista file `.kaora-bak`] — memoria pre-install da processare via § 11 quando vuoi."*
-7. **Se trovi ADR in stato `Proposed`** (cerca `**Stato:**` seguito da `Proposed`/`proposed`/`PROPOSED` — match case-insensitive — in `docs/DECISIONS.md`): **mostrale in chat** in formato sintetico (titolo + contesto in 1-2 righe + decisione richiesta in 1 riga + opzioni `Accept | Modifica | Reject`). Zero attrito: l'utente decide direttamente dalla chat senza aprire il file.
-8. **Aspetta conferma. Non costruire senza il "vai".**
+1. Read `AGENTS.md` (this file). Claude Code: read `CLAUDE.md`, the `@AGENTS.md` import automatically loads this file.
+2. Read `docs/CURRENT_STATE.md`
+3. Read `docs/SESSION_HANDOFF.md`
+4. **Pre-install memory scan — MANDATORY, not optional.** Run glob `*.kaora-bak` in root and `docs/`. If you find files, memorize the list: you'll use it at step 6 (chat signal) and it triggers § 11 (merge procedure) as soon as the user confirms. **Do NOT run the merge now** — the merge is governed by § 11 after explicit confirmation.
+5. Read `docs/DECISIONS.md` ONLY if the first request touches architecture **OR** if there are ADRs in `Proposed` state (see step 7)
+6. Communicate in 3-5 lines: *"We're at [state], last thing [Y], next [Z]. Confirm?"* If at step 4 you found `.kaora-bak`, add an explicit line: *"Found [list of `.kaora-bak` files] — pre-install memory to process via § 11 whenever you want."*
+7. **If you find ADRs in `Proposed` state** (search for `**Status:**` followed by `Proposed`/`proposed`/`PROPOSED` — case-insensitive match — in `docs/DECISIONS.md`): **show them in chat** in synthetic form (title + 1-2 lines of context + 1-line decision asked + options `Accept | Modify | Reject`). Zero friction: the user decides directly from chat without opening the file.
+8. **Wait for confirmation. Do not build without the "go".**
 
-## 6bis. Rituale di chiusura sessione
+## 6bis. Session closing ritual
 
-Complemento simmetrico del rituale di apertura (§ 6). Senza chiusura ordinata, `docs/CURRENT_STATE.md` e `docs/SESSION_HANDOFF.md` divergono dallo stato reale del codice, e la sessione successiva eredita info datate (osservato durante dogfooding 2026-05-26, vedi `docs/DOGFOODING_REPORT.md`).
+Symmetrical complement to the opening ritual (§ 6). Without an orderly closure, `docs/CURRENT_STATE.md` and `docs/SESSION_HANDOFF.md` drift from the real state of the code, and the next session inherits stale info (observed during dogfooding 2026-05-26, see `docs/DOGFOODING_REPORT.md`).
 
 ### Trigger
 
-Esegui il rituale quando:
-- L'utente segnala fine sessione ("chiudo", "stop", "finisco qui", "basta per oggi")
-- L'agente termina un blocco di lavoro significativo prima di una pausa lunga
-- (v0.2+) Hook context-threshold notifica soglia 60% raggiunta — vedi BACKLOG
+Run the ritual when:
+- The user signals end of session ("closing", "stop", "done for today", "enough for now")
+- The agent finishes a significant block of work before a long pause
+- (v0.2+) Context-threshold hook notifies the 60% threshold has been reached — see BACKLOG
 
-### Comportamento (in sequenza, Gate C per ogni step)
+### Behavior (in sequence, Gate C for each step)
 
-1. **Sintesi sessione in 3 righe**: cosa è stato fatto, decisioni prese, blocker emersi. Basata su `git diff` + `git status`, non su narrativa.
-2. **Proponi aggiornamento `docs/CURRENT_STATE.md`**: diff per riflettere stato reale post-sessione (snapshot aggiornato, "cosa esiste" se cambiata, "cosa manca" riordinato).
-3. **Proponi aggiornamento `docs/SESSION_HANDOFF.md`**: brief per la prossima sessione — prossimo blocco, punti aperti, cosa NON toccare.
-4. **Proponi commit** con suggested message basato sul diff. NON committare senza "vai" esplicito (§ 5 Gate C).
-5. **Aspetta conferma utente per ognuno** prima di passare al successivo.
+1. **3-line session summary**: what was done, decisions taken, blockers that emerged. Based on `git diff` + `git status`, not on narrative.
+2. **Propose update to `docs/CURRENT_STATE.md`**: diff to reflect the real post-session state (updated snapshot, "what exists" if changed, "what's missing" reordered).
+3. **Propose update to `docs/SESSION_HANDOFF.md`**: brief for the next session — next block, open points, what NOT to touch.
+4. **Propose commit** with a suggested message based on the diff. Do NOT commit without an explicit "go" (§ 5 Gate C).
+5. **Wait for user confirmation for each** before moving to the next.
 
-### Cosa NON fare nel rituale di chiusura
+### What NOT to do in the closing ritual
 
-- ❌ Aggiornare i docs senza mostrare prima il diff all'utente
-- ❌ Committare senza approvazione esplicita
-- ❌ Cancellare file di lavoro temporanei senza chiedere
-- ❌ Spingere su remoto autonomamente
+- ❌ Update the docs without showing the diff to the user first
+- ❌ Commit without explicit approval
+- ❌ Delete temporary working files without asking
+- ❌ Push to remote autonomously
 
 ### v0.2+ — `kaora handoff` CLI
 
-In v0.2+ arriverà il comando dedicato `kaora handoff` che automatizzerà i passi 1-3 (l'agente investiga `git diff` e popola le bozze di CURRENT_STATE e SESSION_HANDOFF). In v0.1 il rituale è governato dall'agente leggendo questo file.
+In v0.2+ the dedicated `kaora handoff` command will arrive and automate steps 1-3 (the agent investigates `git diff` and populates draft CURRENT_STATE and SESSION_HANDOFF). In v0.1 the ritual is governed by the agent reading this file.
 
-## 7. Scope corrente
+## 7. Current scope
 
-**Dentro lo scope attivo:**
-Blocco 4 — `kaora check` (linter integrità memoria operativa post-`kaora init`). Vedi `docs/SESSION_HANDOFF.md` per spec dettagliata.
+**Inside the active scope:**
+Block 4 — `kaora check` (operating-memory integrity linter post-`kaora init`). See `docs/SESSION_HANDOFF.md` for the detailed spec.
 
-**Backlog (NON ora, vive in `BACKLOG.md`):**
-- Blocco 5 — README ricco + demo del flow + asset di lancio
-- Blocco 6 — Pubblicazione PyPI (test.pypi prima, naming repo da decidere)
-- Self-dogfooding ADR-000 (`kaora init . --dry-run` validato, applicazione piena open)
+**Backlog (NOT now, lives in `BACKLOG.md`):**
+- Block 5 — rich README + flow demo + launch assets
+- Block 6 — PyPI publication (test.pypi first, repo naming to decide)
+- Self-dogfooding ADR-000 (`kaora init . --dry-run` validated, full application open)
 - `kaora handoff` · `kaora errors record` · `kaora skill install` (v0.2+)
-- Hook context-threshold a 60% per Claude Code (v0.2+)
-- MCP server · cloud sync · dashboard web (v0.3+)
+- Context-threshold hook at 60% for Claude Code (v0.2+)
+- MCP server · cloud sync · web dashboard (v0.3+)
 
-## 8. File chiave
+## 8. Key files
 
-| Path | Cosa è |
+| Path | What it is |
 |---|---|
-| `AGENTS.md` | **Questo file.** Master context canonico, cross-agent |
-| `CLAUDE.md` | Import-only (`@AGENTS.md`) — entry point per Claude Code |
-| `AGENT_BRIEF.md` | Onboarding 3-min per nuovi agenti e nuovi builder |
-| `docs/IDENTITY.md` | Chi è il builder, come comunica, anti-pattern personali |
-| `docs/CURRENT_STATE.md` | Stato vivo aggiornato a fine sessione |
-| `docs/SESSION_HANDOFF.md` | Brief per la prossima sessione · cosa fare · cosa NON toccare |
-| `docs/DECISIONS.md` | ADR log immutabile · append-only |
-| `docs/SESSION_ERRORS_TEMPLATE.md` | Template post-mortem riusabile |
-| `BACKLOG.md` | Idee fuori scope corrente |
-| `.claude/settings.json` + `hooks/` | Protezione credenziali + log API |
-| `kaora_memory/` | Codice Python del package (`cli`, `installer`, `settings_merger`, `template_resolver`) |
-| `template/` | Template sorgente che `kaora init` copia nel progetto utente |
-| `tests/` | Suite `pytest` (33 cases green) |
-| `pyproject.toml` | Hatchling build config + entry point `kaora` |
-| `bin/setup-dev.sh` | Setup dev one-liner (venv + `pip -e .[dev]` + chflags nohidden) |
-| `README.md` | Pitch pubblico del pacchetto |
+| `AGENTS.md` | **This file.** Canonical, cross-agent master context |
+| `CLAUDE.md` | Import-only (`@AGENTS.md`) — entry point for Claude Code |
+| `AGENT_BRIEF.md` | 3-min onboarding for new agents and new builders |
+| `docs/IDENTITY.md` | Who the builder is, how they communicate, personal anti-patterns |
+| `docs/CURRENT_STATE.md` | Live state updated at session end |
+| `docs/SESSION_HANDOFF.md` | Brief for the next session · what to do · what NOT to touch |
+| `docs/DECISIONS.md` | Immutable ADR log · append-only |
+| `docs/SESSION_ERRORS_TEMPLATE.md` | Reusable post-mortem template |
+| `BACKLOG.md` | Ideas outside current scope |
+| `.claude/settings.json` + `hooks/` | Credential protection + API logging |
+| `kaora_memory/` | Python package code (`cli`, `installer`, `settings_merger`, `template_resolver`) |
+| `template/` | Source template that `kaora init` copies into the user project |
+| `tests/` | `pytest` suite (33 cases green) |
+| `pyproject.toml` | Hatchling build config + `kaora` entry point |
+| `bin/setup-dev.sh` | One-liner dev setup (venv + `pip -e .[dev]` + chflags nohidden) |
+| `README.md` | Public pitch of the package |
 
-## 9. Cosa NON fare
+## 9. What NOT to do
 
-- ❌ Espandere lo scope corrente senza nuova ADR esplicita
-- ❌ Riaprire ADR già chiuse senza nuova ADR con `Supersedes: ADR-XXX`
-- ❌ Agire di iniziativa — Gate C
-- ❌ Saltare il rituale a meno di skip esplicito (§ 4)
-- ❌ Toccare file `.env`, `credentials.*`, `.secret.*` (bloccati da hook)
-- ❌ Cancellare file `.kaora-bak` senza prima averli letti (memoria pre-install, vedi § 11)
-- ❌ Cambiare layout package da flat a `src/` (ADR-004)
-- ❌ Sostituire `hatchling` con `setuptools`/`poetry` (ADR-004)
-- ❌ Cambiare entry point da `kaora` a qualcosa d'altro
-- ❌ Modificare `kaora_memory/{installer,settings_merger,template_resolver,cli}.py` — moduli stabili Blocco 3
+- ❌ Expand the current scope without a new explicit ADR
+- ❌ Reopen already-closed ADRs without a new ADR with `Supersedes: ADR-XXX`
+- ❌ Act on your own initiative — Gate C
+- ❌ Skip the ritual unless skip is explicit (§ 4)
+- ❌ Touch `.env`, `credentials.*`, `.secret.*` files (blocked by hook)
+- ❌ Delete `.kaora-bak` files without reading them first (pre-install memory, see § 11)
+- ❌ Change package layout from flat to `src/` (ADR-004)
+- ❌ Replace `hatchling` with `setuptools`/`poetry` (ADR-004)
+- ❌ Change the entry point from `kaora` to something else
+- ❌ Edit `kaora_memory/{installer,settings_merger,template_resolver,cli}.py` — stable modules from Block 3
 
-## 10. Skill / sub-agenti da invocare PRIMA di costruire
+## 10. Skills / sub-agents to invoke BEFORE building
 
-Pattern operativo: ogni componente non-triviale richiede skill o sub-agente specializzato caricato **PRIMA** di scrivere codice (Gate A § 5.1).
+Operational pattern: every non-trivial component requires a specialized skill or sub-agent loaded **BEFORE** writing code (Gate A § 5.1).
 
-| Cosa stai per fare | Skill da invocare PRIMA |
+| What you're about to do | Skill to invoke BEFORE |
 |---|---|
-| Modificare `pyproject.toml`, building, PyPI | `python-packaging` |
-| Generalizzare `template/AGENTS.md` | `agents-md` |
-| Generalizzare `template/docs/DECISIONS.md` | `architecture-decision-records` |
-| CLI con Click (test-first) | `tdd-workflows-tdd-cycle` (+ `python-pro` se refactor cli) |
-| HTML premium (preview, landing) | `high-end-visual-design` |
+| Modify `pyproject.toml`, building, PyPI | `python-packaging` |
+| Generalize `template/AGENTS.md` | `agents-md` |
+| Generalize `template/docs/DECISIONS.md` | `architecture-decision-records` |
+| CLI with Click (test-first) | `tdd-workflows-tdd-cycle` (+ `python-pro` for cli refactor) |
+| Premium HTML (preview, landing) | `high-end-visual-design` |
 
-### Lettura file: sub-agente vs Read diretto (ADR-009)
+### File reading: sub-agent vs direct Read (ADR-009)
 
-Quando consulti file durante la costruzione, scegli in base a 3 variabili — *size, intent, post-action* — secondo questa matrice:
+When you consult files while building, choose based on 3 variables — *size, intent, post-action* — according to this matrix:
 
-| Caso | Approccio |
+| Case | Approach |
 |---|---|
-| File < 200 righe | **Read diretto** (overhead sub-agente > risparmio) |
-| File 200-1000 righe **+ modificherai dopo** | **Read diretto** (Edit richiede Read comunque) |
-| File 200-1000 righe **+ serve dettaglio fine** | **Read diretto** (sub-agente perde sfumature) |
-| File 200-1000 righe **+ solo estrazione/sintesi** | **Sub-agente** |
-| File > 1000 righe **+ non modifichi dopo** | **Sub-agente** quasi sempre |
-| File > 1000 righe **+ serve dettaglio fine** | **Read diretto** + accetta costo (caso raro) |
+| File < 200 lines | **Direct Read** (sub-agent overhead > savings) |
+| File 200-1000 lines **+ you'll modify after** | **Direct Read** (Edit requires Read anyway) |
+| File 200-1000 lines **+ fine detail needed** | **Direct Read** (sub-agent loses nuance) |
+| File 200-1000 lines **+ only extraction/synthesis** | **Sub-agent** |
+| File > 1000 lines **+ no modification after** | **Sub-agent** almost always |
+| File > 1000 lines **+ fine detail needed** | **Direct Read** + accept the cost (rare case) |
 
-**Skip se già letto in sessione:** il file è già nel context, ri-leggerlo è no-op gratis, niente sub-agente.
+**Skip if already read in session:** the file is already in context, re-reading it is a free no-op, no sub-agent needed.
 
-**Effetto duplice:**
-- *Ottimizzazione token:* il sub-agente legge nel suo context, restituisce solo il summary (~5% del file). Il file completo non resta mai nel tuo context principale.
-- *Ottimizzazione comportamento:* delegare a sub-agente forza la dichiarazione dell'intent **prima** della lettura. Meno letture esplorative ("apro per curiosità"), più letture finalizzate.
+**Twofold effect:**
+- *Token optimization:* the sub-agent reads in its own context, returns only the summary (~5% of the file). The full file never stays in your main context.
+- *Behavior optimization:* delegating to a sub-agent forces intent declaration **before** the read. Fewer exploratory reads ("I'm just curious"), more purposeful reads.
 
-## 11. Memoria pre-esistente del progetto
+## 11. Pre-existing project memory
 
-> Procedura **triggerata dal rituale § 6 step 4**. Non è una sezione passiva da consultare "se mai serve" — è il braccio operativo dello scan obbligatorio in apertura.
+> Procedure **triggered by ritual § 6 step 4**. Not a passive section to consult "if needed" — it's the operational arm of the mandatory opening scan.
 
-I file `*.kaora-bak` in root o in `docs/` (es. `AGENTS.md.kaora-bak`, `CLAUDE.md.kaora-bak`) contengono la memoria operativa esistente **prima** di `kaora init`. Quando il rituale di apertura ne segnala la presenza e l'utente conferma di voler processare, esegui:
+`*.kaora-bak` files in root or in `docs/` (e.g. `AGENTS.md.kaora-bak`, `CLAUDE.md.kaora-bak`) contain the operating memory that existed **before** `kaora init`. When the opening ritual flags their presence and the user confirms they want to process them, run:
 
-1. Leggi il `.kaora-bak`
-2. Estrai contenuti tecnici rilevanti: package manager, comandi (test/lint/build), conventions di codice, file-scoped commands, struttura cartelle
-3. Proponi un diff per integrarli nella sezione appropriata di questo `AGENTS.md` (§ 2 stack, § 8 file chiave, § 10 skill mapping). Se il `.kaora-bak` contiene contenuto progetto-specifico denso (caso master context già curato), valuta anche `docs/IDENTITY.md` o `docs/CURRENT_STATE.md` come destinazione
-4. **NON duplicare** la memoria operativa kaora (rituale § 4, gate § 5, scope § 7) — quella è già canonica qui
-5. Al termine, chiedi a Alexis Rojas cosa fare dei `.kaora-bak`. Tre opzioni:
-   - **(1) Eliminare** — pulizia immediata, perde l'asset storico
-   - **(2) Conservare in root/docs/** — il file resta dov'è MA il rituale § 6 step 4 lo troverà e segnalerà ad ogni apertura sessione futura (rumore inutile, il contenuto è già stato migrato)
-   - **(3) Archiviare in `docs/archive/`** — conserva l'artefatto fuori dallo scan rituale, zero rumore. **Default raccomandato.**
+1. Read the `.kaora-bak`
+2. Extract relevant technical content: package manager, commands (test/lint/build), code conventions, file-scoped commands, folder structure
+3. Propose a diff to integrate them into the appropriate section of this `AGENTS.md` (§ 2 stack, § 8 key files, § 10 skill mapping). If the `.kaora-bak` contains dense project-specific content (case: already-curated master context), also consider `docs/IDENTITY.md` or `docs/CURRENT_STATE.md` as destinations
+4. **Do NOT duplicate** the kaora operating memory (ritual § 4, gates § 5, scope § 7) — that's already canonical here
+5. At the end, ask Alexis Rojas what to do with the `.kaora-bak`. Three options:
+   - **(1) Delete** — immediate cleanup, loses the historical asset
+   - **(2) Keep in root/docs/** — the file stays where it is BUT ritual § 6 step 4 will find and flag it at every future session opening (useless noise, the content has already been migrated)
+   - **(3) Archive in `docs/archive/`** — preserves the artifact outside the ritual scan, zero noise. **Recommended default.**
 
-## 12. Comportamenti vietati cross-agent
+## 12. Cross-agent forbidden behaviors
 
-Validi per Claude Code, Codex, Cursor, Aider, Gemini CLI e qualsiasi altro agente in questo repo:
+Valid for Claude Code, Codex, Cursor, Aider, Gemini CLI, and any other agent in this repo:
 
-- Niente commit/push autonomi (azione visibile, sempre conferma esplicita)
-- Niente modifica `docs/DECISIONS.md` per ADR già `Accepted` (append-only, nuova ADR `Supersedes`)
-- Niente skip del rituale a meno di intent esplicito utente
-- Niente sovrascrittura di file `.kaora-bak`
+- No autonomous commit/push (visible action, always explicit confirmation)
+- No modification of `docs/DECISIONS.md` for already-`Accepted` ADRs (append-only, new ADR `Supersedes`)
+- No skipping the ritual unless explicit user intent
+- No overwriting of `.kaora-bak` files
 
 ---
 
-**Verifica rapida di salute progetto** (eseguibile in qualsiasi sessione):
+**Quick project health check** (runnable in any session):
 
 ```bash
 cd ~/Desktop/kaora-memory
 python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
-ls template/ template/docs template/.claude/hooks && echo "template completo"
+ls template/ template/docs template/.claude/hooks && echo "template complete"
 .venv/bin/python -m pytest -q && echo "TEST OK (33/33)"
 .venv/bin/kaora --version && echo "CLI OK"
 ```
