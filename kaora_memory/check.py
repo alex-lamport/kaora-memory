@@ -200,7 +200,7 @@ def _placeholder_scan_paths(target: Path) -> list[Path]:
 def _check_placeholders(target: Path, report: CheckReport) -> None:
     for path in _placeholder_scan_paths(target):
         rel = path.relative_to(target).as_posix()
-        content = path.read_text(encoding="utf-8")
+        content = _strip_code_blocks(path.read_text(encoding="utf-8"))
 
         for ph in _STRUCTURAL_PLACEHOLDERS:
             token = "{{" + ph + "}}"

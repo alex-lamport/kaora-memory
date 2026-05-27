@@ -336,6 +336,35 @@ def test_placeholders_scans_all_md_in_docs(tmp_path: Path):
     )
 
 
+def test_placeholders_ignores_open_inside_code_block(tmp_path: Path):
+    """Placeholder e BOOTSTRAP marker dentro un fenced code block sono esempi
+    documentari (es. spec del check stesso), non placeholder reali da
+    sostituire. Stesso pattern del fix adr_state."""
+    _valid_project(tmp_path)
+    (tmp_path / "docs" / "SPEC.md").write_text(
+        "# Spec check\n\n"
+        "Esempio di output atteso:\n\n"
+        "```\n"
+        "PATH = {{project_path}}\n"
+        "YEAR = {{year}}\n"
+        '<BOOTSTRAP need="..." sources="..."/>\n'
+        "```\n\n"
+        "Fine spec.\n",
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    spec_results = [
+        r for r in report.results
+        if r.category == "placeholders" and "SPEC.md" in r.message
+    ]
+    assert spec_results == [], (
+        f"Atteso 0 segnalazioni placeholder per SPEC.md (sono dentro code-block), "
+        f"trovati {len(spec_results)}: {[r.message for r in spec_results]}"
+    )
+
+
 def test_placeholders_skips_archive_and_philosophy(tmp_path: Path):
     """docs/archive/** e docs/PHILOSOPHY.md non sono kaora-managed e devono
     essere esclusi (contengono testo discorsivo, falsi positivi)."""
