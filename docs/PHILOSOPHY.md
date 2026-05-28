@@ -4,6 +4,10 @@
 > Companion to [DECISIONS.md](DECISIONS.md) (the *how*) and [CURRENT_STATE.md](CURRENT_STATE.md) (the *what now*).
 > Home for reflections emerged in development sessions that need to be preserved beyond individual ADRs.
 
+> **Reading note — "Block N" terminology**
+> Throughout this document and [DOGFOODING_REPORT.md](DOGFOODING_REPORT.md), *Block N* refers to a development milestone of the v0.1 roadmap:
+> Block 1 = repo scaffolding · Block 2 = template generalization · Block 3 = `kaora init` CLI · Block 4 = `kaora check` CLI · Block 4.5 = English i18n refactor · Block 4.6 = documentary-content-aware linter (ADR-010) · Block 5 = README + launch assets · Block 6 = PyPI publication. It is internal builder shorthand, not product terminology.
+
 ---
 
 ## 1. Central thesis
@@ -84,7 +88,12 @@ The product evolves because the builder is gifted/divergent. The product makes i
 
 **This is also an act of cognitive accessibility**, not just a product rule.
 
-## 7. Repo naming considerations
+## 7. Repo naming considerations — decision closed 2026-05-28
+
+> **Decision:** `kaora-memory`. Confirmed at the start of Block 5, before the first PyPI publication.
+> Rationale: consistency with the author's "Kaora" ecosystem prioritized over framing-in-name. The metacognitive framing lives in the README tagline, the landing page, and the launch essay — not in the package name. Renaming a published package is painful; the name became immutable on 2026-05-28 when 0.1.1 went to PyPI.
+
+The section below is preserved as the historical rationale that led to the decision.
 
 The current name `kaora-memory` was chosen in Block 1, before the metacognitive framing emerged. It reflects the *what* (operating memory) but not the *why* (applied metacognition + humble agent).
 
@@ -93,11 +102,11 @@ The current name `kaora-memory` was chosen in Block 1, before the metacognitive 
 - "memory" is incomplete as a framing (doesn't tell about gates, ritual, conversational mode, sub-agent)
 - Everything that emerged today (metacognition, reverse positioning, cognitive accessibility) is not covered by "memory"
 
-**Renaming candidates (to evaluate before the v0.1 release, not today):**
+**Renaming candidates that were evaluated:**
 
 | Name | Pro | Con |
 |---|---|---|
-| `kaora-memory` (status quo) | Already chosen, zero brand recognition but consistent with "kaora multi-agent" | Under-represents the framing |
+| `kaora-memory` (status quo) ✅ chosen | Already chosen, zero brand recognition but consistent with "kaora multi-agent" | Under-represents the framing |
 | `kaora-metacognition` | Explicit, academic, original, no similar name on the market | Long (15 chars), hard word to pronounce/remember for non-Italian speakers |
 | `kaora-meta` | Short, evocative | Too generic, "meta" is overused (Meta company, meta-programming) |
 | `kaora-mc` | Acronym, very short | Cryptic, loses the framing |
@@ -107,22 +116,9 @@ The current name `kaora-memory` was chosen in Block 1, before the metacognitive 
 | `kaora-core` | Clean, professional, neutral | Generic, doesn't tell the framing |
 | `kaora` (no suffix) | Very short, brandable | Conflicts with the author's Kaora multi-agent project |
 
-**My recommendation (pending final decision):** postpone the decision to **Block 5** (README + communication), when the framing will be stabilized by the launch essay. At that point:
-- If the metacognitive framing is the main narrative thread → consider `kaora-metacognition`
-- If a short name is a marketing priority → consider `kaora-mc` or `kaora-meta`
-- If consistency with the author's "Kaora" ecosystem is a priority → keep `kaora-memory` and use the metacognitive framing only as a tagline
-
-To decide before PyPI publication (Block 6), because renaming a published package is painful.
-
-## 8. References for the launch essay
-
-Operational brief for the essay: `/tmp/kaora-memory-launch-essay-brief.md` (generated May 22 2026, 16 sections, to pass to the parallel session writing the essay).
-
-Candidate landing page: `/tmp/kaora-memory-preview.html` (dated May 22 00:55, to update in Block 5 with the metacognitive framing + ADR 005-009 + Block 2 closed).
-
-Abstract vision document: `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (dated May 20, more philosophical vision asset, reusable for academic/intellectual audiences).
+The decision followed the third branch of the matrix above: ecosystem consistency over framing density, with the framing carried by the tagline.
 
 ---
 
-**Document version:** 0.1 — May 22 2026, emerged at the close of Block 2.
-**To update:** when the naming decision is made (Block 5), and when new philosophical reflections emerge from the launch.
+**Document version:** 0.2 — first revised 2026-05-28 at the start of Block 5: naming decision closed, internal references to private dev assets removed for public consumption.
+**To update:** when new philosophical reflections emerge from the launch.

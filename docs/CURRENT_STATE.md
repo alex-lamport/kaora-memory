@@ -145,9 +145,9 @@ All 5 **Accepted** after Tests 1-5 and in-chat review.
 
 ## Linked communication assets
 
-- `/tmp/kaora-memory-preview.html` — premium v0.1 preview landing page (dated May 22 00:55, to update in Block 5)
-- `/tmp/kaora-memory-launch-essay-brief.md` — operational brief 16 sections for the launch essay (parallel session)
-- `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` — abstract vision document "LLM Wiki Extended" (dated May 20, reusable for academic audience)
+- `<private landing asset>` — premium v0.1 preview landing page (dated May 22 00:55, to update in Block 5)
+- `<private essay brief>` — operational brief 16 sections for the launch essay (parallel session)
+- `<private vision asset>` — abstract vision document "LLM Wiki Extended" (dated May 20, reusable for academic audience)
 - `docs/PHILOSOPHY.md` — the product's *why*: applied metacognition, ADR-001/007/009 triptych, humble-agent reverse positioning, cognitive accessibility, repo naming considerations
 
 ## Operational notes

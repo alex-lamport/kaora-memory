@@ -3,6 +3,12 @@
 > Report of the self-dogfooding test of the `kaora-memory` v0.1 product on the repository that produces it.
 > ADR-000 honored literally (option A): the `kaora-memory` repo is the first real user of its own product.
 
+> **Reading note 1 — "Block N" terminology**
+> "Block N" is internal builder shorthand for a v0.1 development milestone (Block 1 = scaffolding, Block 2 = template, Block 3 = `kaora init` CLI, Block 4 = `kaora check` CLI, Block 4.5 = English i18n refactor, Block 4.6 = documentary-content-aware linter, Block 5 = launch assets, Block 6 = PyPI publication). Full glossary in [PHILOSOPHY.md](PHILOSOPHY.md).
+
+> **Reading note 2 — commit-message language**
+> Commit messages quoted verbatim from `git log` in this report reflect the builder's working language at the time of the commit. Commits up to Block 4.4 (early May 2026) are in Italian; from the i18n refactor of 2026-05-27 (Block 4.5) onwards, all commits, docs, and code are in English. The IT/EN mix in citations is therefore historical, not stylistic drift.
+
 ---
 
 ## 1. Context

@@ -141,10 +141,10 @@ The user chooses, the agent runs the channel and proposes the diff for IDENTITY.
 
 To finalize when we reach the rich README + PyPI publication:
 
-- **Premium landing page:** `/tmp/kaora-memory-preview.html` (1008 lines, dated May 22 00:55, v0.1 preview)
+- **Premium landing page:** `<private landing asset>` (1008 lines, dated May 22 00:55, v0.1 preview)
   - Update: ADR numbering (from "Stage 1 Phase 8 ADR-034" → "Block 2 closed · ADR 000-009"), add the metacognitive framing that emerged on May 22, realign the 6 layers to the real template files, cite ADR-005/006/007/008/009
-- **Launch essay (operational brief):** `/tmp/kaora-memory-launch-essay-brief.md` (16 sections, generated the evening of May 22) — handed off to the parallel session writing the essay
-- **Abstract vision document:** `/Users/alexissilva/Desktop/kaora-memory-architecture-dashboard.html` (dated May 20, "Memory Architecture LLM Wiki Extended") — reusable as an asset of philosophical depth for academic/intellectual audiences, otherwise to archive if not realigned
+- **Launch essay (operational brief):** `<private essay brief>` (16 sections, generated the evening of May 22) — handed off to the parallel session writing the essay
+- **Abstract vision document:** `<private vision asset>` (dated May 20, "Memory Architecture LLM Wiki Extended") — reusable as an asset of philosophical depth for academic/intellectual audiences, otherwise to archive if not realigned
 
 ### Narrative strategy: where to show the philosophy (target Block 5-6)
 
@@ -152,9 +152,9 @@ The metacognitive philosophy (see [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md)) is
 
 | Channel | Depth | What to show of the philosophy |
 |---|---|---|
-| **Premium landing page** (updated `/tmp/kaora-memory-preview.html`) | 🔴 Central | Dedicated "What it really is" section with metacognitive thesis + rules→acts mapping + humble-vs-arrogant agent narrative frame + 1-2 Flavell/Vygotsky citations in footnote |
+| **Premium landing page** (updated `<private landing asset>`) | 🔴 Central | Dedicated "What it really is" section with metacognitive thesis + rules→acts mapping + humble-vs-arrogant agent narrative frame + 1-2 Flavell/Vygotsky citations in footnote |
 | **Repo README.md** | 🟡 Synthetic | Practical hero + philosophical tagline + "Philosophy in 3 paragraphs" section + link to `docs/PHILOSOPHY.md` |
-| **Launch essay** (Substack/Medium) | 🔴 Maximally expanded | Full argument ~3000 words. Brief in `/tmp/kaora-memory-launch-essay-brief.md` already has the structure |
+| **Launch essay** (Substack/Medium) | 🔴 Maximally expanded | Full argument ~3000 words. Brief in `<private essay brief>` already has the structure |
 | **`kaora dashboard` v0.2 runtime** | 🟢 Light | "Why kaora" tab or link to PHILOSOPHY.md on GitHub. The user already using the product wants project state, not manifesto |
 | **PyPI page** | 🟢 One line | Description: *"Operating memory for AI agents. Induced metacognition — the humble agent recognizes its limits."* + link to GitHub |
 | **X/Twitter launch thread** | 🟡 Hook + demonstration | 10-15 tweets with concrete examples (code, ADR screenshots, `claude go` demo) |

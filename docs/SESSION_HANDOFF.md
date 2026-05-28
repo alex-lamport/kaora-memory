@@ -41,8 +41,8 @@ Public launch assets. Make a repo visitor understand in 30 seconds what kaora-me
    - Link to `docs/PHILOSOPHY.md` for the *why*
 2. **Flow demo** (asciicast or GIF): `kaora init myproject && kaora check myproject`. Real output visible in a few lines.
 3. **Refresh existing assets** (see `CURRENT_STATE.md` → "Linked communication assets"):
-   - `/tmp/kaora-memory-preview.html` — premium landing page, dated May 22, to update with new features (check, dogfooding)
-   - `/tmp/kaora-memory-launch-essay-brief.md` — essay brief (parallel session)
+   - `<private landing asset>` — premium landing page, dated May 22, to update with new features (check, dogfooding)
+   - `<private essay brief>` — essay brief (parallel session)
 4. **Suggested commit message:** `feat(launch): rich README + asciicast demo + landing refresh`
 5. **CURRENT_STATE.md + SESSION_HANDOFF.md** updated with the Block 6 brief (PyPI publication)
 
@@ -51,7 +51,7 @@ Public launch assets. Make a repo visitor understand in 30 seconds what kaora-me
 - `README.md` (full rewrite)
 - Optional `docs/quickstart.md` or `docs/faq.md` if the README grows too much
 - Optional `assets/demo.cast` (asciinema) or `assets/demo.gif` (terminalizer)
-- Refresh `/tmp/kaora-memory-preview.html` (outside repo)
+- Refresh `<private landing asset>` (outside repo)
 
 ### What NOT to touch (Blocks 1-4 closed)
 

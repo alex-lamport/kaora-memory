@@ -12,7 +12,7 @@
 **Name:** kaora-memory
 **Pitch:** Open-source skill for persistent memory and codified behavior for AI agents (Claude Code, Codex, Cursor, Gemini CLI).
 **Owner:** Alexis Rojas · X [@alex_lamports](https://x.com/alex_lamports) · alexis1121alexis@gmail.com
-**Path:** /Users/alexissilva/Desktop/kaora-memory
+**Path:** ~/Desktop/kaora-memory
 **Year:** 2026
 **Current stage:** v0.1 in progress · Block 3 closed · Block 4 next (`kaora check`)
 

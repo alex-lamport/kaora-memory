@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kaora-memory"
-version = "0.1.1"
+version = "0.1.2"
 description = "Operating memory and behaviour for AI agents. Works on any project, fresh or existing."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [
-    { name = "alex.lamport", email = "alexis1121alexis@gmail.com" },
+    { name = "alex.lamport", email = "192558850+alex-lamport@users.noreply.github.com" },
 ]
 keywords = [
     "claude-code",
