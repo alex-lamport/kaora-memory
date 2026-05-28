@@ -8,8 +8,8 @@
 
 ## Snapshot today
 
-**Current block:** Block 4 ✅ closed · Block 4.5 ✅ closed (i18n EN-first) · Block 4.6 ✅ closed (documentary-content-aware stripping, ADR-010) · Block 5 next (rich README + launch assets, in English)
-**Last commit on main:** `03f3f86 refactor(check): regex match Status + Python code/tests/script sync`. Working tree dirty: Block 4.6 (check.py + tests + ADR-010 + doc updates) pending commit.
+**Current block:** Block 4 ✅ closed · Block 4.5 ✅ closed (i18n EN-first) · Block 4.6 ✅ closed (documentary-content-aware stripping, ADR-010) · Block 5 in progress (rich README + launch assets, in English; naming decided 2026-05-28 = `kaora-memory` confirmed)
+**Last commit on main:** `4651fe7 feat(check): documentary-content-aware stripping (ADR-010)`. Working tree clean.
 **Branch:** `main`
 **Remote repo:** not configured yet (placeholder URL `alex-lamport/kaora-memory` in pyproject)
 **Open ADRs:** none · all 000-010 Accepted
@@ -110,8 +110,7 @@ Change vs SESSION_HANDOFF Block 1: added `{{communication_language}}` for future
 
 1. **Rich README + demo** — Block 5 (launch assets in BACKLOG already ready, see "Communication assets" section)
 2. **PyPI publication setup** (`.pypirc`, test.pypi token) — Block 6
-3. **Repo naming decision** (`kaora-memory` vs `kaora-mc` vs others) — before PyPI publication, see BACKLOG
-4. **Possible ADR-011** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates (renumbered from ADR-010 after Block 4.6 took that slot)
+3. **Possible ADR-011** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates (renumbered from ADR-010 after Block 4.6 took that slot)
 
 ## Block 4 design decisions (pending formalization)
 
