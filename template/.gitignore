@@ -1,0 +1,52 @@
+# --- kaora-memory runtime artifacts ---
+# Logs produced by .claude/hooks/log-api-calls.sh — may contain bearer
+# tokens or API keys from third-party calls. NEVER commit.
+logs/
+
+# --- Secrets ---
+.env
+.env.local
+.env.*.local
+*.pypirc
+*.pem
+*.key
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Distribution / packaging ---
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+
+# --- Testing ---
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Claude Code local (per-machine, never committed) ---
+.claude/settings.local.json

@@ -258,3 +258,97 @@ def test_target_created_if_missing(tmp_path: Path):
     install_template(target, year=YEAR)
     assert target.is_dir()
     assert (target / "CLAUDE.md").is_file()
+
+
+# ---------------------------------------------------------------------------
+# Re-run safety (post-launch hardening — pre-existing backup is never lost)
+# ---------------------------------------------------------------------------
+
+def test_rerun_does_not_overwrite_existing_kaora_bak(tmp_path: Path):
+    """A second `kaora init` must NEVER silently overwrite the original
+    .kaora-bak (which holds the irreplaceable pre-kaora user content).
+    The second backup must rotate to `.kaora-bak.1` so the chain of
+    backups is preserved."""
+    # First user run: handwritten CLAUDE.md exists
+    existing = tmp_path / "CLAUDE.md"
+    existing.write_text("ORIGINAL HANDCRAFTED CONTENT", encoding="utf-8")
+
+    # First kaora init → backs up to .kaora-bak
+    install_template(tmp_path, year=YEAR)
+    bak1 = tmp_path / "CLAUDE.md.kaora-bak"
+    assert bak1.read_text(encoding="utf-8") == "ORIGINAL HANDCRAFTED CONTENT"
+
+    # Second kaora init → CLAUDE.md now holds the kaora-canonical content,
+    # which would otherwise overwrite bak1 and lose the original forever
+    install_template(tmp_path, year=YEAR)
+
+    # The original backup MUST be intact
+    assert bak1.read_text(encoding="utf-8") == "ORIGINAL HANDCRAFTED CONTENT", (
+        "first .kaora-bak (original user content) must never be overwritten "
+        "by a subsequent kaora init"
+    )
+    # The second backup must rotate to .kaora-bak.1
+    bak2 = tmp_path / "CLAUDE.md.kaora-bak.1"
+    assert bak2.is_file()
+
+
+def test_rerun_third_time_rotates_to_kaora_bak_2(tmp_path: Path):
+    """The rotation must keep going past .1: three runs → bak, .bak.1, .bak.2."""
+    (tmp_path / "CLAUDE.md").write_text("ORIG", encoding="utf-8")
+
+    install_template(tmp_path, year=YEAR)
+    install_template(tmp_path, year=YEAR)
+    install_template(tmp_path, year=YEAR)
+
+    assert (tmp_path / "CLAUDE.md.kaora-bak").is_file()
+    assert (tmp_path / "CLAUDE.md.kaora-bak.1").is_file()
+    assert (tmp_path / "CLAUDE.md.kaora-bak.2").is_file()
+
+
+# ---------------------------------------------------------------------------
+# Silent merge failure → surfaced as a warning (post-launch hardening)
+# ---------------------------------------------------------------------------
+
+def test_invalid_existing_settings_json_surfaces_warning(tmp_path: Path):
+    """If the user's existing .claude/settings.json can't be merged (e.g.
+    not valid JSON), the installer must surface a warning in InstallReport
+    so the user knows the kaora security hooks were NOT installed. A silent
+    skip is unsafe — the user would assume protection that isn't there."""
+    claude = tmp_path / ".claude"
+    claude.mkdir()
+    settings = claude / "settings.json"
+    settings.write_text("{this is not valid json", encoding="utf-8")
+
+    report = install_template(tmp_path, year=YEAR)
+
+    # User's broken file preserved (skip)
+    assert any(p.name == "settings.json" for p in report.skipped)
+    # But the failure is surfaced
+    warning_paths = [p.name for p, _ in report.warnings]
+    assert "settings.json" in warning_paths, (
+        f"merge failure must surface a warning, got: {report.warnings}"
+    )
+    # The warning message must tell the user what failed
+    warning_msgs = [msg for _, msg in report.warnings]
+    assert any("merge" in m.lower() or "json" in m.lower() for m in warning_msgs)
+
+
+# ---------------------------------------------------------------------------
+# Template .gitignore — fresh-init security default
+# ---------------------------------------------------------------------------
+
+def test_greenfield_creates_gitignore_with_logs_excluded(tmp_path: Path):
+    """`kaora init` on a fresh project must ship a .gitignore that
+    excludes logs/ (where the API-call hook writes potentially-sensitive
+    request lines). Without this, a naive `git add . && git push` to a
+    public repo can leak bearer tokens captured by the hook."""
+    install_template(tmp_path, year=YEAR)
+
+    gitignore = tmp_path / ".gitignore"
+    assert gitignore.is_file(), (
+        ".gitignore must be installed on greenfield init to protect logs/"
+    )
+    content = gitignore.read_text(encoding="utf-8")
+    assert "logs/" in content, (
+        ".gitignore must list logs/ to prevent bearer-token leaks"
+    )

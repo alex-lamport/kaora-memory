@@ -54,6 +54,7 @@ class InstallReport:
     backed_up: list[Path] = field(default_factory=list)
     merged: list[Path] = field(default_factory=list)
     skipped: list[Path] = field(default_factory=list)
+    warnings: list[tuple[Path, str]] = field(default_factory=list)
 
 
 def install_template(
@@ -155,6 +156,26 @@ def _write_fresh(
     report.created.append(rel)
 
 
+def _find_free_backup_path(dest: Path) -> Path:
+    """Return a backup path that doesn't yet exist on disk.
+
+    Tries ``<dest>.kaora-bak`` first. If it's already taken — typical of a
+    second ``kaora init`` run where the original pre-kaora backup is still
+    on disk — rotates incrementally to ``.kaora-bak.1``, ``.kaora-bak.2``,
+    and so on. The original pre-kaora content is therefore never silently
+    overwritten by a subsequent install (ADR-006 v2 + post-launch hardening).
+    """
+    base = dest.parent / (dest.name + BACKUP_SUFFIX)
+    if not base.exists():
+        return base
+    i = 1
+    while True:
+        candidate = dest.parent / (dest.name + BACKUP_SUFFIX + f".{i}")
+        if not candidate.exists():
+            return candidate
+        i += 1
+
+
 def _backup_and_write(
     src: Path,
     dest: Path,
@@ -167,7 +188,7 @@ def _backup_and_write(
         report.backed_up.append(rel)
         return
 
-    bak = dest.parent / (dest.name + BACKUP_SUFFIX)
+    bak = _find_free_backup_path(dest)
     shutil.copy2(dest, bak)
     _write_with_placeholders(src, dest, placeholders)
     report.backed_up.append(rel)
@@ -182,20 +203,31 @@ def _merge_and_write(
 ) -> None:
     try:
         template_dict = json.loads(src.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as exc:
         report.skipped.append(rel)
+        report.warnings.append(
+            (rel, f"template settings.json is not valid JSON: {exc.msg}")
+        )
         return
 
     merged, error = merge_claude_settings(dest, template_dict)
     if error is not None or merged is None:
         report.skipped.append(rel)
+        if error:
+            report.warnings.append(
+                (
+                    rel,
+                    f"could not merge existing settings.json: {error}. "
+                    "kaora hooks NOT installed — fix the JSON or merge manually.",
+                )
+            )
         return
 
     if dry_run:
         report.merged.append(rel)
         return
 
-    bak = dest.parent / (dest.name + BACKUP_SUFFIX)
+    bak = _find_free_backup_path(dest)
     shutil.copy2(dest, bak)
     dest.write_text(json.dumps(merged, indent=2) + "\n", encoding="utf-8")
     report.merged.append(rel)

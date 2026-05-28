@@ -111,6 +111,7 @@ def _print_report(target: Path, report: InstallReport, *, dry_run: bool) -> None
     _section("backed up + overwritten (.kaora-bak)", report.backed_up, "yellow")
     _section("settings.json merged (.kaora-bak)", report.merged, "yellow")
     _section("skipped (preserved existing)", report.skipped, "blue")
+    _section_warnings(report.warnings)
 
     click.echo("")
     click.secho("Next step: ", nl=False, bold=True)
@@ -126,6 +127,14 @@ def _section(title: str, items: list[Path], color: str) -> None:
     click.secho(f"\n  {title} ({len(items)}):", fg=color, bold=True)
     for p in items:
         click.echo(f"    • {p.as_posix()}")
+
+
+def _section_warnings(items: list[tuple[Path, str]]) -> None:
+    if not items:
+        return
+    click.secho(f"\n  warnings ({len(items)}):", fg="red", bold=True)
+    for path, msg in items:
+        click.echo(f"    • {path.as_posix()}: {msg}")
 
 
 if __name__ == "__main__":

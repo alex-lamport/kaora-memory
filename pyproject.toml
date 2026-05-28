@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kaora-memory"
-version = "0.1.0"
+version = "0.1.1"
 description = "Operating memory and behaviour for AI agents. Works on any project, fresh or existing."
 readme = "README.md"
 requires-python = ">=3.10"
