@@ -2,84 +2,84 @@
 
 > Read right after `CLAUDE.md` and `CURRENT_STATE.md`.
 >
-> **Last session:** 2026-05-28 · **Mini-Block 4.6 closed** — `_strip_code_blocks` extended from fenced-only to fenced + inline-backtick stripping (third recurrence of the documentary-content false-positive pattern). 2 new tests (62→64). ADR-010 Accepted. `kaora check .` clean on the repo itself. Committed in `4651fe7`. Working tree clean.
+> **Last session:** 2026-05-28 afternoon · **Technical launch fully closed.** `kaora-memory` is publicly installable: `pip install kaora-memory` resolves to **0.1.2** worldwide. Public repo on `alex-lamport/kaora-memory`, 2 GitHub Releases tagged (v0.1.1 + v0.1.2), CHANGELOG.md created, 0 PII in tracked files. Block 4.6 (ADR-010) + Block 6 (PyPI publication) both closed in this session. README v0.1 published (Block 5 first half). What's still open: launch communication assets.
 
 ---
 
-## 🟢 NEXT SESSION — Block 5: rich README + launch assets (in English)
+## 🟢 NEXT SESSION — Block 5 (second half): launch communication
 
-ADR 000-010 all `Accepted`. Blocks 1-4 closed. Mini-Blocks 4.5 (i18n) + 4.6 (documentary-content-aware check) closed and committed. `kaora init` + `kaora check` both working in EN, repo passes its own linter clean. **README to write in English** (audience now: global open-source community).
+Open Claude Code in `~/Desktop/kaora-memory/`. The product is **live and shippable**; this session is purely about **narrative and reach**. Expect heavy *Learning* mode (audience choice, hook selection, voice calibration), much less *Operative* mode than the technical sessions.
 
-Skeleton agreed in chat on 2026-05-28 (10 sections, ~180 lines target, Quickstart-before-Why per mature OSS pattern à la mise/uv/ripgrep):
-1. Hero · 2. Quickstart · 3. What you get · 4. Why it exists · 5. How it works · 6. Brownfield FAQ · 7. `kaora check` · 8. Roadmap · 9. Philosophy (1 paragraph + link to PHILOSOPHY.md) · 10. License + dogfooding signal.
+**Three voice-of-builder decisions are pending from chat 2026-05-28 (please surface them at the opening ritual):**
 
-Hero confirmed: *"Operating memory and behaviour for AI agents. Works on any project, fresh or existing."* (UK spelling intentional).
+1. **Language of the X thread** — EN (global OSS audience), IT (existing X audience that knows you from DeFi), or bilingual (one thread per language, more work). Open.
+2. **Framing of the pivot** — this is the first non-DeFi public post from the builder. Three concrete framings were floated in chat:
+   - *(a)* normalize as a side project: *"not DeFi today, side project I just shipped, take or leave"* — low commitment, preserves existing-audience contract.
+   - *(b)* explicit strategic pivot: *"from today I'll talk about AI tooling too, here's the first piece"* — redefines the contract.
+   - *(c)* topical post, no transition meta-talk — neutral, lets the topic carry itself.
+3. **Neurodivergent subplot** (PHILOSOPHY § 6: ADR-007 was born from real-time co-evolution between the neurodivergent builder and the agent — no other AI product has that documented origin) — include as 2 closing tweets, hint at 1, or keep out of the first release.
 
----
-
-## 🔵 OPEN POINTS
-
-### 1. Repo naming — DECIDED 2026-05-28
-
-Confirmed `kaora-memory` (status quo). Philosophical framing handled via tagline, not name. Branch 3 of PHILOSOPHY § 7 applied: consistency with the author's "Kaora" ecosystem prioritized over framing-in-name. Zero transition cost (pyproject, BACKLOG, existing assets all aligned). README + landing carry the metacognitive framing instead. BACKLOG entry "Repo naming decision" can be archived.
+These three decisions condition everything downstream. The agent must NOT draft tweets before they're chosen.
 
 ---
 
-## Block 5 goal
+## 🔵 OPEN POINTS (priority order)
 
-Public launch assets. Make a repo visitor understand in 30 seconds what kaora-memory is and why they should use it. Brownfield-friendly: no "greenfield-only" warning, FAQ "I already have a CLAUDE.md?" → tell backup-first + BOOTSTRAP-merge as a *feature*.
+### 1. X thread — primary launch asset
 
-### Expected output at the end of Block 5
+Target: 10-15 tweets. Concrete examples > claims (one tweet with terminal output of `kaora init` beats five tweets of marketing prose). Brownfield is a differentiator vs Mem0 / Letta / claude-memory-mcp — surface it. Dogfooding (the repo passes its own linter) is unique narrative material. Iconic closing pull-quote already EN-translated: *"kaora-memory doesn't add intelligence to the agent. It adds preparation."*
 
-1. **Rich `README.md`** replacing the current minimal one. Proposed sections (to validate in session):
-   - Hero: "Operating memory for AI agents. Works on any project, fresh or existing."
-   - Problem: AI agents without persistent memory, doc drift, isolated sessions
-   - Solution: `pip install kaora-memory` → `kaora init` → every new agent reads `AGENTS.md` + `CLAUDE.md` and starts coherent
-   - Quickstart: 3 commands `pip install kaora-memory && cd myproject && kaora init`
-   - Brownfield FAQ: "I already have a CLAUDE.md?" → backup + guided merge
-   - `kaora check` as a continuous validation tool (example output)
-   - Link to `docs/PHILOSOPHY.md` for the *why*
-2. **Flow demo** (asciicast or GIF): `kaora init myproject && kaora check myproject`. Real output visible in a few lines.
-3. **Refresh existing assets** (see `CURRENT_STATE.md` → "Linked communication assets"):
-   - `<private landing asset>` — premium landing page, dated May 22, to update with new features (check, dogfooding)
-   - `<private essay brief>` — essay brief (parallel session)
-4. **Suggested commit message:** `feat(launch): rich README + asciicast demo + landing refresh`
-5. **CURRENT_STATE.md + SESSION_HANDOFF.md** updated with the Block 6 brief (PyPI publication)
+### 2. LinkedIn post — single dense piece
 
-### Files to create / modify
+~200-300 words. More structured tone. Audience: technical decision-makers, AI/devtools recruiters, OSS observers. Lower frequency than X — one shot, well-aimed.
 
-- `README.md` (full rewrite)
-- Optional `docs/quickstart.md` or `docs/faq.md` if the README grows too much
-- Optional `assets/demo.cast` (asciinema) or `assets/demo.gif` (terminalizer)
-- Refresh `<private landing asset>` (outside repo)
+### 3. Landing refresh (off-repo `<private landing asset>`)
 
-### What NOT to touch (Blocks 1-4 closed)
+1008-line HTML, currently dated May 22 with stale framing. Issues already audited (see CURRENT_STATE → Block 6 section): dates, roadmap shows "Block 1 done / Block 2 next" (reality is everything closed), dogfooding presented as future (it's done), "Repo · in arrivo" (it's live), invented `ADR-034` / `SESSION_ERRORS_2026_05_21` examples, six-layer architecture includes one host-Claude layer that isn't kaora's, "tre micro-feature" hero promise never delivered in the page, pre-metacognitive framing throughout. Refresh integrates the metacognitive philosophy + ADR-010 + real current state.
 
-- ❌ `LICENSE`, `.gitignore`, `pyproject.toml` (unless a version bump is needed)
-- ❌ `kaora_memory/{__init__, settings_merger, template_resolver, installer, check}.py` — stable modules
-- ❌ `kaora_memory/cli.py` — unless adding CLI features tied to the README (e.g. a `kaora doctor` command if the need arises, but that's future scope)
-- ❌ `template/` except for the v0.1 cleanup of structural placeholders (see OPEN POINTS 2)
-- ❌ `bin/setup-dev.sh` — UF_HIDDEN self-healing wrapper stable since 2026-05-24
-- ❌ Reopen `Accepted` ADRs (000-009)
-- ❌ Push to GitHub — final username still to decide (see BACKLOG naming)
+### 4. Launch essay (~3000 words, off-repo `<private essay brief>`)
 
-### Mandatory skills BEFORE building (Gate A § 5.1)
+16-section brief already written. Audience: Substack/Medium readers. Most expanded form of the message. Can be drafted in parallel — does NOT block the X thread + LinkedIn.
 
-- **None mandatory.** Block 5 is writing + visual assets, doesn't require kaora-specific technical skills.
-- *Optional*, if Alexis wants validated structure: `copywriting`, `marketing-psychology`, `landing-page-generator`. Case-by-case decision.
+### 5. asciicast / GIF demo
 
-### Opening session check
+Concrete: terminal session of `kaora init myproject && kaora check myproject`. Real output in a few lines, paste into the README and the landing. Asciinema or terminalizer.
+
+---
+
+## What you can NOT touch in this session
+
+- ❌ Anything in `kaora_memory/` (stable code, 68/68 tests must remain green)
+- ❌ `template/` (immutable per published wheel — changes here require a 0.1.3 cut with PyPI re-publish)
+- ❌ `pyproject.toml` (no version bump unless the next CLI/template change is shipped)
+- ❌ ADRs 000-010 (all Accepted, append-only policy)
+- ❌ `README.md` substantial rewrite (it's the public hero now; small polish is OK, full rewrite is not)
+- ❌ `CHANGELOG.md` history entries (append-only)
+- ❌ Force push (the 2 tags v0.1.1, v0.1.2 must remain on their commits)
+
+## Skills suggested BEFORE drafting (Gate A § 5.1)
+
+- `copywriting` — for the X thread voice
+- `marketing-psychology` — to calibrate hook + closure
+- `brand-storytelling` — for the narrative arc across thread + LinkedIn + essay
+- `launch-strategy` — if a sequencing decision needs to be made (thread first then LinkedIn next day, or simultaneous, etc.)
+- *Optional:* `linkedin-cli` if direct posting from terminal is wanted later
+
+None are mandatory — Block 5 communication is judgment-heavy work. Skills are recommended but the builder's voice matters more.
+
+## Opening session check
 
 ```bash
 cd ~/Desktop/kaora-memory
-python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
-git log --oneline -5
-.venv/bin/python -m pytest -q && echo "TEST OK (64/64)"
-.venv/bin/kaora --version && echo "CLI OK"
-.venv/bin/kaora check . 2>&1 | tail -20   # quick dogfooding of repo state
+git log --oneline -10
+git tag --list "v*"
+.venv/bin/python -m pytest -q && echo "TEST OK (68/68)"
+.venv/bin/kaora --version && echo "CLI OK (0.1.2)"
+.venv/bin/kaora check . 2>&1 | head -3
+curl -sf https://pypi.org/pypi/kaora-memory/json | python3 -c "import sys, json; print('PyPI latest:', json.load(sys.stdin)['info']['version'])"
 ```
 
-If `kaora --version` fails with `ModuleNotFoundError`: `bash bin/setup-dev.sh` (reinstalls the self-healing wrapper on `.venv/bin/kaora`). Happens if you redid `pip install -e .` bypassing the script.
+If anything fails: nothing to fix on disk — diagnose only. The product is shipped; this session must NOT regress the technical state.
 
 ---
 
@@ -87,7 +87,8 @@ If `kaora --version` fails with `ModuleNotFoundError`: `bash bin/setup-dev.sh` (
 
 - **Open Claude Code in `~/Desktop/kaora-memory/`**
 - **Register:** Italian for live conversation · direct · no preambles · one decision at a time · Operative vs Learning mode (ADR-007)
-- **Framework language:** English (post Block 4.5 i18n). All docs, code, tests, scripts on disk are EN. User-agent runtime conversation remains Italian (set via `{{communication_language}}` placeholder for user projects).
-- **Big decisions** → new ADR in `docs/DECISIONS.md` (ADR-008 step 6 of the ritual)
-- **Block 5 mode** is **high-density writing**, not implementation. Expect much more *Learning* mode (narrative exploration, hero choice, tone of voice) than Block 4.
-- **First task of Block 5:** draft the README following the 10-section skeleton agreed in chat (see top of this file). Hero already locked.
+- **Framework language:** English on disk (post Block 4.5 i18n). User-agent conversation remains Italian.
+- **Mode:** **high-density writing**, not implementation. Most of the session will be *Learning*. Forced operative closures ("want me to draft now?") are penalizing for the builder's exploratory flow — see PHILOSOPHY § 6 + ADR-007.
+- **First task of the next session:** at the opening ritual, surface the 3 pending voice decisions (language / framing / neurodivergent subplot) and wait. Do NOT draft tweets, posts, or essay paragraphs before they're resolved.
+- **What to commit:** if drafts of thread / LinkedIn / essay are written, they can live as off-repo working files (the repo doesn't need them as tracked content). If they're committed, suggest a `docs/launch/` subfolder kept out of the wheel.
+- **Reference assets:** README.md (locked v0.1), PHILOSOPHY.md (full thesis), DOGFOODING_REPORT.md (concrete narrative material), DECISIONS.md (ADRs that can be cited), CHANGELOG.md (factual storia delle release).

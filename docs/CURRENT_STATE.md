@@ -2,17 +2,18 @@
 
 > Updated at the end of every session. Answers "where are we, what works, what's missing right now".
 >
-> **Last update:** 2026-05-28 — **Mini-Block 4.6 closed**: `_strip_code_blocks` extended to inline-backtick spans (third recurrence of the documentary-content false-positive pattern). 2 new RED→GREEN tests. ADR-010 (documentary-content-aware stripping) **Accepted**. `kaora check .` now clean on the repo itself: 0 ERROR, 0 WARN, only 7 INFO BOOTSTRAP markers (genuine, awaiting fill in BACKLOG.md + docs/IDENTITY.md). Suite 64/64 green.
+> **Last update:** 2026-05-28 (afternoon close) — **Block 4.6 + Block 5 partial + Block 6 closed in one session.** kaora-memory is now public on PyPI: `pip install kaora-memory` resolves to **0.1.2** globally. GitHub repo public on `alex-lamport/kaora-memory` with README, CHANGELOG, 2 GitHub Releases (v0.1.1 + v0.1.2). v0.1.1 was withdrawn from PyPI after publication for metadata-privacy hardening (Gmail leak in author field) — functionally identical to v0.1.2. 0 PII in tracked files. Suite 68/68 green, `kaora check .` clean (0 ERROR / 0 WARN).
 
 ---
 
 ## Snapshot today
 
-**Current block:** Block 4 ✅ closed · Block 4.5 ✅ closed (i18n EN-first) · Block 4.6 ✅ closed (documentary-content-aware stripping, ADR-010) · Block 5 in progress (rich README + launch assets, in English; naming decided 2026-05-28 = `kaora-memory` confirmed)
-**Last commit on main:** `4651fe7 feat(check): documentary-content-aware stripping (ADR-010)`. Working tree clean.
-**Branch:** `main`
-**Remote repo:** not configured yet (placeholder URL `alex-lamport/kaora-memory` in pyproject)
-**Open ADRs:** none · all 000-010 Accepted
+**Current block:** Block 4 ✅ · Block 4.5 ✅ (i18n EN-first) · Block 4.6 ✅ (documentary-content-aware stripping, ADR-010) · **Block 5 partially closed** (README rich done, launch comms still open: thread X, LinkedIn, essay, asciicast demo, landing refresh) · **Block 6 ✅** (PyPI publication: 0.1.1 → withdrawn for privacy, 0.1.2 latest)
+**Last commit on main:** `d70c7cc docs(changelog): add CHANGELOG.md with 0.1.1 withdrawal note`. Working tree clean.
+**Branch:** `main` · pushed to `origin/main` since `473fb4c`
+**Remote repo:** **live and public** at https://github.com/alex-lamport/kaora-memory · 2 GitHub Releases tagged (v0.1.1, v0.1.2) · description + topics configured
+**PyPI:** **live** at https://pypi.org/project/kaora-memory/0.1.2/ · `pip install kaora-memory` works globally · 0.1.1 deleted from PyPI (metadata privacy)
+**Open ADRs:** none · all 000-010 Accepted · naming decided 2026-05-28 = `kaora-memory` confirmed (PHILOSOPHY § 7 branch 3)
 
 ## What exists
 
@@ -90,6 +91,26 @@ kaora-memory/
 - ✅ **2 new RED→GREEN tests** in `tests/test_check.py` (62→64): `test_adr_state_ignores_proposed_in_inline_backtick`, `test_placeholders_ignores_open_inside_inline_backtick`. TDD red verified before fix, green confirmed after.
 - ✅ **ADR-010 Accepted** in `docs/DECISIONS.md`: formalizes "documentary citation ≠ live state" as the pattern. Edge case "double-backtick markdown spans" explicitly YAGNI'd, with a self-imposed convention not to use that syntax in operating-memory docs.
 - ✅ **`kaora check .` post-fix**: 0 ERROR, 0 WARN, 7 INFO BOOTSTRAP (all genuine markers in BACKLOG.md + docs/IDENTITY.md awaiting fill — not false positives).
+- ✅ Committed in `4651fe7`.
+
+**Block 5 partial close — README + naming + Block 6 entanglement — 2026-05-28 afternoon:**
+- ✅ **Rich README v0.1 published** (141 lines EN, Quickstart-before-Why pattern à la mise/uv/ripgrep). 10 sections: Hero · Quickstart · What you get · Why it exists · How it works · Brownfield FAQ · `kaora check` · Roadmap · Philosophy (1 paragraph) · License + dogfooding signal + iconic closing pull-quote. Committed in `2795f19`.
+- ✅ **Naming decision recorded:** `kaora-memory` confirmed (PHILOSOPHY § 7 branch 3). Rationale: ecosystem consistency over framing-in-name; philosophical framing carried by tagline. Sealed by the first PyPI publication.
+- 🟡 **Launch communication assets still open** (this is the half of Block 5 that's pending):
+  - Landing refresh (off-repo `<private landing asset>`, 1008 lines HTML, May 22 — needs roadmap/date/framing update + metacognitive narrative incorporation)
+  - X thread (10-15 tweets, concrete examples + brownfield + dogfooding hook)
+  - LinkedIn post (single dense piece + invite)
+  - Launch essay (~3000 words, brief exists at `<private essay brief>`)
+  - asciicast / GIF demo of `kaora init && kaora check`
+
+**Block 6 PyPI publication — 2026-05-28 afternoon:**
+- ✅ **`pyproject.toml` polished:** description translated IT→EN, obsolete TODO removed (commit `60ab133`).
+- ✅ **GitHub repo created public:** `alex-lamport/kaora-memory`, topics configured, README rendering verified. Push pre-launch in `473fb4c`.
+- ✅ **Parallel sub-agent pre-publish review:** 1 code-reviewer + 1 security-auditor on the 5 core Python modules + the 2 shipped bash hooks + git history secret scan + supply chain (click, hatchling). Findings: 3 blocking brownfield-safety issues (F1+F2+F3) + 1 material security warning (no `template/.gitignore`). All fixed before broader distribution. No real secrets or unsafe shell patterns in the hooks. Commit `446d4bb`.
+- ✅ **First PyPI publish (0.1.1):** twine check PASSED → testpypi upload + clean-venv install verify → PyPI prod upload + clean-venv install verify (`pip install kaora-memory` global). Tag `v0.1.1` + GitHub Release v0.1.1.
+- ✅ **External review feedback round (0.1.2):** revealed Gmail PII in PyPI author email + local user paths (`/Users/alexissilva/...`) in public docs + "Block N" jargon opacity + PHILOSOPHY § 7 still "open" + IT/EN commit-language mix in DOGFOODING. All fixed via doc-only commit `1f61193` and a second publication 0.1.2. 0.1.1 deleted from PyPI (JSON 404). Tag `v0.1.2` + GitHub Release v0.1.2. Final cleanup of an overlooked Gmail in `AGENTS.md` Owner line committed in `4794ee4`. CHANGELOG.md created in `d70c7cc` to document the 0.1.1 withdrawal honestly.
+- ✅ **Post-publication verification (anyone in the world):** `pip install kaora-memory` → 0.1.2 → `kaora --version` = 0.1.2 → `kaora init` writes 14 files (incl. F3-shipped `.gitignore` with `logs/`).
+- 9 commits total on `main` since the morning session opened, all pushed.
 
 ## Final placeholders (v0.1.1)
 
@@ -108,9 +129,9 @@ Change vs SESSION_HANDOFF Block 1: added `{{communication_language}}` for future
 
 ## What's missing (priority-ordered)
 
-1. **Rich README + demo** — Block 5 (launch assets in BACKLOG already ready, see "Communication assets" section)
-2. **PyPI publication setup** (`.pypirc`, test.pypi token) — Block 6
-3. **Possible ADR-011** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates (renumbered from ADR-010 after Block 4.6 took that slot)
+1. **Launch communication assets** — second half of Block 5 (still open). In priority order: X thread (10-15 tweets) · LinkedIn post · landing refresh · launch essay · asciicast demo. To be handled in a separate Claude session dedicated to high-density writing, not in this technical-shipping session.
+2. **Possible ADR-011** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates (renumbered from ADR-010 after Block 4.6 took that slot).
+3. **Documentation of known issues for 0.1.3** (from pre-publish sub-agent reviews, captured but not blocking): `template_resolver` zipped-wheel edge case · installer `rglob` symlink-follow · non-atomic write (Ctrl-C race) · log-api-calls.sh bearer-token redaction · chmod 0o755 location-blind for future `template/*.sh`.
 
 ## Block 4 design decisions (pending formalization)
 
@@ -152,7 +173,8 @@ All 5 **Accepted** after Tests 1-5 and in-chat review.
 
 ## Operational notes
 
-- **Repo NOT yet pushed** to GitHub
+- **Repo PUBLIC on GitHub:** https://github.com/alex-lamport/kaora-memory · `origin/main` tracks `main`
+- **PyPI live:** https://pypi.org/project/kaora-memory/0.1.2/ · users install via `pip install kaora-memory` (no flag needed)
 - **Dev setup (one-liner):** `bash bin/setup-dev.sh` — creates venv, `pip install -e ".[dev]"`, installs self-healing wrapper on `.venv/bin/kaora` (auto-fix UF_HIDDEN macOS at every execution, ~5ms overhead), runs `kaora --version` and pytest. Re-run after `pip install -e .` to restore the wrapper.
 - **Run tests:** `.venv/bin/python -m pytest` (or `source .venv/bin/activate && pytest`). For AI agents: prefer `.venv/bin/...` because `activate` doesn't survive between isolated shell calls.
 - **Run CLI:** `.venv/bin/kaora init [PATH] [--force] [--dry-run] [--no-git-init]`
@@ -160,8 +182,9 @@ All 5 **Accepted** after Tests 1-5 and in-chat review.
   ```bash
   python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
   ls template/ template/docs template/.claude/hooks && echo "template complete"
-  .venv/bin/python -m pytest -q && echo "TEST OK (64/64)"
-  .venv/bin/kaora --version && echo "CLI OK"
+  .venv/bin/python -m pytest -q && echo "TEST OK (68/68)"
+  .venv/bin/kaora --version && echo "CLI OK (0.1.2)"
   ```
-- **Build wheel:** `.venv/bin/python -m build --wheel` → `dist/kaora_memory-0.1.0-py3-none-any.whl`
-- **Claude Code persistent memory:** not yet populated for this project
+- **Build wheel:** `.venv/bin/python -m build` → `dist/kaora_memory-0.1.2-{whl,tar.gz}`. Pre-publish checklist in BACKLOG.md.
+- **PyPI credentials:** `~/.pypirc` configured with token-based auth for both `pypi` and `testpypi` (chmod 600, never committed). Re-publish flow: rebuild wheel → testpypi upload + verify install → prod upload + verify install → tag + GitHub Release.
+- **Claude Code persistent memory:** populated for this project (`MEMORY.md` index, lives under user-memory area).
