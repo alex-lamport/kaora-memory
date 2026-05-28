@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "kaora-memory"
 version = "0.1.0"
-description = "Skill open-source per memoria persistente e comportamento codificato per agenti AI."
+description = "Operating memory and behaviour for AI agents. Works on any project, fresh or existing."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -48,7 +48,6 @@ dev = [
 [project.scripts]
 kaora = "kaora_memory.cli:main"
 
-# TODO finalizzare username GitHub prima della pubblicazione PyPI
 [project.urls]
 Homepage = "https://github.com/alex-lamport/kaora-memory"
 Repository = "https://github.com/alex-lamport/kaora-memory"
