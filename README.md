@@ -66,7 +66,7 @@ kaora-memory addresses all three by giving the project a **canonical operating m
 After `kaora init`, the project carries two independent sides.
 
 **Memory side** — persistent files at the project root and `docs/`:
-- `AGENTS.md` is the canonical master context. `CLAUDE.md` is a 4-line file that imports `AGENTS.md` (see [ADR-005](docs/DECISIONS.md)).
+- `AGENTS.md` is the canonical master context. `CLAUDE.md` is a 4-line file that imports `AGENTS.md` (see [ADR-005](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DECISIONS.md)).
 - `CURRENT_STATE.md` records "where we are right now"; `SESSION_HANDOFF.md` carries the brief for the next session.
 - `DECISIONS.md` is the append-only ADR log: every architectural decision lives here with its date, status, and rationale.
 
@@ -75,7 +75,7 @@ After `kaora init`, the project carries two independent sides.
 - **Gate A** — before any `Edit` or `Write` the agent checks that a closed ADR isn't being contradicted, the right skill has been invoked, and the value is verified.
 - **Gate B** — after 3-4 modified files the agent checkpoints with the builder.
 - **Gate C** — no file written, no decision taken, without an explicit `go`.
-- **Operative vs Learning mode** — the agent detects whether the builder is executing or exploring and adapts (see [ADR-007](docs/DECISIONS.md)).
+- **Operative vs Learning mode** — the agent detects whether the builder is executing or exploring and adapts (see [ADR-007](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DECISIONS.md)).
 
 Memory persists across sessions and agents. Behaviour is read at session start and enforced throughout the conversation.
 
@@ -87,7 +87,7 @@ Memory persists across sessions and agents. Behaviour is read at session start a
 
 `kaora init` backs it up as `CLAUDE.md.kaora-bak` (preserving every byte) and writes the canonical 4-line `CLAUDE.md` that imports `AGENTS.md`. At your first session after `kaora init`, the agent finds the `.kaora-bak`, reads it, and proposes a **guided merge** into the canonical `AGENTS.md`. You confirm, the merge happens, the `.kaora-bak` archives to `docs/archive/` so it doesn't trigger the opening scan at every future session.
 
-Your pre-existing memory is **preserved as a feature**, not flagged as a warning. See [ADR-006](docs/DECISIONS.md) for the brownfield install policy.
+Your pre-existing memory is **preserved as a feature**, not flagged as a warning. See [ADR-006](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DECISIONS.md) for the brownfield install policy.
 
 > **My `.claude/settings.json` already has hooks. Will `kaora init` overwrite them?**
 
@@ -120,13 +120,13 @@ v0.2+ — `kaora handoff` (CLI automation of session closing), `kaora dashboard`
 
 v0.3+ — MCP server, cloud sync across devices.
 
-Full backlog in [`BACKLOG.md`](BACKLOG.md).
+Full backlog in [`BACKLOG.md`](https://github.com/alex-lamport/kaora-memory/blob/main/BACKLOG.md).
 
 ---
 
 ## Philosophy
 
-kaora-memory is **induced metacognition for AI agents**: the memory + behaviour sides force the agent to plan before acting, monitor during action, evaluate at session close, and recognize the builder's cognitive state. The full thesis lives in [`docs/PHILOSOPHY.md`](docs/PHILOSOPHY.md).
+kaora-memory is **induced metacognition for AI agents**: the memory + behaviour sides force the agent to plan before acting, monitor during action, evaluate at session close, and recognize the builder's cognitive state. The full thesis lives in [`docs/PHILOSOPHY.md`](https://github.com/alex-lamport/kaora-memory/blob/main/docs/PHILOSOPHY.md).
 
 ---
 
@@ -136,6 +136,6 @@ kaora-memory is **induced metacognition for AI agents**: the memory + behaviour 
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/alex-lamport/kaora-memory/blob/main/LICENSE).
 
-Built with kaora-memory itself. The repo passes its own `kaora check`, and every ADR in [`docs/DECISIONS.md`](docs/DECISIONS.md) was decided through the same gates that kaora codifies for other projects. See [`docs/DOGFOODING_REPORT.md`](docs/DOGFOODING_REPORT.md) for the self-application story.
+Built with kaora-memory itself. The repo passes its own `kaora check`, and every ADR in [`docs/DECISIONS.md`](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DECISIONS.md) was decided through the same gates that kaora codifies for other projects. See [`docs/DOGFOODING_REPORT.md`](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DOGFOODING_REPORT.md) for the self-application story.
