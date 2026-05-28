@@ -271,6 +271,34 @@ def test_adr_state_ignores_proposed_in_code_block(tmp_path: Path):
     )
 
 
+def test_adr_state_ignores_proposed_in_inline_backtick(tmp_path: Path):
+    """A **Status:** Proposed cited inside inline backticks (narrative
+    documentation, e.g. `**Status:** Proposed`) is not a real ADR state.
+    Same root cause as the fenced-block case — extend the strip to inline."""
+    _valid_project(tmp_path)
+    (tmp_path / "docs" / "DECISIONS.md").write_text(
+        "# DECISIONS\n\n"
+        "## ADR-001 Real\n\n"
+        "**Status:** Accepted\n\n"
+        "Decision taken.\n\n"
+        "---\n\n"
+        "Narrative note: a new ADR starts with `**Status:** Proposed` "
+        "and gets promoted later.\n",
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    proposed_infos = [
+        r for r in report.results
+        if r.category == "adr_state" and "Proposed" in r.message
+    ]
+    assert proposed_infos == [], (
+        f"Expected 0 'Proposed' INFOs (they're inside inline backticks), "
+        f"found {len(proposed_infos)}: {[r.message for r in proposed_infos]}"
+    )
+
+
 # ---------------------------------------------------------------------------
 # 4. PLACEHOLDERS (3)
 # ---------------------------------------------------------------------------
@@ -362,6 +390,35 @@ def test_placeholders_ignores_open_inside_code_block(tmp_path: Path):
     assert spec_results == [], (
         f"Expected 0 placeholder signals for SPEC.md (they're inside a code-block), "
         f"found {len(spec_results)}: {[r.message for r in spec_results]}"
+    )
+
+
+def test_placeholders_ignores_open_inside_inline_backtick(tmp_path: Path):
+    """Placeholder and BOOTSTRAP tokens cited inside inline backticks are
+    narrative references (e.g. a table of available placeholders, or prose
+    describing how the system works), not real placeholders awaiting
+    substitution. Extends fenced-block stripping to inline spans."""
+    _valid_project(tmp_path)
+    (tmp_path / "docs" / "REFERENCE.md").write_text(
+        "# Placeholder reference\n\n"
+        "| Placeholder | Meaning |\n"
+        "|---|---|\n"
+        "| `{{project_name}}` | User project name |\n"
+        "| `{{project_path}}` | Absolute project path |\n"
+        "| `{{year}}` | Current year |\n\n"
+        "BOOTSTRAP markers like `<BOOTSTRAP need=\"...\"/>` are filled by the agent.\n",
+        encoding="utf-8",
+    )
+
+    report = check_project(tmp_path)
+
+    ref_results = [
+        r for r in report.results
+        if r.category == "placeholders" and "REFERENCE.md" in r.message
+    ]
+    assert ref_results == [], (
+        f"Expected 0 placeholder signals for REFERENCE.md (cited inside inline "
+        f"backticks), found {len(ref_results)}: {[r.message for r in ref_results]}"
     )
 
 

@@ -133,11 +133,19 @@ def _check_adr005(target: Path, report: CheckReport) -> None:
 _RE_ADR_ACCEPTED = re.compile(r"\*\*Status:\*\*\s*Accepted", re.IGNORECASE)
 _RE_ADR_PROPOSED = re.compile(r"\*\*Status:\*\*\s*Proposed", re.IGNORECASE)
 _RE_FENCED_CODE_BLOCK = re.compile(r"```.*?```", re.DOTALL)
+_RE_INLINE_BACKTICK = re.compile(r"`[^`\n]+`")
 
 
 def _strip_code_blocks(content: str) -> str:
-    """Remove fenced code blocks to avoid matching template examples."""
-    return _RE_FENCED_CODE_BLOCK.sub("", content)
+    """Remove documentary code spans so cited tokens don't read as real state.
+
+    Strips fenced ```...``` blocks first (block-level), then `...` inline
+    spans (span-level). Citing `{{project_name}}` or `**Status:** Proposed`
+    in prose or tables is a reference, not an open placeholder or live ADR
+    — see ADR-010.
+    """
+    content = _RE_FENCED_CODE_BLOCK.sub("", content)
+    return _RE_INLINE_BACKTICK.sub("", content)
 
 
 def _check_adr_state(target: Path, report: CheckReport) -> None:

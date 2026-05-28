@@ -437,6 +437,48 @@ The rule is codified in `AGENTS.md` § 10 (sub-section "File reading: sub-agent 
 
 ---
 
+## ADR-010 — Documentary-content-aware stripping in operating-memory checks
+
+**Date:** 2026-05-28
+**Status:** Accepted
+
+### Context
+
+The `kaora check` linter (Block 4) scans operating-memory files for two stateful patterns: open structural placeholders (`{{project_name}}`, etc.) that should have been substituted by `kaora init`, and ADRs in `Proposed` state awaiting decision. To avoid matching template examples, `_strip_code_blocks` initially removed fenced triple-backtick blocks before pattern matching.
+
+Three observations across Blocks 4 and 4.6 made it clear the abstraction needed to be broader:
+
+1. **First occurrence**: a status example inside a fenced template block in `docs/DECISIONS.md` was matched as a real Proposed ADR → false positive INFO. Fix: introduce `_strip_code_blocks` to strip fenced blocks. (Block 4, original)
+2. **Second occurrence**: structural placeholders inside a fenced spec block in user-added docs were matched as open placeholders. Same root, same fix re-applied to `_check_placeholders`. (Block 4 commit `607b5a9`)
+3. **Third occurrence** (this ADR): the same false positives reappeared for tokens cited inside **inline backticks** — markdown tables of available placeholders, narrative prose, BACKLOG entries describing parametric branding. (Block 4.6 dogfooding, 2026-05-28: 7 false-positive WARN + 1 INFO observed on the repo itself)
+
+The pattern is unique: **documentary content** (whatever a markdown reader interprets as a literal citation, not as text-to-be-substituted) must not feed integrity checks. The carrier for citation can be a fenced block OR an inline backtick — both are legitimate markdown spans for "this is a literal reference, not actual content".
+
+### Decision
+
+`_strip_code_blocks` evolves from "strip fenced blocks" to **documentary-content-aware stripping**: it removes both fenced triple-backtick blocks (block-level) and single-backtick spans (inline span-level) before any stateful check on operating-memory files.
+
+Implementation: two sequential regex substitutions in the same function. Fenced first (multiline `DOTALL`), inline second (`[^`\n]+`, single-line, non-greedy). Order matters: fenced spans contain literal triple-backticks that would partially match the inline regex if applied first.
+
+The function name stays (`_strip_code_blocks`), the docstring is updated to reflect the broader semantics. Two new tests guard the behavior:
+- `test_adr_state_ignores_proposed_in_inline_backtick`
+- `test_placeholders_ignores_open_inside_inline_backtick`
+
+### Rejected alternatives
+
+- **Wrap citations in fenced blocks**: would require turning every inline citation (e.g. `{{project_name}}` in tables and prose) into a fenced block. Ugly, breaks markdown tables, doesn't formalize the pattern, only postpones the issue to the next citation form.
+- **Per-file ignore list**: add `docs/DOGFOODING_REPORT.md`, `docs/IDENTITY.md`, etc. to `_PLACEHOLDER_EXCLUDE_NAMES`. Doesn't scale (every new doc with a citation needs an entry) and doesn't solve the kernel: a single check would be doing two jobs at once (find real state + ignore documentary content).
+- **More restrictive regexes on the pattern side** (e.g. require placeholder NOT preceded by backtick): leaks the documentary-vs-real distinction into every regex in `check.py`. ADR-010 keeps the separation clean: regexes find candidates, `_strip_code_blocks` removes documentary noise upstream.
+
+### Consequences
+
+- All three documented occurrences (and future ones with the same root) are resolved by a single function. Pattern formalized: *documentary citation in markdown ≠ live state*.
+- The function becomes the **gate** for documentary-content-aware analysis. Future stateful checks added to `kaora check` (e.g. open-TODO scan, broken-link scan) inherit the behavior for free by reading `content` from `_strip_code_blocks(raw)`.
+- Edge case left intentionally open: markdown double-backtick spans (rare syntax used when the inline code itself contains a backtick character) are NOT stripped. If a future false positive surfaces, extend the regex; until then, YAGNI. Avoid this syntax in operating-memory docs themselves — the helper that justifies the ADR cannot rely on a markdown form it doesn't handle.
+- The pattern is itself a metacognitive recurrence: noticing "the same fix appearing in slightly different forms means the abstraction is too narrow — broaden the function's semantics, don't duplicate the fix". Aligns with the ADR-001 / ADR-007 / ADR-009 triptych on conditional metacognition.
+
+---
+
 ## Updated causal chain
 
 - **ADR-000** (dogfooding) → explains why `CLAUDE.md` and `docs/*` exist in the repo itself before Block 3
@@ -446,6 +488,7 @@ The rule is codified in `AGENTS.md` § 10 (sub-section "File reading: sub-agent 
 - **ADR-006** (backup-first) implements **ADR-002** for the brownfield case: init stays instant, brownfield merge becomes autonomous agent work at the first session via `<BOOTSTRAP/>`
 - **ADR-009** (sub-agent vs Read) completes the metacognitive triptych with **ADR-001** (planning) and **ADR-007** (interlocutor Theory of Mind): codifies *conditional* metacognition of strategy selection
 - **ADR-007** (conversational mode) refines **ADR-001** § 3 (Communication register) by adding the Operative/Learning distinction. Valid for all agents, at every moment, not just at opening
+- **ADR-010** (documentary-content-aware stripping) extends the `_strip_code_blocks` helper introduced as part of Block 4: broadens the abstraction from fenced blocks to fenced + inline spans after observing the same false-positive pattern three times. Operational consequence of ADR-009-style metacognition applied to a linter function.
 
 ---
 
@@ -456,3 +499,4 @@ The rule is codified in `AGENTS.md` § 10 (sub-section "File reading: sub-agent 
 - v0.1.2 — ADR-007 (May 22 2026 session, final Block 2, **Accepted**)
 - v0.1.3 — ADR-008 (May 22 2026 session, emerged while applying ADR-007 in real time, **Accepted**)
 - v0.1.4 — ADR-009 (May 22 2026 session, promoted from BACKLOG after discussion on context and behavior optimization, **Accepted**)
+- v0.1.5 — ADR-010 (May 28 2026 session, Block 4.6, **Accepted** — third recurrence of the documentary-content false-positive triggers formalization)

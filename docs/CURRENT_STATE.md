@@ -2,17 +2,17 @@
 
 > Updated at the end of every session. Answers "where are we, what works, what's missing right now".
 >
-> **Last update:** 2026-05-27 — **Mini-Block 4.5 closed**: full IT→EN i18n refactor of the entire codebase (template + root docs + Python code + tests + setup-dev.sh). English becomes the framework language; the user-agent runtime conversation language remains multilingual via the `{{communication_language}}` placeholder. Atomic regex+test fix: `_RE_ADR_*` now searches `**Status:**` (was `**Stato:**`). Suite 62/62 green throughout every wave. Sub-agent review GREEN on Wave A (10 template files), Wave B-1 (5 root files), Wave B-2 (6 docs), Wave C-1 (6 code modules), Wave C-2 (5 test files + bash script).
+> **Last update:** 2026-05-28 — **Mini-Block 4.6 closed**: `_strip_code_blocks` extended to inline-backtick spans (third recurrence of the documentary-content false-positive pattern). 2 new RED→GREEN tests. ADR-010 (documentary-content-aware stripping) **Accepted**. `kaora check .` now clean on the repo itself: 0 ERROR, 0 WARN, only 7 INFO BOOTSTRAP markers (genuine, awaiting fill in BACKLOG.md + docs/IDENTITY.md). Suite 64/64 green.
 
 ---
 
 ## Snapshot today
 
-**Current block:** Block 4 ✅ closed (`kaora check`) · Block 4.5 ✅ closed (i18n EN-first refactor) · Block 5 next (rich README + launch assets — now to write in English)
-**Last commit on main:** `607b5a9 refactor(check): _strip_code_blocks anche in _check_placeholders`. Working tree dirty: i18n refactor pending commit.
+**Current block:** Block 4 ✅ closed · Block 4.5 ✅ closed (i18n EN-first) · Block 4.6 ✅ closed (documentary-content-aware stripping, ADR-010) · Block 5 next (rich README + launch assets, in English)
+**Last commit on main:** `03f3f86 refactor(check): regex match Status + Python code/tests/script sync`. Working tree dirty: Block 4.6 (check.py + tests + ADR-010 + doc updates) pending commit.
 **Branch:** `main`
 **Remote repo:** not configured yet (placeholder URL `alex-lamport/kaora-memory` in pyproject)
-**Open ADRs:** none · all 000-009 Accepted
+**Open ADRs:** none · all 000-010 Accepted
 
 ## What exists
 
@@ -82,7 +82,14 @@ kaora-memory/
 - ✅ **Test-source sync**: `tests/test_cli.py:27` updated `"kaora init complete"`, `tests/test_check.py:190` updated `"lines"` to match translated production strings.
 - ✅ **Multilingual runtime preserved**: `{{communication_language}}` placeholder kept intact in template. Repo root `AGENTS.md` § 3 + `docs/IDENTITY.md` § 2 explicit: "Italian for live conversation with the user. English for docs, logs, code, comments, and any written artifact on disk."
 - ✅ **Sub-agent review GREEN on all 5 waves** (A, B-1, B-2, C-1, C-2). Zero critical issues. Minor polish applied inline (e.g. "where do we start?" instead of "starting point?", "intentional CI/automation use" instead of "conscious", "expected at least N" instead of "minimum expected N").
-- ✅ **Pytest 62/62 green throughout every wave** (atomic incremental verification). Final `kaora check .` clean (3 known structural-placeholder WARN on BACKLOG/SESSION_HANDOFF unchanged from pre-refactor, 1 INFO on inline-backtick `Proposed` false positive in ADR-008 narrative — pre-existing pattern, not regression).
+- ✅ **Pytest 62/62 green throughout every wave** (atomic incremental verification). Committed as `e351b95 refactor(i18n): translate framework + template to English` + `03f3f86 refactor(check): regex match Status + Python code/tests/script sync`.
+
+**Block 4.6 documentary-content-aware stripping — 2026-05-28:**
+- ✅ **Third recurrence of the documentary-content false-positive pattern** caught via dogfooding on the repo itself: 7 false-positive WARN (citations of structural placeholders inside inline backticks in tables and prose) + 1 false-positive INFO (`**Status:** Proposed` cited in ADR-008 narrative).
+- ✅ **`_strip_code_blocks` extended** in `kaora_memory/check.py`: from fenced-only to fenced + inline-backtick stripping. Two sequential regex substitutions, fenced first (multiline DOTALL), inline second (`[^`\n]+` single-line). Function semantics broadened, name preserved.
+- ✅ **2 new RED→GREEN tests** in `tests/test_check.py` (62→64): `test_adr_state_ignores_proposed_in_inline_backtick`, `test_placeholders_ignores_open_inside_inline_backtick`. TDD red verified before fix, green confirmed after.
+- ✅ **ADR-010 Accepted** in `docs/DECISIONS.md`: formalizes "documentary citation ≠ live state" as the pattern. Edge case "double-backtick markdown spans" explicitly YAGNI'd, with a self-imposed convention not to use that syntax in operating-memory docs.
+- ✅ **`kaora check .` post-fix**: 0 ERROR, 0 WARN, 7 INFO BOOTSTRAP (all genuine markers in BACKLOG.md + docs/IDENTITY.md awaiting fill — not false positives).
 
 ## Final placeholders (v0.1.1)
 
@@ -104,8 +111,7 @@ Change vs SESSION_HANDOFF Block 1: added `{{communication_language}}` for future
 1. **Rich README + demo** — Block 5 (launch assets in BACKLOG already ready, see "Communication assets" section)
 2. **PyPI publication setup** (`.pypirc`, test.pypi token) — Block 6
 3. **Repo naming decision** (`kaora-memory` vs `kaora-mc` vs others) — before PyPI publication, see BACKLOG
-4. **Possible ADR-010** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates
-5. **Structural placeholder cleanup in template `docs/SESSION_HANDOFF.md`** — `kaora check` post-fix4 no longer flags them (they're inside fenced blocks), but if they're not intentionally illustrative it's worth cleaning them at the source (`template/docs/SESSION_HANDOFF.md`). Low cost.
+4. **Possible ADR-011** "delegation depth selection: `/goal` vs normal kaora delegation" — emerged during Block 3 after a practical `/goal` test, to write when the usage pattern consolidates (renumbered from ADR-010 after Block 4.6 took that slot)
 
 ## Block 4 design decisions (pending formalization)
 
@@ -155,7 +161,7 @@ All 5 **Accepted** after Tests 1-5 and in-chat review.
   ```bash
   python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
   ls template/ template/docs template/.claude/hooks && echo "template complete"
-  .venv/bin/python -m pytest -q && echo "TEST OK (62/62)"
+  .venv/bin/python -m pytest -q && echo "TEST OK (64/64)"
   .venv/bin/kaora --version && echo "CLI OK"
   ```
 - **Build wheel:** `.venv/bin/python -m build --wheel` → `dist/kaora_memory-0.1.0-py3-none-any.whl`
