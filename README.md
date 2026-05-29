@@ -20,6 +20,25 @@ That's it. Open Claude Code (or any other agent) in `myproject`, type `go`, and 
 Fresh project: `kaora init` writes 13 files (see below).
 Existing project with a `CLAUDE.md` or `AGENTS.md` already present: `kaora init` backs them up as `.kaora-bak` and the agent merges your existing content into the canonical structure during the first session. See [Brownfield FAQ](#brownfield-faq).
 
+### Installing on macOS
+
+On macOS a plain `pip install` is often blocked (Python's "externally-managed environment"). Install `kaora` as an isolated CLI with **pipx**:
+
+```bash
+brew install pipx        # if you don't have it yet
+pipx ensurepath
+pipx install kaora-memory
+```
+
+Prefer a virtualenv? That works too:
+
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install kaora-memory
+```
+
+If you still get `kaora: command not found` right after installing, open a new terminal window so your shell picks up the updated `PATH`.
+
 ---
 
 ## What you get
