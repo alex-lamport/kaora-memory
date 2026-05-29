@@ -2,8 +2,8 @@
 
 # kaora-memory
 
-**Operating memory and behaviour for AI agents.**
-Works on any project, fresh or existing.
+> **Induced metacognition for AI agents.**
+> A project-level operating memory that makes coding agents start prepared, respect decisions, and stop before acting blindly.
 
 `pip install kaora-memory` → `kaora init` → every agent that opens the project (Claude Code, Codex, Cursor, Gemini CLI) reads the same canonical context and starts coherent.
 
@@ -65,6 +65,18 @@ myproject/
 ```
 
 All templates carry `<BOOTSTRAP/>` markers that the agent fills during the first session by inspecting the repo — no manual setup.
+
+---
+
+## What it really is
+
+kaora-memory is not a memory database, a vector store, or another agent framework.
+
+It is an **operating protocol** for AI coding agents: a small set of files, rituals, gates, and handoff rules that force the agent to perform the regulatory acts of metacognition before and during work.
+
+Without kaora, the agent executes.
+
+With kaora, the agent starts by asking: *what do I know, what don't I know, what has already been decided, and when should I stop?*
 
 ---
 
@@ -160,3 +172,7 @@ kaora-memory is **induced metacognition for AI agents**: the memory + behaviour 
 MIT — see [LICENSE](https://github.com/alex-lamport/kaora-memory/blob/main/LICENSE).
 
 Built with kaora-memory itself. The repo passes its own `kaora check`, and every ADR in [`docs/DECISIONS.md`](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DECISIONS.md) was decided through the same gates that kaora codifies for other projects. See [`docs/DOGFOODING_REPORT.md`](https://github.com/alex-lamport/kaora-memory/blob/main/docs/DOGFOODING_REPORT.md) for the self-application story.
+
+---
+
+Built by [Alexis Rojas](https://x.com/alex_lamports) — part of the KAORA research/workspace around AI agents, memory, and human-agent collaboration.
