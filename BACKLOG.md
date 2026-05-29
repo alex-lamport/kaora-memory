@@ -34,6 +34,13 @@ Automatic external trigger for the closing ritual (§ 6bis). When the host syste
 - MCP server (kaora-memory as a remote service)
 - Cloud sync for memories across devices
 
+### Robust + cross-agent config merge — flagged fragile (to rethink)
+
+Multiple LLMs consulted flagged the current `.claude/settings.json` merge (ADR-006 v2, `settings_merger.py`) as **fragile**: it works for today's known shape, but if a user's settings have a different structure — or Claude changes the schema — the merge can break or behave wrong. Two things to solve:
+
+1. **Make the Claude settings merge robust + universal** — handle arbitrary/unknown settings shapes safely, not just the cases seen so far. Define what "safe merge" means on an unfamiliar schema: preserve the user's keys, never clobber, fail loud instead of silently wrong.
+2. **Coherent merge for the other agents too** — Codex, Cursor, Gemini CLI each have their own config/rules files. kaora claims "cross-agent" but real config merging is Claude-only today. Design a correct, consistent merge story across agents (this also tightens the honest "cross-agent" claim).
+
 ### Premium dashboard — `kaora dashboard` (target v0.2)
 
 Web UI to visualize the project's operating memory. Design reference:
@@ -86,6 +93,18 @@ $ kaora dashboard --export
 ## Operational patterns
 
 (open space — the sub-agent vs direct Read rule has been promoted to **ADR-009 Accepted** in `docs/DECISIONS.md` and codified in `template/AGENTS.md` § 10 on May 22, 2026, already active in v0.1)
+
+### Anti-overload communication rule (cognitive accessibility) — to formalize
+
+The agent must **filter, not dump**. When the user asks one thing, the reply must contain the one or two things that actually matter — not a list that mixes the 2 serious items with 10 irrelevant / stylistic ones, leaving the user to do the screening. The agent does the screening: say the serious thing, keep the rest unless asked. Talk at the builder's level (never technical-implementation detail unless requested). One thing at a time.
+
+**Why it's critical:** for divergent / overload-prone profiles, a wall of mixed-weight options causes cognitive overload — the exact failure mode kaora exists to prevent. This is an accessibility requirement, not a style preference.
+
+**Origin (lived anti-pattern):** 2026-05-29 launch session — the agent repeatedly overloaded the builder with dense lists and unscreened options, turned a ~1h task into ~5h, and pushed the publish from noon to ~7pm. Documented in real time.
+
+**To resolve in detail:** extend ADR-007 (Operative vs Learning) or add a new ADR, codified in `template/AGENTS.md` § 3 — so **the product enforces it**, not the agent's private memory. Open question to settle: how to make "filter, don't dump" a checkable behavior, not just a written wish.
+
+**Primary target: the Claude (Opus) agent's reply behavior.** That's where the overload originates — the rule has to actually shape how the Claude/Opus agent responds, not only live in the docs. Calibrate and test against that model specifically.
 
 ## Template
 
