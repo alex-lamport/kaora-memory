@@ -14,7 +14,7 @@
 **Owner:** Alexis Rojas · X [@alex_lamports](https://x.com/alex_lamports) · GitHub [@alex-lamport](https://github.com/alex-lamport)
 **Path:** ~/Desktop/kaora-memory
 **Year:** 2026
-**Current stage:** v0.1 in progress · Block 3 closed · Block 4 next (`kaora check`)
+**Current stage:** v0.1 shipped · `0.1.2` live on PyPI · launch communication in progress (Block 5, second half)
 
 ## 2. Tech stack
 
@@ -129,12 +129,15 @@ In v0.2+ the dedicated `kaora handoff` command will arrive and automate steps 1-
 ## 7. Current scope
 
 **Inside the active scope:**
-Block 4 — `kaora check` (operating-memory integrity linter post-`kaora init`). See `docs/SESSION_HANDOFF.md` for the detailed spec.
+Block 5 (second half) — launch communication: X thread, LinkedIn, landing refresh, launch essay, asciicast demo. See `docs/SESSION_HANDOFF.md` for the detailed brief. The product itself is already shipped (`pip install kaora-memory` → `0.1.2` live on PyPI).
+
+**Done (shipped):**
+- Block 4 — `kaora check` (operating-memory integrity linter post-`kaora init`)
+- Block 5 (first half) — rich README
+- Block 6 — PyPI publication (`kaora-memory` `0.1.2` live)
+- Self-dogfooding ADR-000 — `kaora init .` applied to the repo itself
 
 **Backlog (NOT now, lives in `BACKLOG.md`):**
-- Block 5 — rich README + flow demo + launch assets
-- Block 6 — PyPI publication (test.pypi first, repo naming to decide)
-- Self-dogfooding ADR-000 (`kaora init . --dry-run` validated, full application open)
 - `kaora handoff` · `kaora errors record` · `kaora skill install` (v0.2+)
 - Context-threshold hook at 60% for Claude Code (v0.2+)
 - MCP server · cloud sync · web dashboard (v0.3+)
@@ -155,7 +158,7 @@ Block 4 — `kaora check` (operating-memory integrity linter post-`kaora init`).
 | `.claude/settings.json` + `hooks/` | Credential protection + API logging |
 | `kaora_memory/` | Python package code (`cli`, `installer`, `settings_merger`, `template_resolver`) |
 | `template/` | Source template that `kaora init` copies into the user project |
-| `tests/` | `pytest` suite (33 cases green) |
+| `tests/` | `pytest` suite (68 cases green) |
 | `pyproject.toml` | Hatchling build config + `kaora` entry point |
 | `bin/setup-dev.sh` | One-liner dev setup (venv + `pip -e .[dev]` + chflags nohidden) |
 | `README.md` | Public pitch of the package |
@@ -236,6 +239,6 @@ Valid for Claude Code, Codex, Cursor, Aider, Gemini CLI, and any other agent in 
 cd ~/Desktop/kaora-memory
 python3 -c "import tomllib; tomllib.load(open('pyproject.toml','rb'))" && echo "TOML OK"
 ls template/ template/docs template/.claude/hooks && echo "template complete"
-.venv/bin/python -m pytest -q && echo "TEST OK (33/33)"
-.venv/bin/kaora --version && echo "CLI OK"
+.venv/bin/python -m pytest -q && echo "TEST OK (68/68)"
+.venv/bin/kaora --version && echo "CLI OK (0.1.2)"
 ```
