@@ -1,3 +1,5 @@
+![kaora-memory — induced metacognition for AI agents](https://raw.githubusercontent.com/alex-lamport/kaora-memory/main/docs/assets/kaora-hero.png)
+
 # kaora-memory
 
 **Operating memory and behaviour for AI agents.**
