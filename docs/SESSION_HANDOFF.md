@@ -2,24 +2,23 @@
 
 > Read right after `CLAUDE.md` and `CURRENT_STATE.md`.
 >
-> **Last session:** 2026-05-28 afternoon · **Technical launch fully closed.** `kaora-memory` is publicly installable: `pip install kaora-memory` resolves to **0.1.2** worldwide. Public repo on `alex-lamport/kaora-memory`, 2 GitHub Releases tagged (v0.1.1 + v0.1.2), CHANGELOG.md created, 0 PII in tracked files. Block 4.6 (ADR-010) + Block 6 (PyPI publication) both closed in this session. README v0.1 published (Block 5 first half). What's still open: launch communication assets.
+> **Last session:** 2026-05-29 · **X launch thread PUBLISHED.** The 3 pending voice decisions were resolved (EN · continuity build-in-public · 1 ND hint) and the 10-tweet thread shipped with hero banner + init screenshot + 57s demo clip. Repo polished for launch (README hero + metacognition framing + "What it really is", macOS note, ROADMAP EN, AGENTS drift fixed). Public-voice profile saved to persistent memory. Still open: LinkedIn, launch essay, landing refresh. — **Prior session (2026-05-28):** **Technical launch fully closed.** `kaora-memory` is publicly installable: `pip install kaora-memory` resolves to **0.1.2** worldwide. Public repo on `alex-lamport/kaora-memory`, 2 GitHub Releases tagged (v0.1.1 + v0.1.2), CHANGELOG.md created, 0 PII in tracked files. Block 4.6 (ADR-010) + Block 6 (PyPI publication) both closed in this session. README v0.1 published (Block 5 first half). What's still open: launch communication assets.
 
 ---
 
-## 🟢 NEXT SESSION — Block 5 (second half): launch communication
+## 🟢 NEXT SESSION — Block 5 remaining: LinkedIn · essay · landing
 
-Open Claude Code in `~/Desktop/kaora-memory/`. The product is **live and shippable**; this session is purely about **narrative and reach**. Expect heavy *Learning* mode (audience choice, hook selection, voice calibration), much less *Operative* mode than the technical sessions.
+X thread is **live** (published 2026-05-29). The 3 voice decisions are settled — full profile in persistent memory `alexis_public_voice_profile.md`:
+- **Language:** EN · **Framing:** continuity build-in-public (kaora as the next object of the existing "build in public" branch, not a pivot) · **ND subplot:** 1 hint only (seeded in the thread, not opened).
 
-**Three voice-of-builder decisions are pending from chat 2026-05-28 (please surface them at the opening ritual):**
+Remaining launch assets, priority order:
+1. **LinkedIn** — single dense post (~200-300 words), structured tone, decision-maker / OSS audience. One shot.
+2. **Launch essay** — ~3000 words, brief at the private essay asset. Substack/Medium. Can run in parallel.
+3. **Landing refresh** — off-repo HTML, update to current state + metacognition framing.
 
-1. **Language of the X thread** — EN (global OSS audience), IT (existing X audience that knows you from DeFi), or bilingual (one thread per language, more work). Open.
-2. **Framing of the pivot** — this is the first non-DeFi public post from the builder. Three concrete framings were floated in chat:
-   - *(a)* normalize as a side project: *"not DeFi today, side project I just shipped, take or leave"* — low commitment, preserves existing-audience contract.
-   - *(b)* explicit strategic pivot: *"from today I'll talk about AI tooling too, here's the first piece"* — redefines the contract.
-   - *(c)* topical post, no transition meta-talk — neutral, lets the topic carry itself.
-3. **Neurodivergent subplot** (PHILOSOPHY § 6: ADR-007 was born from real-time co-evolution between the neurodivergent builder and the agent — no other AI product has that documented origin) — include as 2 closing tweets, hint at 1, or keep out of the first release.
+The builder wanted these handled separately, after X. Decide format per channel when picking them up (he floated "different formats for LinkedIn / IG" — note: IG was a no on 2026-05-26, then reconsidered on 2026-05-29; confirm before using).
 
-These three decisions condition everything downstream. The agent must NOT draft tweets before they're chosen.
+Reusable launch assets created this session (on the Desktop): `kaora-mem-banner.png` (hero), `kaora-x-init.png` (init screenshot), `kaora-x-clip.mp4` (57s demo). Demo project `~/Desktop/agent-desk` (fake brownfield) still present.
 
 ---
 

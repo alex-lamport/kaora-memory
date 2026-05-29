@@ -2,14 +2,14 @@
 
 > Updated at the end of every session. Answers "where are we, what works, what's missing right now".
 >
-> **Last update:** 2026-05-28 (afternoon close) — **Block 4.6 + Block 5 partial + Block 6 closed in one session.** kaora-memory is now public on PyPI: `pip install kaora-memory` resolves to **0.1.2** globally. GitHub repo public on `alex-lamport/kaora-memory` with README, CHANGELOG, 2 GitHub Releases (v0.1.1 + v0.1.2). v0.1.1 was withdrawn from PyPI after publication for metadata-privacy hardening (Gmail leak in author field) — functionally identical to v0.1.2. 0 PII in tracked files. Suite 68/68 green, `kaora check .` clean (0 ERROR / 0 WARN).
+> **Last update:** 2026-05-29 (launch session) — **X launch thread published.** First public non-DeFi post is live: 10-tweet thread (EN · continuity build-in-public · 1 ND hint) + hero banner, init screenshot, and a 57s demo clip (init → opening-ritual recap → brownfield merge proposal). Repo polished for launch: README hero banner, metacognition-first tagline + "What it really is" section + KAORA footer, macOS install note, `AGENTS.md` drift fixed, ROADMAP translated EN. 4 commits pushed; product unchanged (`0.1.2` live). Public-voice profile saved to persistent memory. **Prior close (2026-05-28):** **Block 4.6 + Block 5 partial + Block 6 closed in one session.** kaora-memory is now public on PyPI: `pip install kaora-memory` resolves to **0.1.2** globally. GitHub repo public on `alex-lamport/kaora-memory` with README, CHANGELOG, 2 GitHub Releases (v0.1.1 + v0.1.2). v0.1.1 was withdrawn from PyPI after publication for metadata-privacy hardening (Gmail leak in author field) — functionally identical to v0.1.2. 0 PII in tracked files. Suite 68/68 green, `kaora check .` clean (0 ERROR / 0 WARN).
 
 ---
 
 ## Snapshot today
 
-**Current block:** Block 4 ✅ · Block 4.5 ✅ (i18n EN-first) · Block 4.6 ✅ (documentary-content-aware stripping, ADR-010) · **Block 5 partially closed** (README rich done, launch comms still open: thread X, LinkedIn, essay, asciicast demo, landing refresh) · **Block 6 ✅** (PyPI publication: 0.1.1 → withdrawn for privacy, 0.1.2 latest)
-**Last commit on main:** `d70c7cc docs(changelog): add CHANGELOG.md with 0.1.1 withdrawal note`. Working tree clean.
+**Current block:** Block 4/4.5/4.6 ✅ · Block 6 ✅ (PyPI 0.1.2) · **Block 5 in progress** — README rich ✅ · **X launch thread published ✅ (2026-05-29)**; still open: LinkedIn, launch essay, landing refresh
+**Last commit on main:** `4426323 docs(readme): metacognition-first hero + "What it really is" + KAORA footer` — 4 launch-polish commits this session (`f9df0fc` AGENTS drift + ROADMAP EN · `79528c8` macOS note · `e02cdbf` hero banner · `4426323` metacognition README). Working tree clean.
 **Branch:** `main` · pushed to `origin/main` since `473fb4c`
 **Remote repo:** **live and public** at https://github.com/alex-lamport/kaora-memory · 2 GitHub Releases tagged (v0.1.1, v0.1.2) · description + topics configured
 **PyPI:** **live** at https://pypi.org/project/kaora-memory/0.1.2/ · `pip install kaora-memory` works globally · 0.1.1 deleted from PyPI (metadata privacy)
