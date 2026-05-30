@@ -20,6 +20,8 @@ The builder wanted these handled separately, after X. Decide format per channel 
 
 Reusable launch assets created this session (on the Desktop): `kaora-mem-banner.png` (hero), `kaora-x-init.png` (init screenshot), `kaora-x-clip.mp4` (57s demo). Demo project `~/Desktop/agent-desk` (fake brownfield) still present.
 
+Post-close additions (same session): README now **trilingual** — `README.md` (EN) + `README.it.md` + `README.es.md`, with a flag language switcher at the top of each, sub-agent reviewed. Two backlog items added: anti-overload communication rule (cognitive accessibility) + robust/cross-agent config merge.
+
 ---
 
 ## 🔵 OPEN POINTS (priority order)
