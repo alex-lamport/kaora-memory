@@ -1,5 +1,7 @@
 ![kaora-memory — induced metacognition for AI agents](https://raw.githubusercontent.com/alex-lamport/kaora-memory/main/docs/assets/kaora-hero.png)
 
+**🇬🇧 English** · [🇮🇹 Italiano](README.it.md) · [🇪🇸 Español](README.es.md)
+
 # kaora-memory
 
 > **Induced metacognition for AI agents.**
